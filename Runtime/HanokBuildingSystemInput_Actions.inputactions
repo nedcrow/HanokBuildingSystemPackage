@@ -1,0 +1,75 @@
+{
+    "version": 1,
+    "name": "HanokBuildingSystemInput_Actions",
+    "maps": [
+        {
+            "name": "HanokBuildingSystem",
+            "id": "4e6ce594-866b-4d85-94df-d3d3343ce28c",
+            "actions": [
+                {
+                    "name": "HBS_LeftClick",
+                    "type": "Button",
+                    "id": "44bb815f-9df2-4dca-b67c-9b11ac1f6554",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HBS_RightClick",
+                    "type": "Button",
+                    "id": "783b2bb3-910a-4b87-98d3-5db93da77c58",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HBS_MousePosition",
+                    "type": "Value",
+                    "id": "3fb17794-7679-4b09-b515-148358e2a782",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "604975e7-d929-4163-a762-28f10445ac52",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HBS_LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "11ef7c85-5a3e-42fe-acbc-452abf9b8018",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HBS_MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "758c4f35-2ce0-4f4d-9cba-c0d30f2070ce",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HBS_RightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
