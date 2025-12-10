@@ -26,7 +26,6 @@ namespace HanokBuildingSystem
 
         [Header("Collision Settings")]
         [SerializeField] private bool shouldCheckCollision = true;
-        [SerializeField] private float radiusOfCollisionCheck = 1f;
         [SerializeField] private CollisionResponseType collisionResponse = CollisionResponseType.None;
 
         [Header("Visual Feedback")]
@@ -179,8 +178,6 @@ namespace HanokBuildingSystem
             originalRotation = building.transform.rotation;
 
             StartDragging();
-
-            Debug.Log($"[RemodelingController] Building {building.name} selected for remodeling.");
         }
 
         private void StartDragging()
@@ -260,13 +257,13 @@ namespace HanokBuildingSystem
         /// </summary>
         private bool IsWithinHouseBounds(Vector3 position, House house)
         {
-            if (house == null || house.OutlineVertices == null || house.OutlineVertices.Count == 0)
+            if (house == null || house.BoundaryPlot == null || house.BoundaryPlot.LineList == null || house.BoundaryPlot.LineList.Count == 0)
             {
                 return true; // 경계가 없으면 허용
             }
 
             // 첫 번째 외곽선 사용 (주 경계)
-            List<Vector3> outline = house.OutlineVertices[0];
+            List<Vector3> outline = house.BoundaryPlot.LineList[0];
             if (outline == null || outline.Count < 3)
             {
                 return true;
@@ -314,7 +311,7 @@ namespace HanokBuildingSystem
         /// </summary>
         private Vector3 ClampToHouseBounds(Vector3 position, House house)
         {
-            if (house == null || house.OutlineVertices == null || house.OutlineVertices.Count == 0)
+            if (house == null || house.BoundaryPlot == null || house.BoundaryPlot.LineList == null || house.BoundaryPlot.LineList.Count == 0)
             {
                 return position;
             }
@@ -326,7 +323,7 @@ namespace HanokBuildingSystem
             }
 
             // 경계 내부로 강제 이동: 가장 가까운 경계 지점 찾기
-            List<Vector3> outline = house.OutlineVertices[0];
+            List<Vector3> outline = house.BoundaryPlot.LineList[0];
             if (outline == null || outline.Count < 3)
             {
                 return position;
@@ -459,30 +456,6 @@ namespace HanokBuildingSystem
                 MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
                 propertyBlock.SetColor("_Color", isValid ? validColor : invalidColor);
                 renderer.SetPropertyBlock(propertyBlock);
-            }
-        }
-        #endregion
-
-        #region Debug
-        private void OnDrawGizmosSelected()
-        {
-            if (targetHouse != null && targetHouse.OutlineVertices != null && targetHouse.OutlineVertices.Count > 0)
-            {
-                Gizmos.color = Color.yellow;
-                List<Vector3> outline = targetHouse.OutlineVertices[0];
-
-                for (int i = 0; i < outline.Count; i++)
-                {
-                    Vector3 v1 = outline[i];
-                    Vector3 v2 = outline[(i + 1) % outline.Count];
-                    Gizmos.DrawLine(v1, v2);
-                }
-            }
-
-            if (selectedBuilding != null)
-            {
-                Gizmos.color = isValidPlacement ? Color.green : Color.red;
-                Gizmos.DrawWireSphere(selectedBuilding.transform.position, radiusOfCollisionCheck);
             }
         }
         #endregion

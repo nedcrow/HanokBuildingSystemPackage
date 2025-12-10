@@ -193,26 +193,13 @@ namespace HanokBuildingSystem
 
             // 첫 번째 선택된 House를 리모델링 대상으로 설정
             House targetHouse = currentHouses[0];
-            
+
             // House의 상태를 UnderConstruction으로 변경 (리모델링 중 표시)
             targetHouse.SetUsageState(HouseOccupancyState.UnderConstruction);
 
-            // Plot이 있다면 House의 외곽선을 Plot으로 표시
-            if (plotController != null && targetHouse.OutlineVertices != null && targetHouse.OutlineVertices.Count > 0)
-            {
-                Plot housePlot = new Plot();
-                List<List<Vector3>> outLine = targetHouse.OutlineVertices;
-                foreach(var line in outLine)
-                {
-                    housePlot.AddLine(line);
-                }                
-                plotController.ShowPlot(housePlot);                
-                currentPlots.Add(housePlot);
-            }
-
             // 리모델링 시작 이벤트 발생
             Events.RaiseRemodelingStarted(targetHouse);
-            
+
             Debug.Log($"[HanokBuildingSystem] Entered Remodeling mode for House: {targetHouse.name}");
         }
         #endregion

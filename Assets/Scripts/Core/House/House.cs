@@ -39,8 +39,8 @@ namespace HanokBuildingSystem
     [SerializeField] private HouseType houseType = HouseType.None;
 
     [Header("Area Information")]
-    [Tooltip("2D outline vertices defining the house area")]
-    [SerializeField] private List<List<Vector3>> outlineVertices = new List<List<Vector3>>();
+    [Tooltip("Plot defining the house boundary area")]
+    [SerializeField] private Plot boundaryPlot;
 
     [Header("Current Buildings")]
     [SerializeField] private List<Building> buildings = new List<Building>();
@@ -65,7 +65,7 @@ namespace HanokBuildingSystem
     public Vector2 SampleSize => sampleSize;
     public HouseType HouseType => houseType;
     public List<BuildingType> RequiredBuildingTypes => requiredBuildingTypes;
-    public List<List<Vector3>> OutlineVertices => outlineVertices;
+    public Plot BoundaryPlot => boundaryPlot;
     public List<Building> Buildings => buildings;
     public GameObject Owner => owner;
     public int CurrentResidents => currentResidents;
@@ -88,11 +88,6 @@ namespace HanokBuildingSystem
         if (buildings == null)
         {
             buildings = new List<Building>();
-        }
-
-        if (outlineVertices == null)
-        {
-            outlineVertices = new List<List<Vector3>>();
         }
 
         if (requiredBuildingTypes == null)
@@ -147,17 +142,9 @@ namespace HanokBuildingSystem
         return true;
     }
 
-    public void SetOutlineVertices(List<List<Vector3>> vertices)
+    public void SetBoundaryPlot(Plot plot)
     {
-        outlineVertices = vertices;
-    }
-
-    public void AddOutlineLoop(List<Vector3> vertexLoop)
-    {
-        if (vertexLoop != null && vertexLoop.Count > 0)
-        {
-            outlineVertices.Add(vertexLoop);
-        }
+        boundaryPlot = plot;
     }
 
     public void SetOwner(GameObject newOwner)
@@ -225,6 +212,9 @@ namespace HanokBuildingSystem
             Debug.LogWarning("[House] Cannot show model house: plot is null");
             return;
         }
+
+        // Plot 저장
+        boundaryPlot = plot;
 
         Vector3 plotCenter = plot.GetCenter();
         transform.position = plotCenter;
@@ -382,31 +372,7 @@ namespace HanokBuildingSystem
                 };
             }
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        DrawOutlineVertices();
-    }
-
-    private void DrawOutlineVertices()
-    {
-        if (outlineVertices != null)
-        {
-            Gizmos.color = Color.green;
-            foreach (List<Vector3> loop in outlineVertices)
-            {
-                if (loop == null || loop.Count < 2) continue;
-
-                for (int i = 0; i < loop.Count; i++)
-                {
-                    Vector3 current = loop[i];
-                    Vector3 next = loop[(i + 1) % loop.Count];
-                    Gizmos.DrawLine(current, next);
-                }
-            }
-        }
-    }
+    }    
 #endif
     }
 }

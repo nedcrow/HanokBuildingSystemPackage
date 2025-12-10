@@ -15,6 +15,7 @@ public class HanokSystemController : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
     [SerializeField] private HBSInputHandler inputHandler;
+    [SerializeField] private PlotController plotController;
 
     [Header("Raycast Settings")]
     [SerializeField] private LayerMask houseLayerMask;
@@ -41,6 +42,11 @@ public class HanokSystemController : MonoBehaviour
         {
             inputHandler = GetComponent<HBSInputHandler>();
         }
+
+        if (plotController == null)
+        {
+            plotController = buildingSystem?.PlotController;
+        }
     }
 
     void OnEnable()
@@ -55,6 +61,13 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragging += HandleDragging;
             inputHandler.OnDragEnd += HandleDragEnd;
         }
+
+        if (buildingSystem != null)
+        {
+            buildingSystem.Events.OnHouseSelected += HandleHouseSelected;
+            buildingSystem.Events.OnHouseDeselected += HandleHouseDeselected;
+            buildingSystem.Events.OnSelectionCleared += HandleSelectionHouseCleared;
+        }
     }
 
     void OnDisable()
@@ -68,6 +81,12 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragStart -= HandleDragStart;
             inputHandler.OnDragging -= HandleDragging;
             inputHandler.OnDragEnd -= HandleDragEnd;
+        }
+
+        if (buildingSystem != null)
+        {
+            buildingSystem.Events.OnHouseSelected -= HandleHouseSelected;
+            buildingSystem.Events.OnHouseDeselected -= HandleHouseDeselected;
         }
     }
 
@@ -142,7 +161,7 @@ public class HanokSystemController : MonoBehaviour
                 }
                 else
                 {
-                    buildingSystem.ClearSelection();
+                    buildingSystem.SetState(SystemState.Off);
                 }
                 break;
 
@@ -316,6 +335,35 @@ public class HanokSystemController : MonoBehaviour
         }
 
         return worldPos;
+    }
+    #endregion
+
+    #region House Boundary Visualization
+    private void HandleHouseSelected(House house)
+    {
+        if (house == null || plotController == null)
+        {
+            return;
+        }
+
+        if (house.BoundaryPlot != null)
+        {
+            plotController.ShowPlot(house.BoundaryPlot);
+        }
+    }
+
+    private void HandleHouseDeselected(House house)
+    {
+        if (house == null || plotController == null)
+        {
+            return;
+        }
+        plotController.HidePlot(house.BoundaryPlot);        
+    }
+
+    private void HandleSelectionHouseCleared()
+    {
+        plotController.HideAllPlot();
     }
     #endregion
 }
