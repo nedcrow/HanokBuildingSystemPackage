@@ -194,11 +194,13 @@ namespace HanokBuildingSystem
             // 첫 번째 선택된 House를 리모델링 대상으로 설정
             House targetHouse = currentHouses[0];
 
-            // House의 상태를 UnderConstruction으로 변경 (리모델링 중 표시)
-            targetHouse.SetUsageState(HouseOccupancyState.UnderConstruction);
-
-            // 리모델링 시작 이벤트 발생
-            Events.RaiseRemodelingStarted(targetHouse);
+            // RemodelingController에 리모델링 시작 알림 (백업 수행)
+            if (remodelingController != null)
+            {
+                remodelingController.StartRemodeling(targetHouse);
+                
+                Events.RaiseRemodelingStarted(targetHouse);
+            }
 
             Debug.Log($"[HanokBuildingSystem] Entered Remodeling mode for House: {targetHouse.name}");
         }

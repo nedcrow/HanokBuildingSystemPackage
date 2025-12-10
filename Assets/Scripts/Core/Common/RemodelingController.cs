@@ -47,6 +47,16 @@ namespace HanokBuildingSystem
         // Cached for performance
         private bool isValidPlacement = true;
 
+        // Remodeling backup data
+        private class BuildingSnapshot
+        {
+            public Building building;
+            public Vector3 position;
+            public Quaternion rotation;
+            public int stageIndex;
+        }
+        private List<BuildingSnapshot> buildingBackup = new List<BuildingSnapshot>();
+
         private void Start()
         {
             if (buildingSystem == null)
@@ -99,7 +109,7 @@ namespace HanokBuildingSystem
                 return false;
             }
 
-            // 유효한 위치인지 확인
+            // 유효한 위치인지 체크 후 반응
             if (!isValidPlacement)
             {
                 switch (collisionResponse)
@@ -127,7 +137,6 @@ namespace HanokBuildingSystem
                 buildingSystem.Events.RaiseBuildingModified(targetHouse, selectedBuilding);
 
                 selectedBuilding = null;
-                targetHouse = null;
 
                 return true;
             }
@@ -138,15 +147,29 @@ namespace HanokBuildingSystem
         /// </summary>
         public void CancelSelection()
         {
-            if (selectedBuilding != null)
+            if (selectedBuilding != null && targetHouse != null)
             {
+                // 원래 위치로 복원
                 selectedBuilding.transform.position = originalPosition;
                 selectedBuilding.transform.rotation = originalRotation;
-            }
 
-            StopDragging();
-            selectedBuilding = null;
-            targetHouse = null;
+                // 원래 위치의 유효성 검증
+                bool isValid = ValidatePlacement(selectedBuilding, targetHouse);
+
+                if (isValid)
+                {
+                    StopDragging();
+                    selectedBuilding = null;
+                    targetHouse = null;
+                }
+                else
+                {
+                    Debug.LogWarning($"[RemodelingController] Original position for {selectedBuilding.name} is no longer valid. " +
+                    "Building may overlap or be outside house bounds.");
+
+                    UpdateVisualFeedback(selectedBuilding, isValid);
+                }
+            }
         }
 
         /// <summary>
@@ -167,6 +190,80 @@ namespace HanokBuildingSystem
         /// 현재 선택된 Building
         /// </summary>
         public Building SelectedBuilding => selectedBuilding;
+
+        /// <summary>
+        /// 리모델링 시작 - 현재 하우스 상태 백업
+        /// </summary>
+        public void StartRemodeling(House house)
+        {
+            if (house == null)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot start remodeling: House is null.");
+                return;
+            }
+
+            targetHouse = house;
+            BackupHouseState(house);
+        }
+
+        /// <summary>
+        /// 리모델링 완성 - 하우스를 UnderConstruction으로, 빌딩들을 0단계로 초기화
+        /// </summary>
+        public bool CompleteRemodeling()
+        {
+            if (targetHouse == null)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot complete remodeling: No target house.");
+                return false;
+            }
+
+            // 드래그 중이면 취소
+            if (isDragging)
+            {
+                CancelSelection();
+            }
+
+            // 하우스를 UnderConstruction 상태로 변경
+            targetHouse.SetUsageState(HouseOccupancyState.UnderConstruction);
+
+            // 변경된 빌딩들의 건설 단계를 0으로 초기화
+            ResetModifiedBuildingsToStageZero();
+
+            buildingSystem.Events.RaiseRemodelingCompleted(targetHouse);
+            Debug.Log($"[RemodelingController] Completed remodeling for {targetHouse.name}");
+
+            ClearBackup();
+            targetHouse = null;
+            return true;
+        }
+
+        /// <summary>
+        /// 리모델링 취소 - 백업된 상태로 복원
+        /// </summary>
+        public bool CancelRemodeling()
+        {
+            if (targetHouse == null)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot cancel remodeling: No target house.");
+                return false;
+            }
+
+            // 드래그 중이면 취소
+            if (isDragging)
+            {
+                CancelSelection();
+            }
+
+            // 백업된 상태로 복원
+            RestoreHouseState();
+
+            buildingSystem.Events.RaiseRemodelingCancelled(targetHouse);
+            Debug.Log($"[RemodelingController] Cancelled remodeling for {targetHouse.name}");
+
+            ClearBackup();
+            targetHouse = null;
+            return true;
+        }
         #endregion
 
         #region Building Selection & Dragging
@@ -384,28 +481,52 @@ namespace HanokBuildingSystem
         {
             if (building == null || targetHouse == null)
             {
+                Debug.LogWarning($"Null [targetHouse] for {building.name}`s collision check.");
                 return false;
             }
 
             Collider buildingCollider = building.GetComponent<Collider>();
             if (buildingCollider == null)
             {
+                Debug.LogWarning($"Null [Collider] for {building.name}`s collision check.");
                 return false;
             }
 
-            // 같은 하우스 내의 다른 Building들과 충돌 검사
-            foreach (Building otherBuilding in targetHouse.Buildings)
+            Physics.SyncTransforms();
+
+            Bounds bounds = buildingCollider.bounds;
+            Vector3 center = bounds.center;    // 월드 좌표 기준 중심
+            Vector3 halfExtents = bounds.extents;   // 월드 기준 반지름(가로/세로/높이의 절반)
+
+            Collider[] overlappingColliders = Physics.OverlapBox(
+                center,
+                halfExtents,
+                building.transform.rotation,
+                buildingLayerMask
+            );
+
+            foreach (Collider otherCollider in overlappingColliders)
             {
-                if (otherBuilding == building)
+                // 필터
+                if (otherCollider == buildingCollider)
                 {
                     continue;
                 }
 
-                Collider otherCollider = otherBuilding.GetComponent<Collider>();
-                if (otherCollider != null && buildingCollider.bounds.Intersects(otherCollider.bounds))
+                Building otherBuilding = otherCollider.GetComponent<Building>();
+                if (otherBuilding == null)
                 {
-                    targetBuilding = otherCollider.GetComponentInChildren<Building>();
-                    return true; // 충돌 발생
+                    continue;
+                }
+
+                if (otherBuilding != null && otherBuilding != building)
+                {
+                    // 같은 하우스 내의 빌딩인지 확인
+                    if (targetHouse.Buildings.Contains(otherBuilding))
+                    {
+                        targetBuilding = otherBuilding;
+                        return true; // 충돌 발생
+                    }
                 }
             }
 
@@ -454,9 +575,108 @@ namespace HanokBuildingSystem
             if (renderer != null)
             {
                 MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-                propertyBlock.SetColor("_Color", isValid ? validColor : invalidColor);
+                propertyBlock.SetColor("_BaseMap", isValid ? validColor : invalidColor);
                 renderer.SetPropertyBlock(propertyBlock);
             }
+        }
+        #endregion
+
+        #region Backup & Restore
+        /// <summary>
+        /// 하우스의 빌딩 상태 백업
+        /// </summary>
+        private void BackupHouseState(House house)
+        {
+            buildingBackup.Clear();
+
+            if (house == null || house.Buildings == null)
+            {
+                return;
+            }
+
+            foreach (Building building in house.Buildings)
+            {
+                if (building == null) continue;
+
+                BuildingSnapshot snapshot = new BuildingSnapshot
+                {
+                    building = building,
+                    position = building.transform.position,
+                    rotation = building.transform.rotation,
+                    stageIndex = building.CurrentStageIndex
+                };
+
+                buildingBackup.Add(snapshot);
+            }
+        }
+
+        /// <summary>
+        /// 백업된 상태로 복원
+        /// </summary>
+        private void RestoreHouseState()
+        {
+            foreach (BuildingSnapshot snapshot in buildingBackup)
+            {
+                if (snapshot.building == null) continue;
+
+                snapshot.building.transform.position = snapshot.position;
+                snapshot.building.transform.rotation = snapshot.rotation;
+                snapshot.building.SetStageIndex(snapshot.stageIndex);
+            }
+
+            Debug.Log($"[RemodelingController] Restored {buildingBackup.Count} buildings to original state.");
+        }
+
+        /// <summary>
+        /// 백업 데이터와 비교하여 변경된 빌딩들의 건설 단계를 0으로 초기화
+        /// </summary>
+        private void ResetModifiedBuildingsToStageZero()
+        {
+            int modifiedCount = 0;
+
+            foreach (BuildingSnapshot snapshot in buildingBackup)
+            {
+                if (snapshot.building == null) continue;
+
+                // 위치나 회전이 변경되었는지 확인
+                bool positionChanged = Vector3.Distance(snapshot.building.transform.position, snapshot.position) > 0.01f;
+                bool rotationChanged = Quaternion.Angle(snapshot.building.transform.rotation, snapshot.rotation) > 0.1f;
+
+                if (positionChanged || rotationChanged)
+                {
+                    snapshot.building.SetStageIndex(0);
+                    modifiedCount++;
+                    Debug.Log($"[RemodelingController] Reset {snapshot.building.name} to construction stage 0 (modified)");
+                }
+            }
+
+            // 새로 추가된 빌딩들도 0단계로 설정
+            if (targetHouse != null && targetHouse.Buildings != null)
+            {
+                foreach (Building building in targetHouse.Buildings)
+                {
+                    if (building == null) continue;
+
+                    // 백업에 없는 빌딩 = 새로 추가된 빌딩
+                    bool isNewBuilding = !buildingBackup.Exists(s => s.building == building);
+                    if (isNewBuilding)
+                    {
+                        building.SetStageIndex(0);
+                        modifiedCount++;
+                        Debug.Log($"[RemodelingController] Reset {building.name} to construction stage 0 (newly added)");
+                    }
+                }
+            }
+
+            Debug.Log($"[RemodelingController] Reset {modifiedCount} modified/added buildings to stage 0.");
+        }
+
+        /// <summary>
+        /// 백업 데이터 클리어
+        /// </summary>
+        private void ClearBackup()
+        {
+            buildingBackup.Clear();
         }
         #endregion
     }
