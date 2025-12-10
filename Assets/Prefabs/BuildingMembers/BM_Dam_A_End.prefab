@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 246193071643722559}
   serializedVersion: 2
   m_LocalRotation: {x: -0.30070576, y: -0, z: -0, w: 0.953717}
-  m_LocalPosition: {x: 0, y: 1, z: -0.1}
-  m_LocalScale: {x: 1, y: 0.10000001, z: 0.25}
+  m_LocalPosition: {x: 0.25, y: 1, z: -0.1}
+  m_LocalScale: {x: 0.5, y: 0.10000001, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1718316504979586687}
@@ -174,8 +174,8 @@ Transform:
   m_GameObject: {fileID: 2045288697164706717}
   serializedVersion: 2
   m_LocalRotation: {x: 0.30070576, y: -0, z: -0, w: 0.953717}
-  m_LocalPosition: {x: 0, y: 1, z: 0.1}
-  m_LocalScale: {x: 1, y: 0.10000001, z: 0.25}
+  m_LocalPosition: {x: 0.25, y: 1, z: 0.1}
+  m_LocalScale: {x: 0.5, y: 0.10000001, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1718316504979586687}
@@ -266,11 +266,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8894082429240679417}
-  - component: {fileID: 8715093340988692931}
-  - component: {fileID: 2417890901957334385}
-  - component: {fileID: -516297680935447901}
+  - component: {fileID: 4857775714654934655}
   m_Layer: 0
-  m_Name: B_Dam_A_Center
+  m_Name: BM_Dam_A_End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,56 +290,7 @@ Transform:
   - {fileID: 1718316504979586687}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8715093340988692931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7810427692713562516}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 6
-  size: {x: 1, y: 1, z: 1}
-  statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceName: 1
-      amount: 2
-    - resourceName: 2
-      amount: 2
-  - requiredResources:
-    - resourceName: 4
-      amount: 2
-  - requiredResources:
-    - resourceName: 3
-      amount: 2
-  currentStageIndex: 0
-  constructionMode: 0
-  constructionDuration: 10
-  requiredLaborPerStage: 100
-  buildingMembers: []
---- !u!114 &2417890901957334385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7810427692713562516}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
-  currentDurability: 100
-  maxDurability: 100
-  durabilityDecayRate: 1
-  currentEnvironmentState: 0
-  isDeteriorated: 0
---- !u!65 &-516297680935447901
+--- !u!65 &4857775714654934655
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -390,8 +339,8 @@ Transform:
   m_GameObject: {fileID: 8260626433384191208}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.28}
+  m_LocalPosition: {x: 0.25, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 1, z: 0.28}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1718316504979586687}
@@ -501,8 +450,8 @@ Transform:
   m_GameObject: {fileID: 8404034845049382671}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.24}
+  m_LocalPosition: {x: 0.25, y: 0.5, z: 0}
+  m_LocalScale: {x: 0.5, y: 1, z: 0.24}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1718316504979586687}

@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 8
+  buildingType: 11
   markerSize: {x: 1, y: 1}
   isMainMarker: 0
   currentBuilding: {fileID: 0}
@@ -145,6 +145,12 @@ MonoBehaviour:
   sampleSize: {x: 6, y: 6}
   requiredBuildingTypes: 0400000005000000010000000900000008000000
   houseType: 0
+  boundaryPlot:
+    allVertices: []
+    defaultLineThickness: 0.1
+    defaultMinAngle: 45
+    defaultMaxAngle: 135
+    isBuildable: 0
   buildings: []
   owner: {fileID: 0}
   currentResidents: 0
@@ -305,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 9
+  buildingType: 12
   markerSize: {x: 1, y: 1}
   isMainMarker: 0
   currentBuilding: {fileID: 0}
