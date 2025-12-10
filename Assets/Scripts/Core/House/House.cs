@@ -253,6 +253,7 @@ namespace HanokBuildingSystem
             {
                 marker.SetCurrentBuilding(building);
                 AddBuilding(building);
+                building.ShowModelBuilding(plot, transform);
             }
             else
             {

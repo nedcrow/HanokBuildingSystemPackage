@@ -332,6 +332,14 @@ namespace HanokBuildingSystem
             transform.position = position;
         }
 
+        /// <summary>
+        /// 완성 단계의 모습
+        /// </summary>
+        public virtual void ShowModelBuilding(Plot plot, Transform parent = null)
+        {
+            // 완성 단계의 모습
+        }
+
         private void OnDestroy()
         {
             StopTimeBasedConstruction();

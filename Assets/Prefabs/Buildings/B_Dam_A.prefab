@@ -307,15 +307,26 @@ MonoBehaviour:
   type: 5
   size: {x: 1, y: 1, z: 1}
   statusData: {fileID: 0}
-  constructionStages: []
+  constructionStages:
+  - requiredResources:
+    - resourceName: 1
+      amount: 2
+    - resourceName: 2
+      amount: 2
+  - requiredResources:
+    - resourceName: 4
+      amount: 2
+  - requiredResources:
+    - resourceName: 3
+      amount: 2
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
   requiredLaborPerStage: 100
   buildingMembers: []
-  doorPrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
-  endPrefab: {fileID: 0}
+  wallCenter: {fileID: 7810427692713562516, guid: eba76f806106c4d42b718ab403e2a391, type: 3}
+  wallCorner: {fileID: 7810427692713562516, guid: 8167e8d1a9e0c734f8c358d7a7177d00, type: 3}
+  wallEnd: {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
   wallSegmentLength: 1
   doorWidth: 1.5
   allowMultipleDoors: 0
