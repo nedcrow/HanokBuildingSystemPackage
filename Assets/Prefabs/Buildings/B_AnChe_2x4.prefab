@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4529455085931975416}
   - component: {fileID: 771579134595110933}
   - component: {fileID: 7621755941337988471}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2157594749096217641}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 1331387072579902041}
   - component: {fileID: 864533921684949863}
   - component: {fileID: 3476028711989215038}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1718316504979586687}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +303,7 @@ GameObject:
   - component: {fileID: 2771407860726847692}
   - component: {fileID: 6421252342270106861}
   - component: {fileID: 8998743227510971681}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 3719281952340176606}
   - component: {fileID: 3635363881457814464}
   - component: {fileID: 3499184018792064642}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -525,7 +525,7 @@ GameObject:
   - component: {fileID: 4220270529653690882}
   - component: {fileID: 3625799006847184298}
   - component: {fileID: 4033801218475342569}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -636,7 +636,7 @@ GameObject:
   - component: {fileID: 542049157051381543}
   - component: {fileID: 8335859510479827412}
   - component: {fileID: 1256305810412795839}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -747,7 +747,7 @@ GameObject:
   - component: {fileID: 8715093340988692931}
   - component: {fileID: 3134727060689934381}
   - component: {fileID: -3740338001444487322}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: B_AnChe_2x4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -799,6 +799,9 @@ MonoBehaviour:
     - resourceName: 3
       amount: 100
   currentStageIndex: 0
+  constructionMode: 0
+  constructionDuration: 10
+  requiredLaborPerStage: 100
   buildingMembers: []
 --- !u!114 &3134727060689934381
 MonoBehaviour:
@@ -850,7 +853,7 @@ GameObject:
   - component: {fileID: 5039597272488662278}
   - component: {fileID: 5998303599493835551}
   - component: {fileID: 2453020183109246846}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}

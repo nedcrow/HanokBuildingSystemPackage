@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6423939715088540545}
   - component: {fileID: 7959742098775530298}
   - component: {fileID: 5163898984925681115}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 45057300616425583}
   - component: {fileID: 3788598814253512966}
   - component: {fileID: 8696695472540372421}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 8715093340988692931}
   - component: {fileID: -1544146076648169946}
   - component: {fileID: 1121489863910775141}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: B_JangDokDae_1x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,6 +283,9 @@ MonoBehaviour:
     - resourceName: 5
       amount: 5
   currentStageIndex: 0
+  constructionMode: 0
+  constructionDuration: 10
+  requiredLaborPerStage: 100
   buildingMembers: []
 --- !u!114 &-1544146076648169946
 MonoBehaviour:
@@ -334,7 +337,7 @@ GameObject:
   - component: {fileID: 2006566815338469295}
   - component: {fileID: 7253870619916540532}
   - component: {fileID: 4021319837622143791}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Cylinder (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

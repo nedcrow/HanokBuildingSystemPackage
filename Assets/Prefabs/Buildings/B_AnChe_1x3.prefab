@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2757468941081999832}
   - component: {fileID: 4529455085931975416}
   - component: {fileID: 771579134595110933}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 4061535948696154468}
   - component: {fileID: 2771407860726847692}
   - component: {fileID: 6421252342270106861}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 6643357598375345085}
   - component: {fileID: 542049157051381543}
   - component: {fileID: 8335859510479827412}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 8715093340988692931}
   - component: {fileID: 4825714995169319402}
   - component: {fileID: 5389226059938747695}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: B_AnChe_1x3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -386,7 +386,7 @@ GameObject:
   - component: {fileID: 1427276094123539906}
   - component: {fileID: 5039597272488662278}
   - component: {fileID: 5998303599493835551}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}

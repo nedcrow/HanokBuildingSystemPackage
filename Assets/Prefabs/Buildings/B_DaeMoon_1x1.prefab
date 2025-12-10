@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4529455085931975416}
   - component: {fileID: 771579134595110933}
   - component: {fileID: 7621755941337988471}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1718316504979586687}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 2771407860726847692}
   - component: {fileID: 6421252342270106861}
   - component: {fileID: 8998743227510971681}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 542049157051381543}
   - component: {fileID: 8335859510479827412}
   - component: {fileID: 1256305810412795839}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -382,7 +382,7 @@ GameObject:
   - component: {fileID: 8715093340988692931}
   - component: {fileID: -1117701373541676579}
   - component: {fileID: -1669818874476501483}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: B_DaeMoon_1x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -433,6 +433,9 @@ MonoBehaviour:
     - resourceName: 3
       amount: 10
   currentStageIndex: 0
+  constructionMode: 0
+  constructionDuration: 10
+  requiredLaborPerStage: 100
   buildingMembers: []
 --- !u!114 &-1117701373541676579
 MonoBehaviour:
@@ -484,7 +487,7 @@ GameObject:
   - component: {fileID: 4906558343178670105}
   - component: {fileID: 9171489204040663978}
   - component: {fileID: 6630801607924457839}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Body (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -595,7 +598,7 @@ GameObject:
   - component: {fileID: 5039597272488662278}
   - component: {fileID: 5998303599493835551}
   - component: {fileID: 2453020183109246846}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -706,7 +709,7 @@ GameObject:
   - component: {fileID: 7638755150004635910}
   - component: {fileID: 5940087319568857959}
   - component: {fileID: 122903377426429105}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Body (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

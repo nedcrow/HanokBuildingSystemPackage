@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7338095053004604571}
   - component: {fileID: 6916880584144273297}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "Marker_\uC7A5\uB3C5\uB300"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,6 +47,7 @@ MonoBehaviour:
   buildingType: 8
   markerSize: {x: 1, y: 1}
   isMainMarker: 0
+  currentBuilding: {fileID: 0}
 --- !u!1 &2608398116543999914
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,7 +58,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1956489834205487850}
   - component: {fileID: 6149940877970806235}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "Marker_\uBC14\uAE65\uB2F4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,6 +95,7 @@ MonoBehaviour:
   buildingType: 5
   markerSize: {x: 6, y: 6}
   isMainMarker: 0
+  currentBuilding: {fileID: 0}
 --- !u!1 &2644823593996864012
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +107,7 @@ GameObject:
   - component: {fileID: 3126111669165195961}
   - component: {fileID: 1626162021415772234}
   - component: {fileID: 5817003880277895233}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: House_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,7 +186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7587563916735075901}
   - component: {fileID: 5007855558813495854}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "Marker_\uC548\uCC44"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -221,6 +223,7 @@ MonoBehaviour:
   buildingType: 1
   markerSize: {x: 2, y: 4}
   isMainMarker: 0
+  currentBuilding: {fileID: 0}
 --- !u!1 &4656445782309906404
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +233,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8375270561361976779}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Markers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +271,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4751106960177713204}
   - component: {fileID: 9085260316675066287}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "Marker_\uB4B7\uAC04"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,6 +308,7 @@ MonoBehaviour:
   buildingType: 9
   markerSize: {x: 1, y: 1}
   isMainMarker: 0
+  currentBuilding: {fileID: 0}
 --- !u!1 &6781046500082342399
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1342863752134158667}
   - component: {fileID: 4127406763963635683}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: MainMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -352,6 +356,7 @@ MonoBehaviour:
   buildingType: 0
   markerSize: {x: 6, y: 6}
   isMainMarker: 1
+  currentBuilding: {fileID: 0}
 --- !u!1 &9062780464655738386
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,7 +367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7140139956546976571}
   - component: {fileID: 732861388696880621}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "Marker_\uB300\uBB38"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -399,3 +404,4 @@ MonoBehaviour:
   buildingType: 4
   markerSize: {x: 1, y: 1}
   isMainMarker: 0
+  currentBuilding: {fileID: 0}
