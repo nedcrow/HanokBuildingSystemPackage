@@ -330,6 +330,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2337160494482925094, guid: 8a75d80c0906fc644975eccec7e7dcff, type: 3}
   m_PrefabInstance: {fileID: 259472381}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &312318026 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7224442736635102691, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7808e223ad708cb44acaf91c0ef2a57a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSRemodelingRule_Door
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,42 +1452,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1925857604}
     m_Modifications:
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: initialPoolSizePerPrefab
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: memberPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'memberPrefabs.Array.data[0]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: eba76f806106c4d42b718ab403e2a391, type: 3}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'memberPrefabs.Array.data[1]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 8167e8d1a9e0c734f8c358d7a7177d00, type: 3}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'memberPrefabs.Array.data[2]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'memberPrefabs.Array.data[3]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 8167e8d1a9e0c734f8c358d7a7177d00, type: 3}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'memberPrefabs.Array.data[4]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
-    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'memberPrefabs.Array.data[5]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
     - target: {fileID: 7407213257174742257, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_Name
       value: HanokBuildingSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: ruleSources.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'ruleSources.Array.data[1]'
+      value: 
+      objectReference: {fileID: 312318026}
     - target: {fileID: 8136752329970946030, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
