@@ -16,9 +16,11 @@ public class HanokSystemController : MonoBehaviour
     [SerializeField] private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
     [SerializeField] private HBSInputHandler inputHandler;
     [SerializeField] private PlotController plotController;
+    [SerializeField] private WallGenerator wallGenerator;
 
     [Header("Raycast Settings")]
     [SerializeField] private LayerMask houseLayerMask;
+    [SerializeField] private LayerMask groundLayerMask; // Plot 생성 가능한 지형 레이어
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float minYPosition = 0f;
 
@@ -46,6 +48,11 @@ public class HanokSystemController : MonoBehaviour
         if (plotController == null)
         {
             plotController = buildingSystem?.PlotController;
+        }
+
+        if (wallGenerator == null)
+        {
+            wallGenerator = buildingSystem?.WallGenerator;
         }
     }
 
@@ -316,18 +323,27 @@ public class HanokSystemController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(screenPosition);
         Vector3 worldPos = Vector3.zero;
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        // groundLayerMask가 설정된 경우, 해당 레이어만 감지
+        RaycastHit hit;
+        if (groundLayerMask != 0)
         {
-            worldPos = hit.point;
+            Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayerMask);
         }
-        else
+        else{
+            Physics.Raycast(ray, out hit);
+        }
+
+        worldPos = hit.point;
+
+        // 레이캐스트 실패 시 Y=minYPosition 평면 사용
+        if(hit.collider == null)
         {
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+           Plane groundPlane = new Plane(Vector3.up, new Vector3(0, minYPosition, 0));
             if (groundPlane.Raycast(ray, out float enter))
             {
                 worldPos = ray.GetPoint(enter);
-            }
-        }
+            } 
+        }        
 
         if (worldPos.y < minYPosition)
         {

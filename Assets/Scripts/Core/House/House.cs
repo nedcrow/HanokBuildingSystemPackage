@@ -252,13 +252,17 @@ namespace HanokBuildingSystem
             if (building != null)
             {
                 marker.SetCurrentBuilding(building);
-                AddBuilding(building);
-                building.ShowModelBuilding(plot, transform);
+                AddBuilding(building);                
             }
             else
             {
                 Debug.LogWarning($"[House] Failed to get building of type {marker.BuildingType}");
             }
+        }
+
+        foreach(Building building in buildings)
+        {
+            building.ShowModelBuilding(plot, transform);
         }
 
         SetUsageState(HouseOccupancyState.UnderConstruction);

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace HanokBuildingSystem
@@ -15,6 +16,8 @@ namespace HanokBuildingSystem
         [SerializeField] private bool allowMultipleDoors = false;
         [SerializeField] private int maxDoors = 1;
 
+        WallGenerator wallGenerator;
+
         public GameObject WallCenter => wallCenter;
         public GameObject WallCorner => wallCorner;
         public GameObject WallEnd => wallEnd;
@@ -25,7 +28,17 @@ namespace HanokBuildingSystem
 
         public override void ShowModelBuilding(Plot plot, Transform parent = null)
         {
-            // 완성 단계의 모습
+            if(wallGenerator == null)
+            {
+                wallGenerator = FindFirstObjectByType<WallGenerator>();
+            }
+
+            if(wallGenerator == null)
+            {
+                Debug.LogWarning($"Null exception [WallGenerator]");
+            }
+
+            wallGenerator.GenerateWallsForPlot(plot, this);
         }
     }
 }
