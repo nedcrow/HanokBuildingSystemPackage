@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a38329f6a0d645343ad738bb72143cd9, type: 3}
+  m_Name: BS_AnChe_3x1
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.BuildingStatusData
+  buildingName: AnChe_3x1
+  buildingType: {fileID: 11400000, guid: 4fcb4e153d1ccc345be721b34e0e16ef, type: 2}
+  description: "3x1 \uC0AC\uC774\uC988"
+  constructionStages:
+  - requiredResources:
+    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+      amount: 30
+    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+      amount: 30
+  - requiredResources:
+    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+      amount: 30
+    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+      amount: 30
+  - requiredResources:
+    - resourceType: {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
+      amount: 30
+  maxDurability: 100
+  defaultSize: {x: 3, y: 1, z: 1}
+  fireResistance: 0.5
+  waterResistance: 0.7
+  quakeResistance: 0.8
+  normalMaterial: {fileID: 0}
+  fireMaterial: {fileID: 0}
+  rainMaterial: {fileID: 0}
+  snowMaterial: {fileID: 0}
+  deterioratedMaterial: {fileID: 0}

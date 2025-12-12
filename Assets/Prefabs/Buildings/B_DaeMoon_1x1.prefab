@@ -412,8 +412,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8894082429240679417}
   - component: {fileID: 6265083182781482042}
-  - component: {fileID: -1669818874476501483}
   - component: {fileID: 5149899207803461550}
+  - component: {fileID: -1669818874476501483}
   m_Layer: 0
   m_Name: B_DaeMoon_1x1
   m_TagString: Untagged
@@ -449,21 +449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bd77c384a0147445a4f014c80b9a474, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DoorBuilding
-  type: 4
   size: {x: 1, y: 1, z: 1}
-  statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceName: 1
-      amount: 100
-    - resourceName: 2
-      amount: 100
-  - requiredResources:
-    - resourceName: 4
-      amount: 100
-  - requiredResources:
-    - resourceName: 3
-      amount: 100
+  statusData: {fileID: 11400000, guid: 57a7092ac35998a49998108ab53a89a3, type: 2}
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
@@ -472,6 +459,24 @@ MonoBehaviour:
   doors:
   - {fileID: 3855589101887881024}
   doortype: 0
+--- !u!114 &5149899207803461550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810427692713562516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
+  currentDurability: 100
+  maxDurability: 100
+  currentEnvironmentState: 0
+  isDeteriorated: 0
 --- !u!65 &-1669818874476501483
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -493,23 +498,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5149899207803461550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7810427692713562516}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
-  currentDurability: 100
-  maxDurability: 100
-  durabilityDecayRate: 1
-  currentEnvironmentState: 0
-  isDeteriorated: 0
 --- !u!1 &8182325900062320023
 GameObject:
   m_ObjectHideFlags: 0

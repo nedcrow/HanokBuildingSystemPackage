@@ -10,8 +10,8 @@ namespace HanokBuildingSystem
     public class ResourceTypeData : ScriptableObject
     {
         [Header("Resource Information")]
-        [SerializeField] private string resourceID; // 고유 식별자
-        [SerializeField] private string displayName; // 표시 이름
+        [SerializeField] private string resourceTypeID; // 고유 식별자
+        [SerializeField] private string displayTypeName; // 표시 이름
         [SerializeField] private Sprite icon; // 리소스 아이콘
 
         [Header("Description")]
@@ -25,8 +25,8 @@ namespace HanokBuildingSystem
         [Tooltip("상위 카테고리 자원. 예: SoftWood의 parentCategory는 Wood")]
         [SerializeField] private ResourceTypeData parentCategory; // 부모 카테고리
 
-        public string ResourceID => resourceID;
-        public string DisplayName => displayName;
+        public string ResourceTypeID => resourceTypeID;
+        public string DisplayTypeName => displayTypeName;
         public Sprite Icon => icon;
         public string Description => description;
         public Color ResourceColor => resourceColor;
@@ -35,15 +35,15 @@ namespace HanokBuildingSystem
         private void OnValidate()
         {
             // resourceID가 비어있으면 파일 이름을 사용
-            if (string.IsNullOrEmpty(resourceID))
+            if (string.IsNullOrEmpty(resourceTypeID))
             {
-                resourceID = name;
+                resourceTypeID = name;
             }
         }
 
         public override string ToString()
         {
-            return displayName;
+            return displayTypeName;
         }
 
         /// <summary>

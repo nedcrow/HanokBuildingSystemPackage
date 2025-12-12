@@ -14,7 +14,7 @@ namespace HanokBuildingSystem
 
                 foreach(var marker in markers)
                 {
-                    if(marker.BuildingType != BuildingType.바깥담) continue;
+                    if(!marker.BuildingType.DisplayTypeName.Contains("Dam")) continue;
                     building.transform.position = marker.transform.position;
                 }
 

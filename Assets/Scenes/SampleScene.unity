@@ -523,6 +523,57 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HBSUIManager
   houseInfoPanel: {fileID: 944220745}
+--- !u!1 &387858088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 387858089}
+  - component: {fileID: 387858090}
+  m_Layer: 0
+  m_Name: ResourceCatalog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &387858089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 387858088}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1814365520}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &387858090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 387858088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 283ebe291ce730744aad958562d13638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.ResourceTypeCatalog
+  resourceTypes:
+  - {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
+  - {fileID: 11400000, guid: 4807cc5fd06229f4bb96e44ac3e939c0, type: 2}
+  - {fileID: 11400000, guid: 1b0082e655bd90e4ab443b46683d52bf, type: 2}
+  - {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+  - {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+  showDebugInfo: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1196,6 +1247,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1799462939}
   m_CullTransparentMesh: 1
+--- !u!4 &1814365520 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3052043478448017481, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1834457600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1501,6 +1557,30 @@ PrefabInstance:
       propertyPath: wallGenerator
       value: 
       objectReference: {fileID: 1478886328}
+    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: buildingPrefabs.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'buildingPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 7810427692713562516, guid: 24feae7dfbc90ee4ca1a4738a1e7e38f, type: 3}
+    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'buildingPrefabs.Array.data[3]'
+      value: 
+      objectReference: {fileID: 7810427692713562516, guid: 3ddf596a7f8054a49987ef2e639d6247, type: 3}
+    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'buildingPrefabs.Array.data[4]'
+      value: 
+      objectReference: {fileID: 7810427692713562516, guid: 8c0bdc01453a8f741b56853052e14535, type: 3}
+    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'buildingPrefabs.Array.data[5]'
+      value: 
+      objectReference: {fileID: 7810427692713562516, guid: 5fc3df92c39d34142a18b5a7216fef32, type: 3}
+    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'buildingPrefabs.Array.data[6]'
+      value: 
+      objectReference: {fileID: 7810427692713562516, guid: d21bcb9a0c829d54185f5f8c3d7eec7a, type: 3}
     - target: {fileID: 6915263287050264867, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: memberCatalog
       value: 
@@ -1563,7 +1643,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3052043478448017481, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 387858089}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
 --- !u!1001 &2969110761446407077

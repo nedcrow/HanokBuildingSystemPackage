@@ -860,7 +860,7 @@ GameObject:
   - component: {fileID: -1088625304909561679}
   - component: {fileID: -6034635827569639194}
   m_Layer: 0
-  m_Name: B_AnChe_2x3
+  m_Name: B_AnChe_3x2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -895,21 +895,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 1
   size: {x: 3, y: 1, z: 2}
-  statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceName: 1
-      amount: 40
-    - resourceName: 2
-      amount: 40
-  - requiredResources:
-    - resourceName: 4
-      amount: 40
-  - requiredResources:
-    - resourceName: 3
-      amount: 40
+  statusData: {fileID: 11400000, guid: 4b09256e085f4a846aa7b069bef7cfb8, type: 2}
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
@@ -927,9 +914,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
   currentDurability: 100
   maxDurability: 100
-  durabilityDecayRate: 1
   currentEnvironmentState: 0
   isDeteriorated: 0
 --- !u!65 &-6034635827569639194

@@ -10,8 +10,8 @@ namespace HanokBuildingSystem
     public class HouseTypeData : ScriptableObject
     {
         [Header("House Information")]
-        [SerializeField] private string houseID; // 고유 식별자
-        [SerializeField] private string displayName; // 표시 이름 (예: "Housing", "Resource Production")
+        [SerializeField] private string houseTypeID; // 고유 식별자
+        [SerializeField] private string displayTypeName; // 표시 이름 (예: "Housing", "Resource Production")
         [SerializeField] private Sprite icon; // 주택 타입 아이콘
 
         [Header("Description")]
@@ -21,8 +21,8 @@ namespace HanokBuildingSystem
         [Header("Visual")]
         [SerializeField] private Color houseColor = Color.white; // 주택 타입 대표 색상
 
-        public string HouseID => houseID;
-        public string DisplayName => displayName;
+        public string HouseTypeID => houseTypeID;
+        public string DisplayTypeName => displayTypeName;
         public Sprite Icon => icon;
         public string Description => description;
         public Color HouseColor => houseColor;
@@ -30,15 +30,15 @@ namespace HanokBuildingSystem
         private void OnValidate()
         {
             // houseID가 비어있으면 파일 이름을 사용
-            if (string.IsNullOrEmpty(houseID))
+            if (string.IsNullOrEmpty(houseTypeID))
             {
-                houseID = name;
+                houseTypeID = name;
             }
         }
 
         public override string ToString()
         {
-            return displayName;
+            return displayTypeName;
         }
     }
 }

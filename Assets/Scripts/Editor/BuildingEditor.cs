@@ -7,10 +7,8 @@ namespace HanokBuildingSystem.Editor
     [CanEditMultipleObjects]
     public class BuildingEditor : UnityEditor.Editor
     {
-        private SerializedProperty typeProp;
         private SerializedProperty sizeProp;
         private SerializedProperty statusDataProp;
-        private SerializedProperty constructionStagesProp;
         private SerializedProperty currentStageIndexProp;
         private SerializedProperty constructionModeProp;
         private SerializedProperty constructionDurationProp;
@@ -19,10 +17,8 @@ namespace HanokBuildingSystem.Editor
 
         private void OnEnable()
         {
-            typeProp                    = serializedObject.FindProperty("type");
             sizeProp                    = serializedObject.FindProperty("size");
             statusDataProp              = serializedObject.FindProperty("statusData");
-            constructionStagesProp      = serializedObject.FindProperty("constructionStages");
             currentStageIndexProp       = serializedObject.FindProperty("currentStageIndex");
             constructionModeProp        = serializedObject.FindProperty("constructionMode");
             constructionDurationProp    = serializedObject.FindProperty("constructionDuration");
@@ -45,14 +41,12 @@ namespace HanokBuildingSystem.Editor
             EditorGUILayout.Space();
 
             // ▶ Building Configuration
-            EditorGUILayout.PropertyField(typeProp);
             EditorGUILayout.PropertyField(sizeProp);
             EditorGUILayout.PropertyField(statusDataProp);
 
             EditorGUILayout.Space();
 
             // ▶ Construction
-            EditorGUILayout.PropertyField(constructionStagesProp, true);
             EditorGUILayout.PropertyField(currentStageIndexProp);
 
             EditorGUILayout.Space();

@@ -12,15 +12,11 @@ namespace HanokBuildingSystem
     public class Building : MonoBehaviour
     {
         [Header("Building Configuration")]
-        [SerializeField] private BuildingType type = BuildingType.None;
         [SerializeField] private Vector3 size = Vector3.one;
         [SerializeField] private BuildingStatusData statusData;
 
         [Header("Construction")]
-        [SerializeField] private List<ConstructionStage> constructionStages = new List<ConstructionStage>();
         [SerializeField] private int currentStageIndex = 0;
-
-        [Header("Construction Progress")]
         [SerializeField] private ConstructionMode constructionMode = ConstructionMode.Instant;
         
         [Header("Time-Based Settings")]
@@ -33,14 +29,12 @@ namespace HanokBuildingSystem
         [Header("Building Members")]
         [SerializeField] private List<GameObject> buildingMembers = new List<GameObject>();
 
-        public BuildingType Type => type;
         public Vector3 Size => size;
         public BuildingStatusData StatusData => statusData;
-        public List<ConstructionStage> ConstructionStages => constructionStages;
         public int CurrentStageIndex => currentStageIndex;
-        public int TotalStages => constructionStages.Count;
-        public bool IsCompleted => currentStageIndex >= constructionStages.Count;
-        public float ConstructionProgress => constructionStages.Count > 0 ? (float)currentStageIndex / constructionStages.Count : 1f;
+        public int TotalStages => statusData.ConstructionStages.Count;
+        public bool IsCompleted => currentStageIndex >= statusData.ConstructionStages.Count;
+        public float ConstructionProgress => statusData.ConstructionStages.Count > 0 ? (float)currentStageIndex / statusData.ConstructionStages.Count : 1f;
         public List<GameObject> BuildingMembers => buildingMembers;
         
         // Construction Mode Properties
@@ -85,26 +79,13 @@ namespace HanokBuildingSystem
             {
                 buildingMembers = new List<GameObject>();
             }
-
-            if (statusData != null)
-            {
-                LoadFromStatusData();
-            }
-
-            // 초기 ConstructionMode에 따라 설정
-            if (constructionMode == ConstructionMode.TimeBased)
-            {
-                StartTimeBasedConstruction();
-            }
         }
 
-        public void LoadFromStatusData()
+        public void Setup()
         {
             if (statusData == null) return;
 
-            type = statusData.BuildingType;
             size = statusData.DefaultSize;
-            constructionStages = new List<ConstructionStage>(statusData.ConstructionStages);
             currentStageIndex = 0;
             ResetStageProgress(); // 건설 진행도 초기화
 
@@ -113,19 +94,13 @@ namespace HanokBuildingSystem
             DurabilityComponent durability = GetComponent<DurabilityComponent>();
             if (durability != null)
             {
-                durability.LoadFromStatusData(statusData);
+                durability.SetupFromStatusData(statusData);
             }
-        }
 
-        public void SetStatusData(BuildingStatusData data)
-        {
-            statusData = data;
-            LoadFromStatusData();
-        }
-
-        public void SetType(BuildingType newType)
-        {
-            type = newType;
+            if (constructionMode == ConstructionMode.TimeBased)
+            {
+                StartTimeBasedConstruction();
+            }
         }
 
         public void SetSize(Vector3 newSize)
@@ -259,9 +234,9 @@ namespace HanokBuildingSystem
 
         public ConstructionStage GetCurrentStage()
         {
-            if (currentStageIndex >= 0 && currentStageIndex < constructionStages.Count)
+            if (currentStageIndex >= 0 && currentStageIndex < statusData.ConstructionStages.Count)
             {
-                return constructionStages[currentStageIndex];
+                return statusData.ConstructionStages[currentStageIndex];
             }
             return null;
         }
@@ -274,7 +249,7 @@ namespace HanokBuildingSystem
 
         public void SetStageIndex(int index)
         {
-            currentStageIndex = Mathf.Clamp(index, 0, constructionStages.Count);
+            currentStageIndex = Mathf.Clamp(index, 0, statusData.ConstructionStages.Count);
 
             if (IsCompleted)
             {
@@ -284,7 +259,7 @@ namespace HanokBuildingSystem
 
         public void CompleteConstruction()
         {
-            currentStageIndex = constructionStages.Count;
+            currentStageIndex = statusData.ConstructionStages.Count;
             ResetStageProgress();
             OnConstructionCompleted();
         }

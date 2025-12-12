@@ -748,7 +748,7 @@ GameObject:
   - component: {fileID: 3134727060689934381}
   - component: {fileID: -3740338001444487322}
   m_Layer: 0
-  m_Name: B_AnChe_2x4
+  m_Name: B_AnChe_4x2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -788,16 +788,18 @@ MonoBehaviour:
   statusData: {fileID: 0}
   constructionStages:
   - requiredResources:
-    - resourceName: 1
-      amount: 100
-    - resourceName: 2
-      amount: 100
+    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+      amount: 30
+    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+      amount: 30
   - requiredResources:
-    - resourceName: 4
-      amount: 100
+    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+      amount: 30
+    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+      amount: 30
   - requiredResources:
-    - resourceName: 3
-      amount: 100
+    - resourceType: {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
+      amount: 30
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10

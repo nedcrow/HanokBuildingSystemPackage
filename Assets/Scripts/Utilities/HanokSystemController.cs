@@ -276,7 +276,7 @@ public class HanokSystemController : MonoBehaviour
         return null;
     }
 
-    private void RaycastMultipleHouses(HouseType targetType)
+    private void RaycastMultipleHouses(HouseTypeData targetType)
     {
         House[] allHouses = FindObjectsByType<House>(FindObjectsSortMode.None);
 
@@ -289,7 +289,7 @@ public class HanokSystemController : MonoBehaviour
         }
     }
 
-    private void RaycastHousesInArea(Vector3 startPos, Vector3 endPos, HouseType houseType = HouseType.None)
+    private void RaycastHousesInArea(Vector3 startPos, Vector3 endPos, HouseTypeData houseType = null)
     {
         Vector3 center = (startPos + endPos) / 2f;
         Vector3 size = new Vector3(
@@ -306,7 +306,7 @@ public class HanokSystemController : MonoBehaviour
             House house = col.GetComponentInParent<House>();
             if (house != null)
             {
-                if (houseType == HouseType.None || house.HouseType == houseType)
+                if (houseType == null || house.HouseType == houseType)
                 {
                     buildingSystem.SelectHouse(house);
                 }

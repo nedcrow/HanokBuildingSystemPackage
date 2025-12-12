@@ -5,19 +5,19 @@ namespace HanokBuildingSystem
     public class MarkerComponent : MonoBehaviour
     {
     [Header("Marker Configuration")]
-    [SerializeField] private BuildingType buildingType = BuildingType.None;
+    [SerializeField] private BuildingTypeData buildingType;
     [SerializeField] private Vector2 markerSize = new Vector2(5f, 5f);
     [SerializeField] private bool isMainMarker = false;
 
     [Header("Runtime")]
     [SerializeField] private Building currentBuilding;
 
-    public BuildingType BuildingType => buildingType;
+    public BuildingTypeData BuildingType => buildingType;
     public Vector2 MarkerSize => markerSize;
     public bool IsMainMarker => isMainMarker;
     public Building CurrentBuilding => currentBuilding;
 
-    public void SetBuildingType(BuildingType type)
+    public void SetBuildingType(BuildingTypeData type)
     {
         buildingType = type;
         gameObject.name = isMainMarker ? "MainMarker" : $"Marker_{type}";
@@ -82,7 +82,7 @@ namespace HanokBuildingSystem
             borderColor
         );
 
-        if (!isMainMarker && buildingType != BuildingType.None)
+        if (!isMainMarker && buildingType != null)
         {
             UnityEditor.Handles.Label(center + Vector3.up * 0.5f, buildingType.ToString());
         }

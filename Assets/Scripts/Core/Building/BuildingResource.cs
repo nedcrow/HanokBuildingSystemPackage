@@ -6,16 +6,62 @@ namespace HanokBuildingSystem
     [Serializable]
     public struct Cost
     {
-        [SerializeField] private ResourceType resourceName;
+        [SerializeField] private ResourceTypeData resourceType;
         [SerializeField] private int amount;
 
-        public ResourceType ResourceName => resourceName;
+        public ResourceTypeData ResourceType => resourceType;
         public int Amount => amount;
 
-        public Cost(ResourceType resourceName, int amount)
+        public Cost(ResourceTypeData resourceType, int amount)
         {
-            this.resourceName = resourceName;
+            this.resourceType = resourceType;
             this.amount = amount;
+        }
+
+        // Backward compatibility: Constructor with old ResourceType enum (deprecated)
+        [System.Obsolete("Use ResourceTypeData instead of ResourceType enum")]
+        public Cost(ResourceType oldResourceType, int amount)
+        {
+            // This will need to be manually migrated to use ResourceTypeData assets
+            Debug.LogWarning($"Creating Cost with deprecated ResourceType enum: {oldResourceType}. Please migrate to ResourceTypeData ScriptableObject.");
+            this.resourceType = null;
+            this.amount = amount;
+        }
+
+        /// <summary>
+        /// 주어진 자원이 이 비용의 요구사항을 만족하는지 확인
+        /// 예: Cost가 Wood를 요구할 때, SoftWood나 HardWood도 사용 가능
+        /// </summary>
+        public bool CanBeSatisfiedBy(ResourceTypeData availableResource)
+        {
+            if (resourceType == null || availableResource == null)
+            {
+                return false;
+            }
+
+            return availableResource.CanSatisfy(resourceType);
+        }
+
+        /// <summary>
+        /// 두 비용이 같은 자원 타입인지 확인 (계층 구조 무시)
+        /// </summary>
+        public bool IsSameExactType(Cost other)
+        {
+            return this.resourceType == other.resourceType;
+        }
+
+        /// <summary>
+        /// 두 비용이 호환되는 자원 타입인지 확인 (계층 구조 고려)
+        /// </summary>
+        public bool IsCompatibleWith(Cost other)
+        {
+            if (resourceType == null || other.resourceType == null)
+            {
+                return false;
+            }
+
+            return resourceType.CanSatisfy(other.resourceType) ||
+                   other.resourceType.CanSatisfy(resourceType);
         }
     }
 

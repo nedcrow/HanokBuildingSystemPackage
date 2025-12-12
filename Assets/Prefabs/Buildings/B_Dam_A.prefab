@@ -304,21 +304,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfc3bfc6b111df64a9bf94b01d554beb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.WallBuilding
-  type: 5
   size: {x: 1, y: 1, z: 1}
-  statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceName: 1
-      amount: 2
-    - resourceName: 2
-      amount: 2
-  - requiredResources:
-    - resourceName: 4
-      amount: 2
-  - requiredResources:
-    - resourceName: 3
-      amount: 2
+  statusData: {fileID: 11400000, guid: 94dbc6e4ec0ae774eb0a6f1c4a853cbd, type: 2}
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
@@ -343,9 +330,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
   currentDurability: 100
   maxDurability: 100
-  durabilityDecayRate: 1
   currentEnvironmentState: 0
   isDeteriorated: 0
 --- !u!65 &-516297680935447901

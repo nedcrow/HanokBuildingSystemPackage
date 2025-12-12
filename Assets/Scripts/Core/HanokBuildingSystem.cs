@@ -571,9 +571,9 @@ namespace HanokBuildingSystem
                 Vector3 housePosition = plotCenter + new Vector3(i * spacing, 0, 0);
                 house.transform.position = housePosition;
 
-                foreach (BuildingType requiredType in house.RequiredBuildingTypes)
+                foreach (BuildingTypeData requiredType in house.RequiredBuildingTypes)
                 {
-                    if (requiredType == BuildingType.None) continue;
+                    if (requiredType == null) continue;
 
                     Building building = buildingCatalog.GetBuildingByType(
                         requiredType,
