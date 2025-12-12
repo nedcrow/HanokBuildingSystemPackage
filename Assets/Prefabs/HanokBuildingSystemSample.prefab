@@ -29,7 +29,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8485211620077913506}
+  - {fileID: 4671812966042564779}
   m_Father: {fileID: 8136752329970946030}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8025097793016976325
@@ -48,12 +50,119 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   buildingLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1
   raycastDistance: 1000
-  checkCollision: 1
-  collisionCheckRadius: 1
+  shouldCheckCollision: 1
+  collisionResponse: 2
   validColor: {r: 0, g: 1, b: 0, a: 0.5}
   invalidColor: {r: 1, g: 0, b: 0, a: 0.5}
+  ruleSources:
+  - {fileID: 3297352506825253912}
+--- !u!1 &2537292056039576241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7756832388320677595}
+  - component: {fileID: 2419407458928891290}
+  m_Layer: 0
+  m_Name: BuildingMemberCatalog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7756832388320677595
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537292056039576241}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.48536, y: 0, z: 79.74056}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3052043478448017481}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2419407458928891290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537292056039576241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bebc65ea3dd13b4cad534048595d56c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.BuildingMemberCatalog
+  initialPoolSizePerPrefab: 10
+  autoExpand: 1
+  memberPrefabs:
+  - {fileID: 7810427692713562516, guid: eba76f806106c4d42b718ab403e2a391, type: 3}
+  - {fileID: 7810427692713562516, guid: 8167e8d1a9e0c734f8c358d7a7177d00, type: 3}
+  - {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
+  filterOutBuildingAndHouse: 1
+--- !u!1 &2977865806728210408
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 918983236298229212}
+  - component: {fileID: 6915263287050264867}
+  m_Layer: 0
+  m_Name: WallCreator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &918983236298229212
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2977865806728210408}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.48536, y: 0, z: 79.74056}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8136752329970946030}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6915263287050264867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2977865806728210408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9e2c4b3d5a1f6e0c9d8b7a4e5f3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.WallGenerator
+  memberCatalog: {fileID: 0}
+  wallPrefabName: Dam_A_Center
+  cornerPrefabName: Dam_A_Corner
+  endPrefabName: Dam_A_End
+  wallSegmentLength: 1
+  heightOffset: 0
+  useCornerPieces: 1
+  useEndPieces: 1
+  showDebugGizmos: 1
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &2996276106009203258
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,11 +214,53 @@ MonoBehaviour:
   - {fileID: 7810427692713562516, guid: d8574d359e183b84c9c7e609de2226b4, type: 3}
   - {fileID: 7810427692713562516, guid: d21bcb9a0c829d54185f5f8c3d7eec7a, type: 3}
   - {fileID: 7810427692713562516, guid: 24feae7dfbc90ee4ca1a4738a1e7e38f, type: 3}
-  - {fileID: 7810427692713562516, guid: eba76f806106c4d42b718ab403e2a391, type: 3}
-  - {fileID: 7810427692713562516, guid: 8167e8d1a9e0c734f8c358d7a7177d00, type: 3}
-  - {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
   - {fileID: 7810427692713562516, guid: 5fc3df92c39d34142a18b5a7216fef32, type: 3}
   - {fileID: 7810427692713562516, guid: 3ddf596a7f8054a49987ef2e639d6247, type: 3}
+  - {fileID: 7810427692713562516, guid: 8c0bdc01453a8f741b56853052e14535, type: 3}
+--- !u!1 &4645962474501914544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4671812966042564779}
+  - component: {fileID: 7224442736635102691}
+  m_Layer: 0
+  m_Name: CustomRule_Door
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4671812966042564779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4645962474501914544}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2321337330813453535}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7224442736635102691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4645962474501914544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7808e223ad708cb44acaf91c0ef2a57a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSRemodelingRule_Door
 --- !u!1 &4938408651586705536
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,6 +391,7 @@ Transform:
   m_Children:
   - {fileID: 2714452770191807437}
   - {fileID: 6315151006544714229}
+  - {fileID: 7756832388320677595}
   m_Father: {fileID: 8136752329970946030}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7407213257174742257
@@ -276,6 +428,7 @@ Transform:
   - {fileID: 2918221387091597352}
   - {fileID: 3757446864330033574}
   - {fileID: 2321337330813453535}
+  - {fileID: 918983236298229212}
   - {fileID: 3052043478448017481}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -293,9 +446,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokSystemController
   buildingSystem: {fileID: 439504990842044987}
   inputHandler: {fileID: 8482222856146161250}
+  plotController: {fileID: 0}
   houseLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1
   mainCamera: {fileID: 0}
   minYPosition: 0
 --- !u!114 &439504990842044987
@@ -368,3 +522,47 @@ MonoBehaviour:
   autoExpand: 1
   housePrefabs:
   - {fileID: 2644823593996864012, guid: 9566c7fb3795bdf4fbec9e1c3348651b, type: 3}
+--- !u!1 &8438153296502187716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8485211620077913506}
+  - component: {fileID: 3297352506825253912}
+  m_Layer: 0
+  m_Name: CustomRule_Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8485211620077913506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8438153296502187716}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2321337330813453535}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3297352506825253912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8438153296502187716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3591b5074646ba841bebc92d35c2f565, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSRemodelingRule_Dam

@@ -32,11 +32,15 @@ namespace HanokBuildingSystem
         [SerializeField] private Color validColor = new Color(0, 1, 0, 0.5f);
         [SerializeField] private Color invalidColor = new Color(1, 0, 0, 0.5f);
 
+        [Header("Custom rules")]
+        [SerializeField] private List<MonoBehaviour> ruleSources; // IRemodelRule 구현 Mono들은 전부 여기 등록
+        private readonly List<IRemodelingRule> rules = new();
+
         // Current state
         private Building selectedBuilding;
         private Building targetBuilding;
         private House targetHouse;
-        private bool isDragging = false;
+        [SerializeField] private bool isDragging = false;
         private Coroutine draggingCoroutine;
         private Vector3 originalPosition;
         private Quaternion originalRotation;
@@ -67,6 +71,12 @@ namespace HanokBuildingSystem
             if (mainCamera == null)
             {
                 mainCamera = Camera.main;
+            }
+
+            foreach (var src in ruleSources)
+            {
+                if (src is IRemodelingRule rule)
+                    rules.Add(rule);
             }
         }
 
@@ -312,13 +322,25 @@ namespace HanokBuildingSystem
                 Vector3 clampedPosition = ClampToHouseBounds(worldPosition, targetHouse);
                 selectedBuilding.transform.position = clampedPosition;
 
+                // 임의 룰 추가
+                foreach(IRemodelingRule rule in rules)
+                {
+                    string failReason;
+                    bool enforce;
+                    if (!rule.ControlBuilding(selectedBuilding, targetHouse, worldPosition, out failReason, out enforce))
+                    {
+                        if(enforce) StopDragging();
+                        yield return null;
+                    }
+                }
+
                 // 배치 가능 여부 검사
                 isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse);
 
                 // 시각적 피드백 (옵션)
                 UpdateVisualFeedback(selectedBuilding, isValidPlacement);
 
-                yield return null; // 다음 프레임까지 대기
+                yield return new WaitForSeconds(0.02f);
             }
         }
         #endregion

@@ -1,101 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2347403412677273784
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7338095053004604571}
-  - component: {fileID: 6916880584144273297}
-  m_Layer: 0
-  m_Name: "Marker_\uC7A5\uB3C5\uB300"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7338095053004604571
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2347403412677273784}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.23, y: 0, z: -2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8375270561361976779}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6916880584144273297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2347403412677273784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 8
-  markerSize: {x: 1, y: 1}
-  isMainMarker: 0
-  currentBuilding: {fileID: 0}
---- !u!1 &2608398116543999914
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1956489834205487850}
-  - component: {fileID: 6149940877970806235}
-  m_Layer: 0
-  m_Name: "Marker_\uBC14\uAE65\uB2F4"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1956489834205487850
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2608398116543999914}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8375270561361976779}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6149940877970806235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2608398116543999914}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 5
-  markerSize: {x: 6, y: 6}
-  isMainMarker: 0
-  currentBuilding: {fileID: 0}
 --- !u!1 &2644823593996864012
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,8 +47,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::House
   sampleSize: {x: 6, y: 6}
-  requiredBuildingTypes: 0400000005000000010000000900000008000000
-  houseType: 0
+  requiredBuildingTypes:
+  - {fileID: 11400000, guid: 4fcb4e153d1ccc345be721b34e0e16ef, type: 2}
+  - {fileID: 11400000, guid: e6984f46f2a4ed74e8dc39aaedf02527, type: 2}
+  - {fileID: 11400000, guid: cc508b7f466708b4e85fae6ab9f990f7, type: 2}
+  - {fileID: 11400000, guid: f63bd6a9546a24b4db30cbaed4e035e4, type: 2}
+  houseType: {fileID: 0}
+  boundaryPlot:
+    allVertices: []
+    defaultLineThickness: 0.1
+    defaultMinAngle: 45
+    defaultMaxAngle: 135
+    isBuildable: 0
   buildings: []
   owner: {fileID: 0}
   currentResidents: 0
@@ -176,7 +90,7 @@ MonoBehaviour:
   cornerVertexCount: 1
   endCapVertexCount: 1
   textureMode: 1
---- !u!1 &4134434889246639228
+--- !u!1 &2922047101956531747
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -184,44 +98,44 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7587563916735075901}
-  - component: {fileID: 5007855558813495854}
+  - component: {fileID: 4114352203683363320}
+  - component: {fileID: 917210285519376239}
   m_Layer: 0
-  m_Name: "Marker_\uC548\uCC44"
+  m_Name: "Marker_\uBC14\uAE65\uB2F4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7587563916735075901
+--- !u!4 &4114352203683363320
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4134434889246639228}
+  m_GameObject: {fileID: 2922047101956531747}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.11, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8375270561361976779}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5007855558813495854
+--- !u!114 &917210285519376239
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4134434889246639228}
+  m_GameObject: {fileID: 2922047101956531747}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 1
-  markerSize: {x: 2, y: 4}
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
+  buildingType: {fileID: 11400000, guid: cc508b7f466708b4e85fae6ab9f990f7, type: 2}
+  markerSize: {x: 1, y: 1}
   isMainMarker: 0
   currentBuilding: {fileID: 0}
 --- !u!1 &4656445782309906404
@@ -254,61 +168,12 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1342863752134158667}
-  - {fileID: 7140139956546976571}
-  - {fileID: 7587563916735075901}
-  - {fileID: 4751106960177713204}
-  - {fileID: 1956489834205487850}
-  - {fileID: 7338095053004604571}
+  - {fileID: 1996274022572231823}
+  - {fileID: 1645009658841946840}
+  - {fileID: 4114352203683363320}
+  - {fileID: 2905280211253819103}
   m_Father: {fileID: 3126111669165195961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4968658287917403150
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4751106960177713204}
-  - component: {fileID: 9085260316675066287}
-  m_Layer: 0
-  m_Name: "Marker_\uB4B7\uAC04"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4751106960177713204
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4968658287917403150}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.06, y: 0, z: 2.12}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8375270561361976779}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9085260316675066287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4968658287917403150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 9
-  markerSize: {x: 1, y: 1}
-  isMainMarker: 0
-  currentBuilding: {fileID: 0}
 --- !u!1 &6781046500082342399
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,11 +218,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 0
+  buildingType: {fileID: 0}
   markerSize: {x: 6, y: 6}
   isMainMarker: 1
   currentBuilding: {fileID: 0}
---- !u!1 &9062780464655738386
+--- !u!1 &6908138831132463019
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -365,8 +230,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7140139956546976571}
-  - component: {fileID: 732861388696880621}
+  - component: {fileID: 1645009658841946840}
+  - component: {fileID: 411375037861297824}
   m_Layer: 0
   m_Name: "Marker_\uB300\uBB38"
   m_TagString: Untagged
@@ -374,34 +239,130 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7140139956546976571
+--- !u!4 &1645009658841946840
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9062780464655738386}
+  m_GameObject: {fileID: 6908138831132463019}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8375270561361976779}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &732861388696880621
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &411375037861297824
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9062780464655738386}
+  m_GameObject: {fileID: 6908138831132463019}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: 4
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
+  buildingType: {fileID: 11400000, guid: e6984f46f2a4ed74e8dc39aaedf02527, type: 2}
+  markerSize: {x: 1, y: 1}
+  isMainMarker: 0
+  currentBuilding: {fileID: 0}
+--- !u!1 &7950788003411905257
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1996274022572231823}
+  - component: {fileID: 5562204993419209269}
+  m_Layer: 0
+  m_Name: "Marker_\uC548\uCC44"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1996274022572231823
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950788003411905257}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8375270561361976779}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5562204993419209269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950788003411905257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
+  buildingType: {fileID: 11400000, guid: 4fcb4e153d1ccc345be721b34e0e16ef, type: 2}
+  markerSize: {x: 3, y: 1}
+  isMainMarker: 0
+  currentBuilding: {fileID: 0}
+--- !u!1 &8950034961747358418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2905280211253819103}
+  - component: {fileID: 5757274665925187650}
+  m_Layer: 0
+  m_Name: "Marker_\uC7A5\uB3C5\uB300"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2905280211253819103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950034961747358418}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8375270561361976779}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5757274665925187650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950034961747358418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
+  buildingType: {fileID: 11400000, guid: f63bd6a9546a24b4db30cbaed4e035e4, type: 2}
   markerSize: {x: 1, y: 1}
   isMainMarker: 0
   currentBuilding: {fileID: 0}

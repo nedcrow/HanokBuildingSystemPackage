@@ -36,6 +36,7 @@ namespace HanokBuildingSystem
         [Header("Required Components")]
         [SerializeField] private PlotController plotController;
         [SerializeField] private RemodelingController remodelingController;
+        [SerializeField] private WallGenerator wallGenerator;
 
         [Header("Catalogs")]
         [SerializeField] private HouseCatalog houseCatalog;
@@ -44,6 +45,7 @@ namespace HanokBuildingSystem
 
         public PlotController PlotController => plotController;
         public RemodelingController RemodelingController => remodelingController;
+        public WallGenerator WallGenerator => wallGenerator;
         public HouseCatalog HouseCatalog => houseCatalog;
         public BuildingCatalog BuildingCatalog => buildingCatalog;
         public BuildingMemberCatalog BuildingMemberCatalog => buildingMemberCatalog;
@@ -417,7 +419,7 @@ namespace HanokBuildingSystem
             }
 
             if (currentHouses != null && currentPlots != null && houseCatalog != null &&
-                currentPlots.Count > 0 && currentPlots[0].GetLineCount() > 2)
+                currentPlots.Count > 0 && currentPlots[0].GetLineCount() > 3)
             {
                 for (int i = 0; i < currentPlots.Count; i++)
                 {
@@ -569,9 +571,9 @@ namespace HanokBuildingSystem
                 Vector3 housePosition = plotCenter + new Vector3(i * spacing, 0, 0);
                 house.transform.position = housePosition;
 
-                foreach (BuildingType requiredType in house.RequiredBuildingTypes)
+                foreach (BuildingTypeData requiredType in house.RequiredBuildingTypes)
                 {
-                    if (requiredType == BuildingType.None) continue;
+                    if (requiredType == null) continue;
 
                     Building building = buildingCatalog.GetBuildingByType(
                         requiredType,

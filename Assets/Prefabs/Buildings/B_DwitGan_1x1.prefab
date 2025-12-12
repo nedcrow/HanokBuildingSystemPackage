@@ -383,21 +383,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 9
+  type: 12
   size: {x: 1, y: 1, z: 1}
   statusData: {fileID: 0}
   constructionStages:
   - requiredResources:
-    - resourceName: 1
-      amount: 10
-    - resourceName: 2
-      amount: 10
+    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+      amount: 30
+    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+      amount: 30
   - requiredResources:
-    - resourceName: 4
-      amount: 10
+    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+      amount: 30
+    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+      amount: 30
   - requiredResources:
-    - resourceName: 3
-      amount: 10
+    - resourceType: {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
+      amount: 30
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10

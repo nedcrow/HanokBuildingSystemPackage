@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 
 namespace HanokBuildingSystem
@@ -6,9 +8,10 @@ namespace HanokBuildingSystem
     public class DurabilityComponent : MonoBehaviour
     {
         [Header("Durability Settings")]
-        [SerializeField] private float currentDurability;
-        [SerializeField] private float maxDurability = 100f;
-        [SerializeField] private float durabilityDecayRate = 0.1f;
+        [SerializeField][Range(0,1)] private float durabilityPercent = 1;
+        [SerializeField] private float durabilityDecayRate = 1f;
+        [SerializeField] [ReadOnly] private float currentDurability = 100f;
+        [SerializeField] [ReadOnly] private float maxDurability = 100f;
 
         [Header("State")]
         [SerializeField] private EnvironmentState currentEnvironmentState = EnvironmentState.Normal;
@@ -20,7 +23,7 @@ namespace HanokBuildingSystem
         public float CurrentDurability => currentDurability;
         public float MaxDurability => maxDurability;
         public float DurabilityDecayRate => durabilityDecayRate;
-        public float DurabilityPercent => maxDurability > 0 ? currentDurability / maxDurability : 0f;
+        public float DurabilityPercent => durabilityPercent;
         public bool IsDeteriorated => isDeteriorated;
         public EnvironmentState CurrentEnvironmentState => currentEnvironmentState;
 
@@ -33,22 +36,15 @@ namespace HanokBuildingSystem
                 enabled = false;
                 return;
             }
-
-            InitializeDurability();
         }
 
-        private void InitializeDurability()
-        {
-            currentDurability = maxDurability;
-        }
-
-        public void LoadFromStatusData(BuildingStatusData data)
+        public void SetupFromStatusData(BuildingStatusData data)
         {
             if (data == null) return;
 
             statusData = data;
             maxDurability = data.MaxDurability;
-            currentDurability = maxDurability;
+            currentDurability = maxDurability * durabilityPercent;
         }
 
         public void SetEnvironmentState(EnvironmentState newState)
@@ -146,7 +142,7 @@ namespace HanokBuildingSystem
         public void SetMaxDurability(float value)
         {
             maxDurability = Mathf.Max(1f, value);
-            currentDurability = Mathf.Min(currentDurability, maxDurability);
+            currentDurability = maxDurability * durabilityPercent;
         }
 
         public void SetDurabilityDecayRate(float value)
@@ -166,7 +162,7 @@ namespace HanokBuildingSystem
         private void OnValidate()
         {
             maxDurability = Mathf.Max(1f, maxDurability);
-            currentDurability = Mathf.Clamp(currentDurability, 0f, maxDurability);
+            currentDurability = maxDurability * durabilityPercent;
             durabilityDecayRate = Mathf.Max(0f, durabilityDecayRate);
         }
 #endif

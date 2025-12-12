@@ -144,7 +144,7 @@ Transform:
   - {fileID: 2757468941081999832}
   - {fileID: 6643357598375345085}
   - {fileID: 2778280187764191236}
-  - {fileID: 2623211393089246455}
+  - {fileID: 987119261243088508}
   - {fileID: 1427276094123539906}
   m_Father: {fileID: 8894082429240679417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -259,6 +259,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &3855589101887881024
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 987119261243088508}
+  m_Layer: 0
+  m_Name: Door
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &987119261243088508
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855589101887881024}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.25, y: 0.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1.6666665}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2623211393089246455}
+  m_Father: {fileID: 1718316504979586687}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4297385618581205922
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,8 +411,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8894082429240679417}
-  - component: {fileID: 8715093340988692931}
-  - component: {fileID: -1117701373541676579}
+  - component: {fileID: 6265083182781482042}
+  - component: {fileID: 5149899207803461550}
   - component: {fileID: -1669818874476501483}
   m_Layer: 0
   m_Name: B_DaeMoon_1x1
@@ -405,7 +437,7 @@ Transform:
   - {fileID: 1718316504979586687}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8715093340988692931
+--- !u!114 &6265083182781482042
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -414,30 +446,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 7810427692713562516}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bd77c384a0147445a4f014c80b9a474, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 4
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DoorBuilding
   size: {x: 1, y: 1, z: 1}
-  statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceName: 1
-      amount: 10
-    - resourceName: 2
-      amount: 10
-  - requiredResources:
-    - resourceName: 4
-      amount: 10
-  - requiredResources:
-    - resourceName: 3
-      amount: 10
+  statusData: {fileID: 11400000, guid: 57a7092ac35998a49998108ab53a89a3, type: 2}
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
   requiredLaborPerStage: 100
   buildingMembers: []
---- !u!114 &-1117701373541676579
+  doors:
+  - {fileID: 3855589101887881024}
+  doortype: 0
+--- !u!114 &5149899207803461550
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -449,9 +471,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
   currentDurability: 100
   maxDurability: 100
-  durabilityDecayRate: 1
   currentEnvironmentState: 0
   isDeteriorated: 0
 --- !u!65 &-1669818874476501483
@@ -725,11 +748,11 @@ Transform:
   m_GameObject: {fileID: 8404034845049382671}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.8, y: 1, z: 0.2}
+  m_LocalPosition: {x: 0.25, y: 0.25, z: 0}
+  m_LocalScale: {x: 0.8, y: 1, z: 0.12000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1718316504979586687}
+  m_Father: {fileID: 987119261243088508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7638755150004635910
 MeshFilter:

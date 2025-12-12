@@ -19,6 +19,7 @@ When suggesting git commit messages, ALWAYS include gitmoji (git emoji) at the b
 - 🎉 `:tada:` - Initial commit
 - 🏗️ `:building_construction:` - Architecture changes
 - 💄 `:lipstick:` - UI/styling
+- 🧹 `:chore:` - Fix a typo/Chores
 
 ### Format:
 ```

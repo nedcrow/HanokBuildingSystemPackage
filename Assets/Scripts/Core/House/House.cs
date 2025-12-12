@@ -34,9 +34,9 @@ namespace HanokBuildingSystem
     [SerializeField] private Vector2 sampleSize = new Vector2(10f, 10f);
 
     [Header("House Configuration")]
-    [SerializeField] private List<BuildingType> requiredBuildingTypes = new List<BuildingType>();
+    [SerializeField] private List<BuildingTypeData> requiredBuildingTypes = new List<BuildingTypeData>();
 
-    [SerializeField] private HouseType houseType = HouseType.None;
+    [SerializeField] private HouseTypeData houseType;
 
     [Header("Area Information")]
     [Tooltip("Plot defining the house boundary area")]
@@ -63,8 +63,8 @@ namespace HanokBuildingSystem
     [SerializeField] private HouseOccupancyState usageState = HouseOccupancyState.UnderConstruction;
 
     public Vector2 SampleSize => sampleSize;
-    public HouseType HouseType => houseType;
-    public List<BuildingType> RequiredBuildingTypes => requiredBuildingTypes;
+    public HouseTypeData HouseType => houseType;
+    public List<BuildingTypeData> RequiredBuildingTypes => requiredBuildingTypes;
     public Plot BoundaryPlot => boundaryPlot;
     public List<Building> Buildings => buildings;
     public GameObject Owner => owner;
@@ -92,7 +92,7 @@ namespace HanokBuildingSystem
 
         if (requiredBuildingTypes == null)
         {
-            requiredBuildingTypes = new List<BuildingType>();
+            requiredBuildingTypes = new List<BuildingTypeData>();
         }
     }
 
@@ -121,12 +121,12 @@ namespace HanokBuildingSystem
 
     public bool HasRequiredBuildings()
     {
-        foreach (BuildingType requiredType in requiredBuildingTypes)
+        foreach (BuildingTypeData requiredType in requiredBuildingTypes)
         {
             bool hasType = false;
             foreach (Building building in buildings)
             {
-                if (building.Type == requiredType)
+                if (building.StatusData.BuildingType == requiredType)
                 {
                     hasType = true;
                     break;
@@ -236,7 +236,7 @@ namespace HanokBuildingSystem
         foreach (Transform child in markersParent)
         {
             MarkerComponent marker = child.GetComponent<MarkerComponent>();
-            if (marker == null || marker.IsMainMarker || marker.BuildingType == BuildingType.None)
+            if (marker == null || marker.IsMainMarker || marker.BuildingType == null)
                 continue;
 
             // 이미 빌딩이 있으면 스킵
@@ -252,12 +252,17 @@ namespace HanokBuildingSystem
             if (building != null)
             {
                 marker.SetCurrentBuilding(building);
-                AddBuilding(building);
+                AddBuilding(building);                
             }
             else
             {
                 Debug.LogWarning($"[House] Failed to get building of type {marker.BuildingType}");
             }
+        }
+
+        foreach(Building building in buildings)
+        {
+            building.ShowModelBuilding(plot, transform);
         }
 
         SetUsageState(HouseOccupancyState.UnderConstruction);
@@ -336,9 +341,9 @@ namespace HanokBuildingSystem
             }
         }
 
-        foreach (BuildingType requiredType in requiredBuildingTypes)
+        foreach (BuildingTypeData requiredType in requiredBuildingTypes)
         {
-            if (requiredType == BuildingType.None) continue;
+            if (requiredType == null) continue;
 
             MarkerComponent existingMarker = existingMarkers.Find(m => m.BuildingType == requiredType);
 

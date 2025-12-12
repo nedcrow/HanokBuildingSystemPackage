@@ -275,13 +275,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 8
   size: {x: 1, y: 1, z: 1}
-  statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceName: 5
-      amount: 5
+  statusData: {fileID: 11400000, guid: d945a14070b9d4840a8139a2f6e93ec8, type: 2}
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
@@ -299,9 +294,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
   currentDurability: 100
   maxDurability: 100
-  durabilityDecayRate: 1
   currentEnvironmentState: 0
   isDeteriorated: 0
 --- !u!65 &1121489863910775141
