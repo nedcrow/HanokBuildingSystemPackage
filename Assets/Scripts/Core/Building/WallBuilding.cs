@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ namespace HanokBuildingSystem
         public GameObject WallCenter => wallCenter;
         public GameObject WallCorner => wallCorner;
         public GameObject WallEnd => wallEnd;
+        public List<GameObject> Walls;
         public float WallSegmentLength => wallSegmentLength;
         public float DoorWidth => doorWidth;
         public bool AllowMultipleDoors => allowMultipleDoors;
@@ -38,7 +40,7 @@ namespace HanokBuildingSystem
                 Debug.LogWarning($"Null exception [WallGenerator]");
             }
 
-            wallGenerator.GenerateWallsForPlot(plot, this);
+            Walls = wallGenerator.GenerateWallsForPlot(plot, this);
 
             if (body != null)
             {
