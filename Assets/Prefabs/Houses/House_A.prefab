@@ -136,7 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
   buildingType: {fileID: 11400000, guid: cc508b7f466708b4e85fae6ab9f990f7, type: 2}
   markerSize: {x: 1, y: 1}
-  isMainMarker: 0
+  isAreaMarker: 0
   currentBuilding: {fileID: 0}
 --- !u!1 &4656445782309906404
 GameObject:
@@ -167,61 +167,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1342863752134158667}
+  - {fileID: 6695877398954203277}
   - {fileID: 1996274022572231823}
   - {fileID: 1645009658841946840}
   - {fileID: 4114352203683363320}
   - {fileID: 2905280211253819103}
   m_Father: {fileID: 3126111669165195961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6781046500082342399
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1342863752134158667}
-  - component: {fileID: 4127406763963635683}
-  m_Layer: 0
-  m_Name: MainMarker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1342863752134158667
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6781046500082342399}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8375270561361976779}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4127406763963635683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6781046500082342399}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarkerComponent
-  buildingType: {fileID: 0}
-  markerSize: {x: 6, y: 6}
-  isMainMarker: 1
-  currentBuilding: {fileID: 0}
 --- !u!1 &6908138831132463019
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
   buildingType: {fileID: 11400000, guid: e6984f46f2a4ed74e8dc39aaedf02527, type: 2}
   markerSize: {x: 1, y: 1}
-  isMainMarker: 0
+  isAreaMarker: 0
   currentBuilding: {fileID: 0}
 --- !u!1 &7950788003411905257
 GameObject:
@@ -316,7 +268,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
   buildingType: {fileID: 11400000, guid: 4fcb4e153d1ccc345be721b34e0e16ef, type: 2}
   markerSize: {x: 3, y: 1}
-  isMainMarker: 0
+  isAreaMarker: 0
+  currentBuilding: {fileID: 0}
+--- !u!1 &8760845087428741243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6695877398954203277}
+  - component: {fileID: 9169803815377230143}
+  m_Layer: 0
+  m_Name: AreaMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6695877398954203277
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8760845087428741243}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8375270561361976779}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9169803815377230143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8760845087428741243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7abfbfa6fbf9fd64794d59b1f8e8cb4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
+  buildingType: {fileID: 0}
+  markerSize: {x: 6, y: 6}
+  isAreaMarker: 1
   currentBuilding: {fileID: 0}
 --- !u!1 &8950034961747358418
 GameObject:
@@ -364,5 +364,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.MarkerComponent
   buildingType: {fileID: 11400000, guid: f63bd6a9546a24b4db30cbaed4e035e4, type: 2}
   markerSize: {x: 1, y: 1}
-  isMainMarker: 0
+  isAreaMarker: 0
   currentBuilding: {fileID: 0}

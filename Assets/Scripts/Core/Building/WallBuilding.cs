@@ -39,6 +39,11 @@ namespace HanokBuildingSystem
             }
 
             wallGenerator.GenerateWallsForPlot(plot, this);
+
+            if (body != null)
+            {
+                body.SetActive(false);
+            }
         }
     }
 }

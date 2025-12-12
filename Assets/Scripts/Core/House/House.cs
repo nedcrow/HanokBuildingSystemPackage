@@ -236,7 +236,7 @@ namespace HanokBuildingSystem
         foreach (Transform child in markersParent)
         {
             MarkerComponent marker = child.GetComponent<MarkerComponent>();
-            if (marker == null || marker.IsMainMarker || marker.BuildingType == null)
+            if (marker == null || marker.IsAreaMarker || marker.BuildingType == null)
                 continue;
 
             // 이미 빌딩이 있으면 스킵
@@ -298,31 +298,31 @@ namespace HanokBuildingSystem
             markersParent = markersObj.transform;
         }
 
-        UpdateMainMarker(markersParent);
+        UpdateAreaMarker(markersParent);
         UpdateSubMarkers(markersParent);
     }
 
-    private void UpdateMainMarker(Transform markersParent)
+    private void UpdateAreaMarker(Transform markersParent)
     {
-        Transform mainMarkerTransform = markersParent.Find("MainMarker");
+        Transform areaMarkerTransform = markersParent.Find("AreaMarker");
 
-        if (mainMarkerTransform == null)
+        if (areaMarkerTransform == null)
         {
-            GameObject mainMarkerObj = new GameObject("MainMarker");
-            mainMarkerObj.transform.SetParent(markersParent);
-            mainMarkerObj.transform.localPosition = Vector3.zero;
-            mainMarkerObj.transform.localRotation = Quaternion.identity;
+            GameObject areaMarkerObj = new GameObject("AreaMarker");
+            areaMarkerObj.transform.SetParent(markersParent);
+            areaMarkerObj.transform.localPosition = Vector3.zero;
+            areaMarkerObj.transform.localRotation = Quaternion.identity;
 
-            MarkerComponent mainMarker = mainMarkerObj.AddComponent<MarkerComponent>();
-            mainMarker.SetAsMainMarker(true);
-            mainMarker.SetMarkerSize(sampleSize);
+            MarkerComponent areaMarker = areaMarkerObj.AddComponent<MarkerComponent>();
+            areaMarker.SetAsAreaMarker(true);
+            areaMarker.SetMarkerSize(sampleSize);
         }
         else
         {
-            MarkerComponent mainMarker = mainMarkerTransform.GetComponent<MarkerComponent>();
-            if (mainMarker != null)
+            MarkerComponent areaMarker = areaMarkerTransform.GetComponent<MarkerComponent>();
+            if (areaMarker != null)
             {
-                mainMarker.SetMarkerSize(sampleSize);
+                areaMarker.SetMarkerSize(sampleSize);
             }
         }
     }
@@ -332,7 +332,7 @@ namespace HanokBuildingSystem
         List<MarkerComponent> existingMarkers = new List<MarkerComponent>();
         foreach (Transform child in markersParent)
         {
-            if (child.name == "MainMarker") continue;
+            if (child.name == "AreaMarker") continue;
 
             MarkerComponent marker = child.GetComponent<MarkerComponent>();
             if (marker != null)

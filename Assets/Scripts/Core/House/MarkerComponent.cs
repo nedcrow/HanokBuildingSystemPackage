@@ -7,20 +7,20 @@ namespace HanokBuildingSystem
     [Header("Marker Configuration")]
     [SerializeField] private BuildingTypeData buildingType;
     [SerializeField] private Vector2 markerSize = new Vector2(5f, 5f);
-    [SerializeField] private bool isMainMarker = false;
+    [SerializeField] private bool isAreaMarker = false;
 
     [Header("Runtime")]
     [SerializeField] private Building currentBuilding;
 
     public BuildingTypeData BuildingType => buildingType;
     public Vector2 MarkerSize => markerSize;
-    public bool IsMainMarker => isMainMarker;
+    public bool IsAreaMarker => isAreaMarker;
     public Building CurrentBuilding => currentBuilding;
 
     public void SetBuildingType(BuildingTypeData type)
     {
         buildingType = type;
-        gameObject.name = isMainMarker ? "MainMarker" : $"Marker_{type}";
+        gameObject.name = isAreaMarker ? "AreaMarker" : $"Marker_{type}";
     }
 
     public void SetMarkerSize(Vector2 size)
@@ -28,10 +28,10 @@ namespace HanokBuildingSystem
         markerSize = size;
     }
 
-    public void SetAsMainMarker(bool isMain)
+    public void SetAsAreaMarker(bool isMain)
     {
-        isMainMarker = isMain;
-        gameObject.name = isMain ? "MainMarker" : $"Marker_{buildingType}";
+        isAreaMarker = isMain;
+        gameObject.name = isMain ? "AreaMarker" : $"Marker_{buildingType}";
     }
 
     public void SetCurrentBuilding(Building building)
@@ -68,7 +68,7 @@ namespace HanokBuildingSystem
         Vector3 corner3 = center + new Vector3(halfExtents.x, 0, halfExtents.z);
         Vector3 corner4 = center + new Vector3(-halfExtents.x, 0, halfExtents.z);
 
-        Color borderColor = isMainMarker ? Color.yellow : new Color(1f, 0.5f, 0f);
+        Color borderColor = isAreaMarker ? Color.yellow : new Color(1f, 0.5f, 0f);
         Gizmos.color = borderColor;
         Gizmos.DrawLine(corner1, corner2);
         Gizmos.DrawLine(corner2, corner3);
@@ -82,7 +82,7 @@ namespace HanokBuildingSystem
             borderColor
         );
 
-        if (!isMainMarker && buildingType != null)
+        if (!isAreaMarker && buildingType != null)
         {
             UnityEditor.Handles.Label(center + Vector3.up * 0.5f, buildingType.ToString());
         }

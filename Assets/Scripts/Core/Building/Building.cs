@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace HanokBuildingSystem
@@ -29,6 +31,7 @@ namespace HanokBuildingSystem
         [Header("Building Members")]
         [SerializeField] private List<GameObject> buildingMembers = new List<GameObject>();
 
+        protected GameObject body;
         public Vector3 Size => size;
         public BuildingStatusData StatusData => statusData;
         public int CurrentStageIndex => currentStageIndex;
@@ -78,6 +81,30 @@ namespace HanokBuildingSystem
             if (buildingMembers == null)
             {
                 buildingMembers = new List<GameObject>();
+            }
+
+            SetBody();
+        }
+
+        private void SetBody()
+        {
+            if(body == null)
+            {
+                Transform[] childs = GetComponentsInChildren<Transform>();
+                foreach(var child in childs)
+                {
+                    if(child.name == "Body") {
+                        body = child.gameObject;
+                        break;
+                    }
+                }
+            }
+
+            if(body == null)
+            {
+                body = new GameObject("Body");
+                body.transform.position = Vector3.zero;
+                body.transform.SetParent(transform);
             }
         }
 
@@ -323,6 +350,9 @@ namespace HanokBuildingSystem
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            // Body
+            SetBody();
+
             // LaborBased 모드일 때 LaborComponent 설정 동기화
             if (constructionMode == ConstructionMode.LaborBased)
             {
