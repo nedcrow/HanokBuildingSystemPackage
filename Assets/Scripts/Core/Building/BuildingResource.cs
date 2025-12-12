@@ -18,16 +18,6 @@ namespace HanokBuildingSystem
             this.amount = amount;
         }
 
-        // Backward compatibility: Constructor with old ResourceType enum (deprecated)
-        [System.Obsolete("Use ResourceTypeData instead of ResourceType enum")]
-        public Cost(ResourceType oldResourceType, int amount)
-        {
-            // This will need to be manually migrated to use ResourceTypeData assets
-            Debug.LogWarning($"Creating Cost with deprecated ResourceType enum: {oldResourceType}. Please migrate to ResourceTypeData ScriptableObject.");
-            this.resourceType = null;
-            this.amount = amount;
-        }
-
         /// <summary>
         /// 주어진 자원이 이 비용의 요구사항을 만족하는지 확인
         /// 예: Cost가 Wood를 요구할 때, SoftWood나 HardWood도 사용 가능
