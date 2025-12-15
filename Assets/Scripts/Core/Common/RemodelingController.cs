@@ -19,6 +19,7 @@ namespace HanokBuildingSystem
         [Header("Dependencies")]
         [SerializeField] private HanokBuildingSystem buildingSystem;
         [SerializeField] private Camera mainCamera;
+        [SerializeField] private bool clampPlacementPosition = true;
 
         [Header("Raycast Settings")]
         [SerializeField] private LayerMask buildingLayerMask;
@@ -316,26 +317,31 @@ namespace HanokBuildingSystem
         {
             while (isDragging && selectedBuilding != null)
             {
-                Vector3 worldPosition = ScreenToWorldPosition(currentMousePosition);
+                Vector3 newPosition = ScreenToWorldPosition(currentMousePosition);
 
                 // 하우스 영역 내부로 제한
-                Vector3 clampedPosition = ClampToHouseBounds(worldPosition, targetHouse);
-                selectedBuilding.transform.position = clampedPosition;
+                if (clampPlacementPosition)
+                {
+                    newPosition = ClampToHouseBounds(newPosition, targetHouse);
+                } else
+                {
+                    // 배치 가능 여부 검사
+                    isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse);
+                }
+                
+                selectedBuilding.transform.position = newPosition;
 
                 // 임의 룰 추가
                 foreach(IRemodelingRule rule in rules)
                 {
                     string failReason;
                     bool enforce;
-                    if (!rule.ControlBuilding(selectedBuilding, targetHouse, worldPosition, out failReason, out enforce))
+                    if (!rule.ControlBuilding(selectedBuilding, targetHouse, newPosition, out failReason, out enforce))
                     {
                         if(enforce) StopDragging();
                         yield return null;
                     }
-                }
-
-                // 배치 가능 여부 검사
-                isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse);
+                }                
 
                 // 시각적 피드백 (옵션)
                 UpdateVisualFeedback(selectedBuilding, isValidPlacement);
@@ -373,6 +379,7 @@ namespace HanokBuildingSystem
 
         /// <summary>
         /// 위치가 하우스 영역 내부인지 검사 (2D Point-in-Polygon)
+        /// 모든 아웃라인을 탐색하여 하나라도 내부에 있으면 true 반환
         /// </summary>
         private bool IsWithinHouseBounds(Vector3 position, House house)
         {
@@ -381,30 +388,37 @@ namespace HanokBuildingSystem
                 return true; // 경계가 없으면 허용
             }
 
-            // 첫 번째 외곽선 사용 (주 경계)
-            List<Vector3> outline = house.BoundaryPlot.LineList[0];
-            if (outline == null || outline.Count < 3)
+            Vector2 point = new Vector2(position.x, position.z);
+
+            // 모든 아웃라인을 탐색
+            int intersectCount = 0;
+            foreach (List<Vector3> outline in house.BoundaryPlot.LineList)
+            {
+                if (outline == null || outline.Count < 2)
+                    continue;
+
+                // 2D Point-in-Polygon 알고리즘 (Ray Casting)
+                for (int i = 0; i < outline.Count-1; i++)
+                {
+                    Vector2 v1 = new Vector2(outline[i].x, outline[i].z);
+                    Vector2 v2 = new Vector2(outline[i + 1].x, outline[i + 1].z);
+
+                    if (RayIntersectsSegment(point, v1, v2))
+                    {
+                        intersectCount++;
+                    }
+                }
+            }
+
+            Debug.Log($"intersectCount: {intersectCount}");
+            // 홀수 번 교차하면 내부 - 하나라도 내부에 있으면 true 반환
+            if ((intersectCount % 2) == 1)
             {
                 return true;
             }
 
-            // 2D Point-in-Polygon 알고리즘 (Ray Casting)
-            Vector2 point = new Vector2(position.x, position.z);
-            int intersectCount = 0;
-
-            for (int i = 0; i < outline.Count; i++)
-            {
-                Vector2 v1 = new Vector2(outline[i].x, outline[i].z);
-                Vector2 v2 = new Vector2(outline[(i + 1) % outline.Count].x, outline[(i + 1) % outline.Count].z);
-
-                if (RayIntersectsSegment(point, v1, v2))
-                {
-                    intersectCount++;
-                }
-            }
-
-            // 홀수 번 교차하면 내부
-            return (intersectCount % 2) == 1;
+            // 모든 아웃라인을 확인했지만 내부가 아님
+            return false;
         }
 
         /// <summary>
@@ -412,7 +426,7 @@ namespace HanokBuildingSystem
         /// </summary>
         private bool RayIntersectsSegment(Vector2 point, Vector2 v1, Vector2 v2)
         {
-            // 선분이 점의 y 범위에 있는지 확인
+            // 선분이 두 점 모두 point.y 보다 큰지, 작은지 확인 ((T == T) || (F == F))
             if ((v1.y > point.y) == (v2.y > point.y))
             {
                 return false;
@@ -427,6 +441,7 @@ namespace HanokBuildingSystem
 
         /// <summary>
         /// 위치를 하우스 경계 내부로 클램핑
+        /// 모든 아웃라인을 탐색하여 가장 가까운 경계 지점 찾기
         /// </summary>
         private Vector3 ClampToHouseBounds(Vector3 position, House house)
         {
@@ -441,29 +456,29 @@ namespace HanokBuildingSystem
                 return position;
             }
 
-            // 경계 내부로 강제 이동: 가장 가까운 경계 지점 찾기
-            List<Vector3> outline = house.BoundaryPlot.LineList[0];
-            if (outline == null || outline.Count < 3)
-            {
-                return position;
-            }
-
+            // 경계 내부로 강제 이동: 모든 아웃라인에서 가장 가까운 경계 지점 찾기
             Vector3 closestPoint = position;
             float minDistance = float.MaxValue;
 
-            // 각 선분에 대해 가장 가까운 점 찾기
-            for (int i = 0; i < outline.Count; i++)
+            foreach (var outline in house.BoundaryPlot.LineList)
             {
-                Vector3 v1 = outline[i];
-                Vector3 v2 = outline[(i + 1) % outline.Count];
+                if (outline == null || outline.Count < 2)
+                    continue;
 
-                Vector3 pointOnSegment = ClosestPointOnSegment(position, v1, v2);
-                float distance = Vector3.Distance(position, pointOnSegment);
-
-                if (distance < minDistance)
+                // 각 선분에 대해 가장 가까운 점 찾기
+                for (int i = 0; i < outline.Count; i++)
                 {
-                    minDistance = distance;
-                    closestPoint = pointOnSegment;
+                    Vector3 v1 = outline[i];
+                    Vector3 v2 = outline[(i + 1) % outline.Count];
+
+                    Vector3 pointOnSegment = ClosestPointOnSegment(position, v1, v2);
+                    float distance = Vector3.Distance(position, pointOnSegment);
+
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        closestPoint = pointOnSegment;
+                    }
                 }
             }
 
