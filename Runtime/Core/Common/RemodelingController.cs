@@ -397,7 +397,7 @@ namespace HanokBuildingSystem
                 if (outline == null || outline.Count < 2)
                     continue;
 
-                // 2D Point-in-Polygon 알고리즘 (Ray Casting)
+                // 2D Point-in-Polygon 알고리즘
                 for (int i = 0; i < outline.Count-1; i++)
                 {
                     Vector2 v1 = new Vector2(outline[i].x, outline[i].z);
