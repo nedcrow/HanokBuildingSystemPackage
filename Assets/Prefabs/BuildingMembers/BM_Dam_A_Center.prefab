@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4529455085931975416}
   - component: {fileID: 771579134595110933}
   - component: {fileID: 7621755941337988471}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1718316504979586687}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,7 +158,7 @@ GameObject:
   - component: {fileID: 2771407860726847692}
   - component: {fileID: 6421252342270106861}
   - component: {fileID: 8998743227510971681}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,7 +267,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8894082429240679417}
   - component: {fileID: -516297680935447901}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: BM_Dam_A_Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 5039597272488662278}
   - component: {fileID: 5998303599493835551}
   - component: {fileID: 2453020183109246846}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -434,7 +434,7 @@ GameObject:
   - component: {fileID: 7638755150004635910}
   - component: {fileID: 5940087319568857959}
   - component: {fileID: 122903377426429105}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -22,11 +22,12 @@ namespace HanokBuildingSystem
         [SerializeField] private bool clampPlacementPosition = true;
 
         [Header("Raycast Settings")]
-        [SerializeField] private LayerMask buildingLayerMask;
+        [SerializeField] private LayerMask buildingLayerMask; // 커서로 빌딩 선택 시 사용
         [SerializeField] private float raycastDistance = 1000f;
 
         [Header("Collision Settings")]
         [SerializeField] private bool shouldCheckCollision = true;
+        [SerializeField] private LayerMask collisionCheckLayers; // 빌딩 배치 시 충돌 체크할 레이어 (Building, Obstacle 등)
         [SerializeField] private CollisionResponseType collisionResponse = CollisionResponseType.None;
 
         [Header("Visual Feedback")]
@@ -345,11 +346,11 @@ namespace HanokBuildingSystem
                 if (clampPlacementPosition)
                 {
                     newPosition = ClampToHouseBounds(newPosition, targetHouse);
-                } else
-                {
-                    // 배치 가능 여부 검사
-                    isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse);
                 }
+                
+                // 배치 가능 여부 검사
+                isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse);
+                
                 
                 selectedBuilding.transform.position = newPosition;
 
@@ -391,7 +392,7 @@ namespace HanokBuildingSystem
             }
 
             // 충돌 검사
-            if (shouldCheckCollision && CheckBuildingCollision(building))
+            if (shouldCheckCollision && CheckPlacementCollision(building))
             {
                 return false;
             }
@@ -533,9 +534,10 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// 다른 Building과 충돌하는지 검사
+        /// 빌딩 배치 시 충돌 검사
+        /// 건설을 방해하는 레이어의 충돌체를 감지하고, Building인 경우 targetBuilding 설정
         /// </summary>
-        private bool CheckBuildingCollision(Building building)
+        private bool CheckPlacementCollision(Building building)
         {
             if (building == null || targetHouse == null)
             {
@@ -553,42 +555,44 @@ namespace HanokBuildingSystem
             Physics.SyncTransforms();
 
             Bounds bounds = buildingCollider.bounds;
-            Vector3 center = bounds.center;    // 월드 좌표 기준 중심
-            Vector3 halfExtents = bounds.extents;   // 월드 기준 반지름(가로/세로/높이의 절반)
+            Vector3 center = bounds.center;
+            Vector3 halfExtents = bounds.extents;
 
+            // 충돌 체크 레이어로 장애물 감지
             Collider[] overlappingColliders = Physics.OverlapBox(
                 center,
                 halfExtents,
                 building.transform.rotation,
-                buildingLayerMask
+                collisionCheckLayers
             );
+
+            bool hasCollision = false;
+            targetBuilding = null; // 초기화
 
             foreach (Collider otherCollider in overlappingColliders)
             {
-                // 필터
+                // 자기 자신은 제외
                 if (otherCollider == buildingCollider)
                 {
                     continue;
                 }
 
-                Building otherBuilding = otherCollider.GetComponent<Building>();
-                if (otherBuilding == null)
-                {
-                    continue;
-                }
+                // 충돌 발생
+                hasCollision = true;
 
+                // Building 컴포넌트가 있는지 확인
+                Building otherBuilding = otherCollider.GetComponent<Building>();
                 if (otherBuilding != null && otherBuilding != building)
                 {
                     // 같은 하우스 내의 빌딩인지 확인
                     if (targetHouse.Buildings.Contains(otherBuilding))
                     {
                         targetBuilding = otherBuilding;
-                        return true; // 충돌 발생
                     }
                 }
             }
 
-            return false;
+            return hasCollision;
         }
         #endregion
 

@@ -849,7 +849,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 918794912}
-  m_Layer: 6
+  m_Layer: 4
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1400,7 +1400,7 @@ GameObject:
   - component: {fileID: 1875372826}
   - component: {fileID: 1875372825}
   - component: {fileID: 1875372824}
-  m_Layer: 6
+  m_Layer: 4
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1601,6 +1601,10 @@ PrefabInstance:
       propertyPath: 'ruleSources.Array.data[1]'
       value: 
       objectReference: {fileID: 312318026}
+    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: collisionCheckLayers.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8136752329970946030, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1640,6 +1644,22 @@ PrefabInstance:
     - target: {fileID: 8136752329970946030, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: rotateLeftAction
+      value: 
+      objectReference: {fileID: 2735785801234865069, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
+    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: dragStartDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: rotateRightAction
+      value: 
+      objectReference: {fileID: 6707454358872895932, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
+    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: doubleClickInterval
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
