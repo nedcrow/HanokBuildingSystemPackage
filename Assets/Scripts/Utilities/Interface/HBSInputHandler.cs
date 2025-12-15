@@ -10,6 +10,8 @@ namespace HanokBuildingSystem
     [SerializeField] private InputActionReference mousePositionAction; // <Mouse>/position
     [SerializeField] private InputActionReference leftButtonAction;      // <Mouse>/leftButton
     [SerializeField] private InputActionReference rightButtonAction;     // <Mouse>/rightButton
+    [SerializeField] private InputActionReference rotateLeftAction;      // Q key
+    [SerializeField] private InputActionReference rotateRightAction;     // E key
 
     [Header("Double Click")]
     [SerializeField] private float doubleClickInterval = 0.25f; // 두 번 클릭 사이 최대 간격(초)
@@ -31,47 +33,103 @@ namespace HanokBuildingSystem
     public event Action<Vector2> OnDragStart;      // 드래그 시작 순간
     public event Action<Vector2> OnDragging;       // 드래그 중 계속 (마우스 위치 전달)
     public event Action<Vector2> OnDragEnd;        // 드래그 끝났을 때(손 뗐을 때)
+    public event Action OnRotateLeft;              // Q 키 눌렀을 때
+    public event Action OnRotateRight;             // E 키 눌렀을 때
 
     private void OnEnable()
     {
-        var pos = mousePositionAction.action;
-        var leftBtn = leftButtonAction.action;
-        var rightBtn = rightButtonAction?.action;
+        // Check for unassigned InputActionReferences
+        var unassignedActions = new System.Collections.Generic.List<string>();
 
-        pos.performed += OnPointerMoveInternal;
-        leftBtn.started += OnLeftButtonDownInternal;
-        leftBtn.canceled += OnLeftButtonUpInternal;
+        if (mousePositionAction == null) unassignedActions.Add("mousePositionAction");
+        if (leftButtonAction == null) unassignedActions.Add("leftButtonAction");
+        if (rightButtonAction == null) unassignedActions.Add("rightButtonAction");
+        if (rotateLeftAction == null) unassignedActions.Add("rotateLeftAction");
+        if (rotateRightAction == null) unassignedActions.Add("rotateRightAction");
+
+        if (unassignedActions.Count > 0)
+        {
+            Debug.LogWarning($"[HBSInputHandler] Unassigned InputActionReferences: {string.Join(", ", unassignedActions)}");
+        }
+
+        var pos = mousePositionAction?.action;
+        var leftBtn = leftButtonAction?.action;
+        var rightBtn = rightButtonAction?.action;
+        var rotateLeft = rotateLeftAction?.action;
+        var rotateRight = rotateRightAction?.action;
+
+        if (pos != null)
+        {
+            pos.performed += OnPointerMoveInternal;
+            pos.Enable();
+        }
+
+        if (leftBtn != null)
+        {
+            leftBtn.started += OnLeftButtonDownInternal;
+            leftBtn.canceled += OnLeftButtonUpInternal;
+            leftBtn.Enable();
+        }
 
         if (rightBtn != null)
         {
             rightBtn.started += OnRightButtonDownInternal;
             rightBtn.canceled += OnRightButtonUpInternal;
+            rightBtn.Enable();
         }
 
-        pos.Enable();
-        leftBtn.Enable();
-        rightBtn?.Enable();
+        if (rotateLeft != null)
+        {
+            rotateLeft.performed += OnRotateLeftInternal;
+            rotateLeft.Enable();
+        }
+
+        if (rotateRight != null)
+        {
+            rotateRight.performed += OnRotateRightInternal;
+            rotateRight.Enable();
+        }
     }
 
     private void OnDisable()
     {
-        var pos = mousePositionAction.action;
-        var leftBtn = leftButtonAction.action;
+        var pos = mousePositionAction?.action;
+        var leftBtn = leftButtonAction?.action;
         var rightBtn = rightButtonAction?.action;
+        var rotateLeft = rotateLeftAction?.action;
+        var rotateRight = rotateRightAction?.action;
 
-        pos.performed -= OnPointerMoveInternal;
-        leftBtn.started -= OnLeftButtonDownInternal;
-        leftBtn.canceled -= OnLeftButtonUpInternal;
+        if (pos != null)
+        {
+            pos.performed -= OnPointerMoveInternal;
+            pos.Disable();
+        }
+
+        if (leftBtn != null)
+        {
+            leftBtn.started -= OnLeftButtonDownInternal;
+            leftBtn.canceled -= OnLeftButtonUpInternal;
+            leftBtn.Disable();
+        }
 
         if (rightBtn != null)
         {
             rightBtn.started -= OnRightButtonDownInternal;
             rightBtn.canceled -= OnRightButtonUpInternal;
+            rightBtn.Disable();
         }
 
-        pos.Disable();
-        leftBtn.Disable();
-        rightBtn?.Disable();
+        if (rotateLeft != null)
+        {
+            rotateLeft.performed -= OnRotateLeftInternal;
+            rotateLeft.Disable();
+        }
+
+        if (rotateRight != null)
+        {
+            rotateRight.performed -= OnRotateRightInternal;
+            rotateRight.Disable();
+        }
     }
 
     // 왼쪽 버튼 눌렀을 때
@@ -155,6 +213,20 @@ namespace HanokBuildingSystem
         {
             OnDragging?.Invoke(pos);
         }
+    }
+
+    // Q 키 눌렀을 때
+    private void OnRotateLeftInternal(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("HandleRotateLeft");
+        OnRotateLeft?.Invoke();
+    }
+
+    // E 키 눌렀을 때
+    private void OnRotateRightInternal(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("HandleRotateRight");
+        OnRotateRight?.Invoke();
     }
     }
 }

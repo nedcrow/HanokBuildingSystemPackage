@@ -451,6 +451,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DoorBuilding
   size: {x: 1, y: 1, z: 1}
   statusData: {fileID: 11400000, guid: 57a7092ac35998a49998108ab53a89a3, type: 2}
+  allowManualRotation: 0
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10

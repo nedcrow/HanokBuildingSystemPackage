@@ -16,6 +16,7 @@ namespace HanokBuildingSystem
         [Header("Building Configuration")]
         [SerializeField] private Vector3 size = Vector3.one;
         [SerializeField] private BuildingStatusData statusData;
+        [SerializeField] private bool allowManualRotation = true;
 
         [Header("Construction")]
         [SerializeField] private int currentStageIndex = 0;
@@ -34,6 +35,7 @@ namespace HanokBuildingSystem
         protected GameObject body;
         public Vector3 Size => size;
         public BuildingStatusData StatusData => statusData;
+        public bool AllowManualRotation => allowManualRotation;
         public int CurrentStageIndex => currentStageIndex;
         public int TotalStages => statusData.ConstructionStages.Count;
         public bool IsCompleted => currentStageIndex >= statusData.ConstructionStages.Count;

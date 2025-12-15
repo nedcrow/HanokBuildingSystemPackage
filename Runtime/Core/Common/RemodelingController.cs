@@ -193,6 +193,28 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
+        /// 선택된 빌딩을 왼쪽으로 회전
+        /// </summary>
+        public void RotateLeft(float angle = 90f)
+        {
+            if (selectedBuilding != null && selectedBuilding.AllowManualRotation)
+            {
+                selectedBuilding.transform.Rotate(Vector3.up, -angle);
+            }
+        }
+
+        /// <summary>
+        /// 선택된 빌딩을 오른쪽으로 회전
+        /// </summary>
+        public void RotateRight(float angle = 90f)
+        {
+            if (selectedBuilding != null && selectedBuilding.AllowManualRotation)
+            {
+                selectedBuilding.transform.Rotate(Vector3.up, angle);
+            }
+        }
+
+        /// <summary>
         /// 현재 드래그 중인지 여부
         /// </summary>
         public bool IsDragging => isDragging;

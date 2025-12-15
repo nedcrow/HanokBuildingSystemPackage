@@ -67,6 +67,8 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragStart += HandleDragStart;
             inputHandler.OnDragging += HandleDragging;
             inputHandler.OnDragEnd += HandleDragEnd;
+            inputHandler.OnRotateLeft += HandleRotateLeft;
+            inputHandler.OnRotateRight += HandleRotateRight;
         }
 
         if (buildingSystem != null)
@@ -88,6 +90,8 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragStart -= HandleDragStart;
             inputHandler.OnDragging -= HandleDragging;
             inputHandler.OnDragEnd -= HandleDragEnd;
+            inputHandler.OnRotateLeft -= HandleRotateLeft;
+            inputHandler.OnRotateRight -= HandleRotateRight;
         }
 
         if (buildingSystem != null)
@@ -256,6 +260,22 @@ public class HanokSystemController : MonoBehaviour
             {
                 RaycastHousesInArea(dragStartPosition, dragEndPosition);
             }
+        }
+    }
+
+    private void HandleRotateLeft()
+    {
+        if (buildingSystem.CurrentState == SystemState.Remodeling)
+        {
+            buildingSystem.RemodelingController?.RotateLeft();
+        }
+    }
+
+    private void HandleRotateRight()
+    {
+        if (buildingSystem.CurrentState == SystemState.Remodeling)
+        {
+            buildingSystem.RemodelingController?.RotateRight();
         }
     }
     #endregion
