@@ -409,8 +409,7 @@ namespace HanokBuildingSystem
                     }
                 }
             }
-
-            Debug.Log($"intersectCount: {intersectCount}");
+            
             // 홀수 번 교차하면 내부 - 하나라도 내부에 있으면 true 반환
             if ((intersectCount % 2) == 1)
             {

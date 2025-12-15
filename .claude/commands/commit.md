@@ -24,5 +24,6 @@ Common gitmoji to use:
 - 📦 Dependencies
 - 🎉 Initial commit
 - 🏗️ Architecture
+- 🧹 Chore
 
 Provide options in different styles (concise, detailed, feature-focused).
