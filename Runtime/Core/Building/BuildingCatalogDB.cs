@@ -10,7 +10,7 @@ namespace HanokBuildingSystem
 
         public List<BuildingStatusData> Buildings => buildings;
 
-        public BuildingStatusData GetBuildingByType(BuildingType type)
+        public BuildingStatusData GetBuildingByType(BuildingTypeData type)
         {
             return buildings.Find(b => b != null && b.BuildingType == type);
         }

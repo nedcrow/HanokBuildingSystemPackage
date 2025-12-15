@@ -40,9 +40,9 @@ namespace HanokBuildingSystem
         /// </summary>
         public void ShowRange()
         {
-            if (house == null || house.OutlineVertices == null) return;
+            if (house == null || house.BoundaryPlot == null) return;
 
-            DrawRange(house.OutlineVertices);
+            DrawRange(house.BoundaryPlot.LineList);
             isVisible = true;
         }
 

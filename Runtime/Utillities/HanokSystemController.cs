@@ -15,9 +15,12 @@ public class HanokSystemController : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
     [SerializeField] private HBSInputHandler inputHandler;
+    [SerializeField] private PlotController plotController;
+    [SerializeField] private WallGenerator wallGenerator;
 
     [Header("Raycast Settings")]
     [SerializeField] private LayerMask houseLayerMask;
+    [SerializeField] private LayerMask groundLayerMask; // Plot 생성 가능한 지형 레이어
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float minYPosition = 0f;
 
@@ -41,6 +44,16 @@ public class HanokSystemController : MonoBehaviour
         {
             inputHandler = GetComponent<HBSInputHandler>();
         }
+
+        if (plotController == null)
+        {
+            plotController = buildingSystem?.PlotController;
+        }
+
+        if (wallGenerator == null)
+        {
+            wallGenerator = buildingSystem?.WallGenerator;
+        }
     }
 
     void OnEnable()
@@ -55,6 +68,13 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragging += HandleDragging;
             inputHandler.OnDragEnd += HandleDragEnd;
         }
+
+        if (buildingSystem != null)
+        {
+            buildingSystem.Events.OnHouseSelected += HandleHouseSelected;
+            buildingSystem.Events.OnHouseDeselected += HandleHouseDeselected;
+            buildingSystem.Events.OnSelectionCleared += HandleSelectionHouseCleared;
+        }
     }
 
     void OnDisable()
@@ -68,6 +88,12 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragStart -= HandleDragStart;
             inputHandler.OnDragging -= HandleDragging;
             inputHandler.OnDragEnd -= HandleDragEnd;
+        }
+
+        if (buildingSystem != null)
+        {
+            buildingSystem.Events.OnHouseSelected -= HandleHouseSelected;
+            buildingSystem.Events.OnHouseDeselected -= HandleHouseDeselected;
         }
     }
 
@@ -142,7 +168,7 @@ public class HanokSystemController : MonoBehaviour
                 }
                 else
                 {
-                    buildingSystem.ClearSelection();
+                    buildingSystem.SetState(SystemState.Off);
                 }
                 break;
 
@@ -250,7 +276,7 @@ public class HanokSystemController : MonoBehaviour
         return null;
     }
 
-    private void RaycastMultipleHouses(HouseType targetType)
+    private void RaycastMultipleHouses(HouseTypeData targetType)
     {
         House[] allHouses = FindObjectsByType<House>(FindObjectsSortMode.None);
 
@@ -263,7 +289,7 @@ public class HanokSystemController : MonoBehaviour
         }
     }
 
-    private void RaycastHousesInArea(Vector3 startPos, Vector3 endPos, HouseType houseType = HouseType.None)
+    private void RaycastHousesInArea(Vector3 startPos, Vector3 endPos, HouseTypeData houseType = null)
     {
         Vector3 center = (startPos + endPos) / 2f;
         Vector3 size = new Vector3(
@@ -280,7 +306,7 @@ public class HanokSystemController : MonoBehaviour
             House house = col.GetComponentInParent<House>();
             if (house != null)
             {
-                if (houseType == HouseType.None || house.HouseType == houseType)
+                if (houseType == null || house.HouseType == houseType)
                 {
                     buildingSystem.SelectHouse(house);
                 }
@@ -297,18 +323,27 @@ public class HanokSystemController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(screenPosition);
         Vector3 worldPos = Vector3.zero;
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        // groundLayerMask가 설정된 경우, 해당 레이어만 감지
+        RaycastHit hit;
+        if (groundLayerMask != 0)
         {
-            worldPos = hit.point;
+            Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayerMask);
         }
-        else
+        else{
+            Physics.Raycast(ray, out hit);
+        }
+
+        worldPos = hit.point;
+
+        // 레이캐스트 실패 시 Y=minYPosition 평면 사용
+        if(hit.collider == null)
         {
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+           Plane groundPlane = new Plane(Vector3.up, new Vector3(0, minYPosition, 0));
             if (groundPlane.Raycast(ray, out float enter))
             {
                 worldPos = ray.GetPoint(enter);
-            }
-        }
+            } 
+        }        
 
         if (worldPos.y < minYPosition)
         {
@@ -316,6 +351,35 @@ public class HanokSystemController : MonoBehaviour
         }
 
         return worldPos;
+    }
+    #endregion
+
+    #region House Boundary Visualization
+    private void HandleHouseSelected(House house)
+    {
+        if (house == null || plotController == null)
+        {
+            return;
+        }
+
+        if (house.BoundaryPlot != null)
+        {
+            plotController.ShowPlot(house.BoundaryPlot);
+        }
+    }
+
+    private void HandleHouseDeselected(House house)
+    {
+        if (house == null || plotController == null)
+        {
+            return;
+        }
+        plotController.HidePlot(house.BoundaryPlot);        
+    }
+
+    private void HandleSelectionHouseCleared()
+    {
+        plotController.HideAllPlot();
     }
     #endregion
 }

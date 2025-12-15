@@ -45,14 +45,14 @@ namespace HanokBuildingSystem
             return GetFromPool(prefabIndex, position, rotation);
         }
 
-        public Building GetBuildingByType(BuildingType type)
+        public Building GetBuildingByType(BuildingTypeData type)
         {
             foreach (var prefab in buildingPrefabs)
             {
                 if (prefab == null) continue;
 
                 Building building = prefab.GetComponent<Building>();
-                if (building != null && building.Type == type)
+                if (building != null && building.StatusData.BuildingType == type)
                 {
                     return GetBuilding(prefab);
                 }
@@ -62,14 +62,14 @@ namespace HanokBuildingSystem
             return null;
         }
 
-        public Building GetBuildingByType(BuildingType type, Vector3 position, Quaternion rotation)
+        public Building GetBuildingByType(BuildingTypeData type, Vector3 position, Quaternion rotation)
         {
             foreach (var prefab in buildingPrefabs)
             {
                 if (prefab == null) continue;
 
                 Building building = prefab.GetComponent<Building>();
-                if (building != null && building.Type == type)
+                if (building != null &&  building.StatusData != null && building.StatusData.BuildingType == type)
                 {
                     return GetBuilding(prefab, position, rotation);
                 }

@@ -34,13 +34,13 @@ namespace HanokBuildingSystem
     [SerializeField] private Vector2 sampleSize = new Vector2(10f, 10f);
 
     [Header("House Configuration")]
-    [SerializeField] private List<BuildingType> requiredBuildingTypes = new List<BuildingType>();
+    [SerializeField] private List<BuildingTypeData> requiredBuildingTypes = new List<BuildingTypeData>();
 
-    [SerializeField] private HouseType houseType = HouseType.None;
+    [SerializeField] private HouseTypeData houseType;
 
     [Header("Area Information")]
-    [Tooltip("2D outline vertices defining the house area")]
-    [SerializeField] private List<List<Vector3>> outlineVertices = new List<List<Vector3>>();
+    [Tooltip("Plot defining the house boundary area")]
+    [SerializeField] private Plot boundaryPlot;
 
     [Header("Current Buildings")]
     [SerializeField] private List<Building> buildings = new List<Building>();
@@ -63,9 +63,9 @@ namespace HanokBuildingSystem
     [SerializeField] private HouseOccupancyState usageState = HouseOccupancyState.UnderConstruction;
 
     public Vector2 SampleSize => sampleSize;
-    public HouseType HouseType => houseType;
-    public List<BuildingType> RequiredBuildingTypes => requiredBuildingTypes;
-    public List<List<Vector3>> OutlineVertices => outlineVertices;
+    public HouseTypeData HouseType => houseType;
+    public List<BuildingTypeData> RequiredBuildingTypes => requiredBuildingTypes;
+    public Plot BoundaryPlot => boundaryPlot;
     public List<Building> Buildings => buildings;
     public GameObject Owner => owner;
     public int CurrentResidents => currentResidents;
@@ -90,14 +90,9 @@ namespace HanokBuildingSystem
             buildings = new List<Building>();
         }
 
-        if (outlineVertices == null)
-        {
-            outlineVertices = new List<List<Vector3>>();
-        }
-
         if (requiredBuildingTypes == null)
         {
-            requiredBuildingTypes = new List<BuildingType>();
+            requiredBuildingTypes = new List<BuildingTypeData>();
         }
     }
 
@@ -126,12 +121,12 @@ namespace HanokBuildingSystem
 
     public bool HasRequiredBuildings()
     {
-        foreach (BuildingType requiredType in requiredBuildingTypes)
+        foreach (BuildingTypeData requiredType in requiredBuildingTypes)
         {
             bool hasType = false;
             foreach (Building building in buildings)
             {
-                if (building.Type == requiredType)
+                if (building.StatusData.BuildingType == requiredType)
                 {
                     hasType = true;
                     break;
@@ -147,17 +142,9 @@ namespace HanokBuildingSystem
         return true;
     }
 
-    public void SetOutlineVertices(List<List<Vector3>> vertices)
+    public void SetBoundaryPlot(Plot plot)
     {
-        outlineVertices = vertices;
-    }
-
-    public void AddOutlineLoop(List<Vector3> vertexLoop)
-    {
-        if (vertexLoop != null && vertexLoop.Count > 0)
-        {
-            outlineVertices.Add(vertexLoop);
-        }
+        boundaryPlot = plot;
     }
 
     public void SetOwner(GameObject newOwner)
@@ -226,6 +213,9 @@ namespace HanokBuildingSystem
             return;
         }
 
+        // Plot 저장
+        boundaryPlot = plot;
+
         Vector3 plotCenter = plot.GetCenter();
         transform.position = plotCenter;
 
@@ -246,7 +236,7 @@ namespace HanokBuildingSystem
         foreach (Transform child in markersParent)
         {
             MarkerComponent marker = child.GetComponent<MarkerComponent>();
-            if (marker == null || marker.IsMainMarker || marker.BuildingType == BuildingType.None)
+            if (marker == null || marker.IsAreaMarker || marker.BuildingType == null)
                 continue;
 
             // 이미 빌딩이 있으면 스킵
@@ -262,12 +252,17 @@ namespace HanokBuildingSystem
             if (building != null)
             {
                 marker.SetCurrentBuilding(building);
-                AddBuilding(building);
+                AddBuilding(building);                
             }
             else
             {
                 Debug.LogWarning($"[House] Failed to get building of type {marker.BuildingType}");
             }
+        }
+
+        foreach(Building building in buildings)
+        {
+            building.ShowModelBuilding(plot, transform);
         }
 
         SetUsageState(HouseOccupancyState.UnderConstruction);
@@ -303,31 +298,31 @@ namespace HanokBuildingSystem
             markersParent = markersObj.transform;
         }
 
-        UpdateMainMarker(markersParent);
+        UpdateAreaMarker(markersParent);
         UpdateSubMarkers(markersParent);
     }
 
-    private void UpdateMainMarker(Transform markersParent)
+    private void UpdateAreaMarker(Transform markersParent)
     {
-        Transform mainMarkerTransform = markersParent.Find("MainMarker");
+        Transform areaMarkerTransform = markersParent.Find("AreaMarker");
 
-        if (mainMarkerTransform == null)
+        if (areaMarkerTransform == null)
         {
-            GameObject mainMarkerObj = new GameObject("MainMarker");
-            mainMarkerObj.transform.SetParent(markersParent);
-            mainMarkerObj.transform.localPosition = Vector3.zero;
-            mainMarkerObj.transform.localRotation = Quaternion.identity;
+            GameObject areaMarkerObj = new GameObject("AreaMarker");
+            areaMarkerObj.transform.SetParent(markersParent);
+            areaMarkerObj.transform.localPosition = Vector3.zero;
+            areaMarkerObj.transform.localRotation = Quaternion.identity;
 
-            MarkerComponent mainMarker = mainMarkerObj.AddComponent<MarkerComponent>();
-            mainMarker.SetAsMainMarker(true);
-            mainMarker.SetMarkerSize(sampleSize);
+            MarkerComponent areaMarker = areaMarkerObj.AddComponent<MarkerComponent>();
+            areaMarker.SetAsAreaMarker(true);
+            areaMarker.SetMarkerSize(sampleSize);
         }
         else
         {
-            MarkerComponent mainMarker = mainMarkerTransform.GetComponent<MarkerComponent>();
-            if (mainMarker != null)
+            MarkerComponent areaMarker = areaMarkerTransform.GetComponent<MarkerComponent>();
+            if (areaMarker != null)
             {
-                mainMarker.SetMarkerSize(sampleSize);
+                areaMarker.SetMarkerSize(sampleSize);
             }
         }
     }
@@ -337,7 +332,7 @@ namespace HanokBuildingSystem
         List<MarkerComponent> existingMarkers = new List<MarkerComponent>();
         foreach (Transform child in markersParent)
         {
-            if (child.name == "MainMarker") continue;
+            if (child.name == "AreaMarker") continue;
 
             MarkerComponent marker = child.GetComponent<MarkerComponent>();
             if (marker != null)
@@ -346,9 +341,9 @@ namespace HanokBuildingSystem
             }
         }
 
-        foreach (BuildingType requiredType in requiredBuildingTypes)
+        foreach (BuildingTypeData requiredType in requiredBuildingTypes)
         {
-            if (requiredType == BuildingType.None) continue;
+            if (requiredType == null) continue;
 
             MarkerComponent existingMarker = existingMarkers.Find(m => m.BuildingType == requiredType);
 
@@ -382,31 +377,7 @@ namespace HanokBuildingSystem
                 };
             }
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        DrawOutlineVertices();
-    }
-
-    private void DrawOutlineVertices()
-    {
-        if (outlineVertices != null)
-        {
-            Gizmos.color = Color.green;
-            foreach (List<Vector3> loop in outlineVertices)
-            {
-                if (loop == null || loop.Count < 2) continue;
-
-                for (int i = 0; i < loop.Count; i++)
-                {
-                    Vector3 current = loop[i];
-                    Vector3 next = loop[(i + 1) % loop.Count];
-                    Gizmos.DrawLine(current, next);
-                }
-            }
-        }
-    }
+    }    
 #endif
     }
 }

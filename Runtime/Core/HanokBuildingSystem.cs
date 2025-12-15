@@ -36,6 +36,7 @@ namespace HanokBuildingSystem
         [Header("Required Components")]
         [SerializeField] private PlotController plotController;
         [SerializeField] private RemodelingController remodelingController;
+        [SerializeField] private WallGenerator wallGenerator;
 
         [Header("Catalogs")]
         [SerializeField] private HouseCatalog houseCatalog;
@@ -44,6 +45,7 @@ namespace HanokBuildingSystem
 
         public PlotController PlotController => plotController;
         public RemodelingController RemodelingController => remodelingController;
+        public WallGenerator WallGenerator => wallGenerator;
         public HouseCatalog HouseCatalog => houseCatalog;
         public BuildingCatalog BuildingCatalog => buildingCatalog;
         public BuildingMemberCatalog BuildingMemberCatalog => buildingMemberCatalog;
@@ -193,26 +195,15 @@ namespace HanokBuildingSystem
 
             // 첫 번째 선택된 House를 리모델링 대상으로 설정
             House targetHouse = currentHouses[0];
-            
-            // House의 상태를 UnderConstruction으로 변경 (리모델링 중 표시)
-            targetHouse.SetUsageState(HouseOccupancyState.UnderConstruction);
 
-            // Plot이 있다면 House의 외곽선을 Plot으로 표시
-            if (plotController != null && targetHouse.OutlineVertices != null && targetHouse.OutlineVertices.Count > 0)
+            // RemodelingController에 리모델링 시작 알림 (백업 수행)
+            if (remodelingController != null)
             {
-                Plot housePlot = new Plot();
-                List<List<Vector3>> outLine = targetHouse.OutlineVertices;
-                foreach(var line in outLine)
-                {
-                    housePlot.AddLine(line);
-                }                
-                plotController.ShowPlot(housePlot);                
-                currentPlots.Add(housePlot);
+                remodelingController.StartRemodeling(targetHouse);
+                
+                Events.RaiseRemodelingStarted(targetHouse);
             }
 
-            // 리모델링 시작 이벤트 발생
-            Events.RaiseRemodelingStarted(targetHouse);
-            
             Debug.Log($"[HanokBuildingSystem] Entered Remodeling mode for House: {targetHouse.name}");
         }
         #endregion
@@ -428,7 +419,7 @@ namespace HanokBuildingSystem
             }
 
             if (currentHouses != null && currentPlots != null && houseCatalog != null &&
-                currentPlots.Count > 0 && currentPlots[0].GetLineCount() > 2)
+                currentPlots.Count > 0 && currentPlots[0].GetLineCount() > 3)
             {
                 for (int i = 0; i < currentPlots.Count; i++)
                 {
@@ -580,9 +571,9 @@ namespace HanokBuildingSystem
                 Vector3 housePosition = plotCenter + new Vector3(i * spacing, 0, 0);
                 house.transform.position = housePosition;
 
-                foreach (BuildingType requiredType in house.RequiredBuildingTypes)
+                foreach (BuildingTypeData requiredType in house.RequiredBuildingTypes)
                 {
-                    if (requiredType == BuildingType.None) continue;
+                    if (requiredType == null) continue;
 
                     Building building = buildingCatalog.GetBuildingByType(
                         requiredType,

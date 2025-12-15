@@ -398,7 +398,7 @@ namespace HanokBuildingSystem
                     continue;
 
                 // 2D Point-in-Polygon 알고리즘 (Ray Casting)
-                for (int i = 0; i < outline.Count; i++)
+                for (int i = 0; i < outline.Count-1; i++)
                 {
                     Vector2 v1 = new Vector2(outline[i].x, outline[i].z);
                     Vector2 v2 = new Vector2(outline[i + 1].x, outline[i + 1].z);
@@ -409,8 +409,7 @@ namespace HanokBuildingSystem
                     }
                 }
             }
-
-            Debug.Log($"intersectCount: {intersectCount}");
+            
             // 홀수 번 교차하면 내부 - 하나라도 내부에 있으면 true 반환
             if ((intersectCount % 2) == 1)
             {

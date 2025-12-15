@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using HanokBuildingSystem;
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// House 정보를 표시하는 UI 패널
@@ -42,9 +43,11 @@ public class HBSPanelHouseInfo : MonoBehaviour
         {
             buildingSystem = HanokBuildingSystem.HanokBuildingSystem.Instance;
 
-            buildingSystem.Events.OnRemodelingStarted += OnRemodelingStarted;
-            buildingSystem.Events.OnRemodelingCompleted += OnRemodelingCompleted;
-            buildingSystem.Events.OnRemodelingCancelled += OnRemodelingCancelled;
+            buildingSystem.Events.OnHouseSelected += HandleHouseSelected;
+
+            buildingSystem.Events.OnRemodelingStarted += HandleRemodelingStarted;
+            buildingSystem.Events.OnRemodelingCompleted += HandleRemodelingCompleted;
+            buildingSystem.Events.OnRemodelingCancelled += HandleRemodelingCancelled;
         }
     }
 
@@ -113,61 +116,76 @@ public class HBSPanelHouseInfo : MonoBehaviour
 
     public void OnClickCancelButton()
     {
-        if (buildingSystem != null && currentHouse != null)
+        if (buildingSystem != null && buildingSystem.RemodelingController != null)
         {
-            buildingSystem.SetState(SystemState.Off);
-            // 리모델링 취소. 하우스 및 빌딩 상태 원복 요청.
+            // 리모델링 취소 - 백업된 상태로 복원
+            bool success = buildingSystem.RemodelingController.CancelRemodeling();
+
+            if (success)
+            {
+                buildingSystem.SetState(SystemState.Off);
+                Debug.Log("[HBSPanelHouseInfo] Remodeling cancelled successfully.");
+            }
         }
     }
 
     public void OnClickConfirmButton()
     {
-        if (buildingSystem != null && currentHouse != null)
+        if (buildingSystem != null && buildingSystem.RemodelingController != null)
         {
-            buildingSystem.SetState(SystemState.Off);
-            // 리모델링 확인. 하우스의 변경, 추가 빌딩들을 0단계 상태로 변경.
+            // 리모델링 완성 - 하우스 UnderConstruction, 변경된 빌딩 0단계로 초기화
+            bool success = buildingSystem.RemodelingController.CompleteRemodeling();
+
+            if (success)
+            {
+                buildingSystem.SetState(SystemState.Off);
+                Debug.Log("[HBSPanelHouseInfo] Remodeling completed successfully.");
+            }
         }
     }
 
-    private void OnRemodelingStarted(House house)
+    private void HandleHouseSelected(House house)
+    {
+        RemodelingToInformationMode();
+        UpdateInfo(house);
+    }
+
+    private void HandleRemodelingStarted(House house)
     {
         if (house == currentHouse)
         {
-            SwitchMode();
+            InformationToRemodelingMode();
             RefreshInfo();
         }
     }
 
-    private void OnRemodelingCompleted(House house)
+    private void HandleRemodelingCompleted(House house)
     {
         if (house == currentHouse)
         {
-            SwitchMode();
+            RemodelingToInformationMode();
             RefreshInfo();
         }
     }
 
-    private void OnRemodelingCancelled(House house)
+    private void HandleRemodelingCancelled(House house)
     {
         if (house == currentHouse)
         {
-            SwitchMode();
+            RemodelingToInformationMode();
             RefreshInfo();
         }
     }
 
-    private void SwitchMode()
+    private void InformationToRemodelingMode()
     {
-        if (informationPanel.activeSelf)
-        {
-            informationPanel.SetActive(false);
-            remodelingPanel.SetActive(true);
-        }
-        else
-        {
-            informationPanel.SetActive(true);
-            remodelingPanel.SetActive(false);
-        }        
+        informationPanel.SetActive(false);
+        remodelingPanel.SetActive(true);
+    }
+    private void RemodelingToInformationMode()
+    {
+        informationPanel.SetActive(true);
+        remodelingPanel.SetActive(false);
     }
 
     private void OnDestroy()
@@ -175,9 +193,9 @@ public class HBSPanelHouseInfo : MonoBehaviour
         // 이벤트 구독 해제
         if (buildingSystem != null)
         {
-            buildingSystem.Events.OnRemodelingStarted -= OnRemodelingStarted;
-            buildingSystem.Events.OnRemodelingCompleted -= OnRemodelingCompleted;
-            buildingSystem.Events.OnRemodelingCancelled -= OnRemodelingCancelled;
+            buildingSystem.Events.OnRemodelingStarted -= HandleRemodelingStarted;
+            buildingSystem.Events.OnRemodelingCompleted -= HandleRemodelingCompleted;
+            buildingSystem.Events.OnRemodelingCancelled -= HandleRemodelingCancelled;
         }
     }
 }
