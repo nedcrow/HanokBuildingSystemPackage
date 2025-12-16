@@ -1550,8 +1550,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1501401058}
     - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: currentHoverTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: targetHoverTime_Phuse
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: groundLayerMask.m_Bits
-      value: 64
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: wallGenerator
@@ -1651,7 +1659,7 @@ PrefabInstance:
       objectReference: {fileID: 2735785801234865069, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
     - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: dragStartDistance
-      value: 2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: rotateRightAction
@@ -1659,7 +1667,7 @@ PrefabInstance:
       objectReference: {fileID: 6707454358872895932, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
     - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: doubleClickInterval
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

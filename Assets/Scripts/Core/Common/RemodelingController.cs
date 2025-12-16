@@ -39,10 +39,11 @@ namespace HanokBuildingSystem
         private readonly List<IRemodelingRule> rules = new();
 
         // Current state
-        private Building selectedBuilding;
-        private Building targetBuilding;
-        private House targetHouse;
-        [SerializeField] private bool isDragging = false;
+        [SerializeField, ReadOnly] private Building selectedBuilding;
+        [SerializeField, ReadOnly] private Building targetBuilding;
+        [SerializeField, ReadOnly] private House targetHouse;
+        [SerializeField, ReadOnly] private bool isDragging = false;
+        public bool IsDragging => isDragging;
         private Coroutine draggingCoroutine;
         private Vector3 originalPosition;
         private Quaternion originalRotation;
@@ -214,16 +215,6 @@ namespace HanokBuildingSystem
                 selectedBuilding.transform.Rotate(Vector3.up, angle);
             }
         }
-
-        /// <summary>
-        /// 현재 드래그 중인지 여부
-        /// </summary>
-        public bool IsDragging => isDragging;
-
-        /// <summary>
-        /// 현재 선택된 Building
-        /// </summary>
-        public Building SelectedBuilding => selectedBuilding;
 
         /// <summary>
         /// 리모델링 시작 - 현재 하우스 상태 백업
@@ -577,20 +568,24 @@ namespace HanokBuildingSystem
                     continue;
                 }
 
-                // 충돌 발생
-                hasCollision = true;
-
-                // Building 컴포넌트가 있는지 확인
-                Building otherBuilding = otherCollider.GetComponent<Building>();
-                if (otherBuilding != null && otherBuilding != building)
+                Building otherBuilding = otherCollider.GetComponentInParent<Building>();
+                if(otherBuilding == building)
                 {
-                    // 같은 하우스 내의 빌딩인지 확인
+                    continue;
+                }
+
+                // 같은 하우스 내의 빌딩만 타겟으로 지정
+                if (otherBuilding != null)
+                {
+                    
                     if (targetHouse.Buildings.Contains(otherBuilding))
                     {
                         targetBuilding = otherBuilding;
                     }
                 }
-            }
+
+                return hasCollision = true;
+            }            
 
             return hasCollision;
         }

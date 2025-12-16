@@ -1,6 +1,6 @@
 {
   "name": "com.harim.hanokbuildingsystem",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "displayName": "Hanok Building System",
   "description": "Hanok Building System Package for Unity",
   "unity": "2021.1",
