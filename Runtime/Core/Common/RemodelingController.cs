@@ -53,6 +53,7 @@ namespace HanokBuildingSystem
 
         // Cached for performance
         private bool isValidPlacement = true;
+        public bool IsValidPlacement => isValidPlacement;
 
         // Remodeling backup data
         private class BuildingSnapshot
@@ -311,6 +312,12 @@ namespace HanokBuildingSystem
 
             isDragging = true;
             draggingCoroutine = StartCoroutine(DragBuildingCoroutine());
+
+            IPlacementFeedback placementFeedback = selectedBuilding?.GetComponent<IPlacementFeedback>();
+            if(placementFeedback != null)
+            {
+                placementFeedback.SetPlacementState(PlacementVisualState.Selected);
+            }
         }
 
         private void StopDragging()
@@ -321,6 +328,12 @@ namespace HanokBuildingSystem
                 draggingCoroutine = null;
             }
 
+            IPlacementFeedback placementFeedback = selectedBuilding?.GetComponent<IPlacementFeedback>();
+            if(placementFeedback != null)
+            {
+                placementFeedback.SetPlacementState(PlacementVisualState.None);
+            }  
+
             isDragging = false;
         }
 
@@ -329,6 +342,7 @@ namespace HanokBuildingSystem
         /// </summary>
         private IEnumerator DragBuildingCoroutine()
         {
+            bool lastValidPlacement = true;
             while (isDragging && selectedBuilding != null)
             {
                 Vector3 newPosition = ScreenToWorldPosition(currentMousePosition);
@@ -358,7 +372,12 @@ namespace HanokBuildingSystem
                 }                
 
                 // 시각적 피드백 (옵션)
-                UpdateVisualFeedback(selectedBuilding, isValidPlacement);
+                if(lastValidPlacement != isValidPlacement)
+                {
+                    lastValidPlacement = isValidPlacement;
+                    UpdateVisualFeedback(selectedBuilding, isValidPlacement);   
+                }
+                
 
                 yield return new WaitForSeconds(0.02f);
             }
@@ -628,12 +647,11 @@ namespace HanokBuildingSystem
 
         private void UpdateVisualFeedback(Building building, bool isValid)
         {
-            Renderer renderer = building.GetComponentInChildren<Renderer>();
-            if (renderer != null)
+            IPlacementFeedback placementFeedback = building?.GetComponent<IPlacementFeedback>();
+            if(placementFeedback != null)
             {
-                MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-                propertyBlock.SetColor("_BaseMap", isValid ? validColor : invalidColor);
-                renderer.SetPropertyBlock(propertyBlock);
+                if(isValidPlacement) placementFeedback.SetPlacementState(PlacementVisualState.Valid);
+                if(!isValidPlacement) placementFeedback.SetPlacementState(PlacementVisualState.Invalid);
             }
         }
         #endregion

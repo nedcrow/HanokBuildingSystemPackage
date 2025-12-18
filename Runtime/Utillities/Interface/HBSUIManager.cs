@@ -1,5 +1,6 @@
 using UnityEngine;
 using HanokBuildingSystem;
+using System.Collections.Generic;
 
 /// <summary>
 /// House 관련 UI를 관리하는 클래스
@@ -33,7 +34,7 @@ public class HBSUIManager : MonoBehaviour
 
             // 선택 해제 시 숨김
             buildingSystem.Events.OnHouseDeselected += HideHouseInfo;
-            buildingSystem.Events.OnSelectionCleared += HideAllInfo;
+            buildingSystem.Events.OnSelectionClearing += HandleSelectionCleared;
 
             // 상태 변경 시 처리
             buildingSystem.Events.OnStateChanged += OnSystemStateChanged;
@@ -46,7 +47,7 @@ public class HBSUIManager : MonoBehaviour
         {
             buildingSystem.Events.OnHouseSelected -= ShowHouseInfo;
             buildingSystem.Events.OnHouseDeselected -= HideHouseInfo;
-            buildingSystem.Events.OnSelectionCleared -= HideAllInfo;
+            buildingSystem.Events.OnSelectionClearing -= HandleSelectionCleared;
             buildingSystem.Events.OnStateChanged -= OnSystemStateChanged;
         }
     }
@@ -75,6 +76,11 @@ public class HBSUIManager : MonoBehaviour
         {
             houseInfoPanel.Hide();
         }
+    }
+
+    private void HandleSelectionCleared(List<House> houses)
+    {
+        HideAllInfo();
     }
 
     private void OnSystemStateChanged(SystemState oldState, SystemState newState)
