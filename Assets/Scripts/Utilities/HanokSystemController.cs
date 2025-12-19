@@ -1,6 +1,8 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using HanokBuildingSystem;
+using System.Collections;
+using Unity.Mathematics;
+using System.Collections.Generic;
 
 /// <summary>
 /// HanokBuildingSystem 컨트롤러
@@ -24,8 +26,16 @@ public class HanokSystemController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float minYPosition = 0f;
 
+    [Header("Hover")]
+    [SerializeField] private float targetHoverTime_PreSelect = 0.5f;
+    [SerializeField] private float targetHoverTime_Phuse = 600;
+    [SerializeField] private float currentHoverTime = 1.0f;
+    [SerializeField] private float moveThresholdPx = 5f; 
+
     private Vector3 dragStartPosition;
     private Vector3 dragEndPosition;
+    private Vector2 _lastPos;
+    private Coroutine _hoverRoutine;
     private House currentHoveredHouse;
 
     void Start()
@@ -75,7 +85,8 @@ public class HanokSystemController : MonoBehaviour
         {
             buildingSystem.Events.OnHouseSelected += HandleHouseSelected;
             buildingSystem.Events.OnHouseDeselected += HandleHouseDeselected;
-            buildingSystem.Events.OnSelectionCleared += HandleSelectionHouseCleared;
+            buildingSystem.Events.OnSelectionClearing += HandleSelectionHouseClearing;
+            buildingSystem.Events.OnConstructionStarted += HandleConstructionStarted;
         }
     }
 
@@ -140,14 +151,14 @@ public class HanokSystemController : MonoBehaviour
 
             case SystemState.NewBuilding:
                 Plot currentPlot = buildingSystem.GetCurrentPlot();
-                if (currentPlot != null && currentPlot.LineList.Count < buildingSystem.MaxVertexCount)
+                if (currentPlot != null && currentPlot.LineList.Count <= buildingSystem.MaxVertexCount)
                 {
                     Vector3 worldPos = ScreenToWorldPosition(screenPosition);
                     buildingSystem.AddVertex(worldPos);
                 }
                 else
                 {
-                    buildingSystem.SetState(SystemState.Off);
+                    buildingSystem.SetState(SystemState.Off); // 주의
                 }
                 break;
             case SystemState.Remodeling:
@@ -237,6 +248,9 @@ public class HanokSystemController : MonoBehaviour
 
             currentHoveredHouse = house;
         }
+
+        // Hover
+        CheckHover(screenPosition);
     }
 
     private void HandleDragStart(Vector2 screenPosition)
@@ -372,6 +386,43 @@ public class HanokSystemController : MonoBehaviour
 
         return worldPos;
     }
+
+    private void CheckHover(Vector2 currentPos)
+    {
+        if (_lastPos == default)
+            _lastPos = currentPos;
+            
+        if (Vector2.Distance(currentPos, _lastPos) >= moveThresholdPx)
+        {
+            _lastPos = currentPos;
+            StopCoroutine(_hoverRoutine);
+            _hoverRoutine = StartCoroutine(HoverCountdown(currentPos));
+            return;
+        }
+
+        if(_hoverRoutine == null) _hoverRoutine = StartCoroutine(HoverCountdown(currentPos));
+    }
+
+    private IEnumerator HoverCountdown(Vector2 pos)
+    {
+        currentHoverTime = 0;
+        while (true)
+        {
+            if(math.abs(targetHoverTime_PreSelect - currentHoverTime) < 0.01f)
+            {
+                House house = RaycastHouse(pos);
+            }
+
+            if(math.abs(targetHoverTime_Phuse - currentHoverTime) < 0.01f)
+            {
+                Debug.Log("Wake up!");
+            }
+            
+            if(currentHoverTime < targetHoverTime_Phuse) currentHoverTime += 0.1f;            
+
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
     #endregion
 
     #region House Boundary Visualization
@@ -384,8 +435,13 @@ public class HanokSystemController : MonoBehaviour
 
         if (house.BoundaryPlot != null)
         {
-            plotController.ShowPlot(house.BoundaryPlot);
+            plotController.ShowPlot(house.BoundaryPlot);            
         }
+
+        if (!buildingSystem.RemodelingController.IsDragging)
+        {
+            
+        }    
     }
 
     private void HandleHouseDeselected(House house)
@@ -394,12 +450,27 @@ public class HanokSystemController : MonoBehaviour
         {
             return;
         }
-        plotController.HidePlot(house.BoundaryPlot);        
+        plotController.HidePlot(house.BoundaryPlot);   
+
+        if (!buildingSystem.RemodelingController.IsDragging)
+        {
+           
+        }
     }
 
-    private void HandleSelectionHouseCleared()
+    private void HandleSelectionHouseClearing(List<House> houses)
     {
         plotController.HideAllPlot();
+
+        foreach(House house in houses)
+        {
+
+        }
+    }
+
+    public void HandleConstructionStarted(House house)
+    {
+
     }
     #endregion
 }

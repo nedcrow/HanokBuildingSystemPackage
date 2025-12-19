@@ -454,14 +454,7 @@ public class HanokSystemController : MonoBehaviour
 
         if (!buildingSystem.RemodelingController.IsDragging)
         {
-           foreach(Building building in house.Buildings)
-            {
-                IPlacementFeedback visualizer = building.GetComponent<IPlacementFeedback>();
-                if(visualizer != null)
-                {
-                    visualizer.SetPlacementState(PlacementVisualState.None);
-                }   
-            }
+           
         }
     }
 
@@ -471,21 +464,13 @@ public class HanokSystemController : MonoBehaviour
 
         foreach(House house in houses)
         {
-            IPlacementFeedback visualizer = house.GetComponent<IPlacementFeedback>();
-            if(visualizer != null)
-            {
-                visualizer.SetPlacementState(PlacementVisualState.None);
-            }   
+
         }
     }
 
     public void HandleConstructionStarted(House house)
     {
-        HBSHouseOutliner houseOutliner = house?.GetComponent<HBSHouseOutliner>();
-            if (houseOutliner != null)
-            {
-                houseOutliner.Setup();
-            }
+
     }
     #endregion
 }

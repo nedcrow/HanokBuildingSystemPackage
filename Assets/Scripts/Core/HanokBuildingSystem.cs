@@ -230,9 +230,9 @@ namespace HanokBuildingSystem
         }
 
         public void ClearSelection()
-        {
+        {          
+            Events.RaiseSelectionClearing(currentHouses);
             currentHouses.Clear();
-            Events.RaiseSelectionCleared();
         }
 
         public void ReturnCurrentHouses()
@@ -294,20 +294,6 @@ namespace HanokBuildingSystem
             if (currentPlot == null) return;
 
             int lineCount = currentPlot.GetLineCount();
-            if (lineCount == 0)
-            {
-                Debug.LogWarning("Has not LineCount of currentPlot.");
-                return;
-            }
-            else if (lineCount >= maxVertexCount)
-            {
-                // 건설 가능하면 건설 시작
-                if (currentPlot.IsBuildable)
-                {
-                    CheckPlotCompletion();
-                }
-                return;
-            }
 
             // 첫 클릭
             if(currentPlot.GetLine(0).Count == 0)
@@ -336,6 +322,25 @@ namespace HanokBuildingSystem
 
                 Events.RaiseVertexAdded(currentPlot, worldPosition);
                 return;
+            }
+            else
+            {
+                // Check plot completion
+                lineCount = currentPlot.GetLineCount();
+                if (lineCount == 0)
+                {
+                    Debug.LogWarning("Has not LineCount of currentPlot.");
+                    return;
+                }
+                else if (lineCount >= maxVertexCount)
+                {
+                    // 건설 가능하면 건설 시작
+                    if (currentPlot.IsBuildable)
+                    {
+                        CheckPlotCompletion();
+                    }
+                    return;
+                }
             }
 
             // 새 라인 생성: [점2, 점2(커서)]
@@ -441,12 +446,12 @@ namespace HanokBuildingSystem
         }
 
         private void CheckPlotCompletion()
-        {
+        {            
             Plot currentPlot = GetCurrentPlot();
             if (currentPlot != null && currentPlot.IsBuildable)
-            {
-                Events.RaisePlotCompleted(currentPlot);
+            {                
                 ValidatePlotForConstruction();
+                Events.RaisePlotCompleted(currentPlot);
             }
         }
         #endregion
@@ -513,6 +518,10 @@ namespace HanokBuildingSystem
             }
         }
 
+        /// <summary>
+        /// 최소크기 검사
+        /// </summary>
+        /// <returns></returns>
         private bool ValidateAllHouses()
         {
             Plot currentPlot = GetCurrentPlot();
@@ -551,6 +560,7 @@ namespace HanokBuildingSystem
 
         public void StartConstruction()
         {
+            Debug.Log("StartConstruction");
             Plot currentPlot = GetCurrentPlot();
             if (currentPlot == null || buildingCatalog == null)
             {
@@ -558,39 +568,15 @@ namespace HanokBuildingSystem
                 return;
             }
 
-            Events.RaiseConstructionStarted();
-
-            Vector3 plotCenter = currentPlot.GetCenter();
-            float spacing = 5f;
 
             for (int i = 0; i < currentHouses.Count; i++)
             {
                 House house = currentHouses[i];
                 if (house == null) continue;
 
-                Vector3 housePosition = plotCenter + new Vector3(i * spacing, 0, 0);
-                house.transform.position = housePosition;
+                house.ShowModelHouse(currentPlot);
 
-                foreach (BuildingTypeData requiredType in house.RequiredBuildingTypes)
-                {
-                    if (requiredType == null) continue;
-
-                    Building building = buildingCatalog.GetBuildingByType(
-                        requiredType,
-                        housePosition,
-                        Quaternion.identity
-                    );
-
-                    if (building != null)
-                    {
-                        house.AddBuilding(building);
-                        Events.RaiseBuildingConstructed(building);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Failed to get building of type {requiredType} from catalog.");
-                    }
-                }
+                Events.RaiseConstructionStarted(house);
 
                 house.SetUsageState(HouseOccupancyState.UnderConstruction);
             }
@@ -606,10 +592,12 @@ namespace HanokBuildingSystem
                 return;
             }
 
+            Events.RaiseConstructionCancelled(currentHouses[0]);
+
             ReturnCurrentHouses();
 
             ClearSelection();
-            Events.RaiseConstructionCancelled();
+            
             SetState(SystemState.Off);
         }
         #endregion

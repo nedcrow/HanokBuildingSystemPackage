@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,7 +18,7 @@ namespace HanokBuildingSystem
     [SerializeField] private float doubleClickInterval = 0.25f; // 두 번 클릭 사이 최대 간격(초)
     private float _lastClickUpTime = -999f;
 
-    [Header("Drag")]
+    [Header("Drag")][Description("드래그 시작 판정 픽셀 거리")]
     [SerializeField] private float dragStartDistance = 5f; // 드래그 시작 판정 픽셀 거리
     private bool _isPointerDown;
     private bool _isDragging;

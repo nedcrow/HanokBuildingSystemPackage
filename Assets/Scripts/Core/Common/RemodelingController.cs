@@ -53,6 +53,7 @@ namespace HanokBuildingSystem
 
         // Cached for performance
         private bool isValidPlacement = true;
+        public bool IsValidPlacement => isValidPlacement;
 
         // Remodeling backup data
         private class BuildingSnapshot
@@ -179,8 +180,6 @@ namespace HanokBuildingSystem
                 {
                     Debug.LogWarning($"[RemodelingController] Original position for {selectedBuilding.name} is no longer valid. " +
                     "Building may overlap or be outside house bounds.");
-
-                    UpdateVisualFeedback(selectedBuilding, isValid);
                 }
             }
         }
@@ -320,7 +319,6 @@ namespace HanokBuildingSystem
                 StopCoroutine(draggingCoroutine);
                 draggingCoroutine = null;
             }
-
             isDragging = false;
         }
 
@@ -329,6 +327,7 @@ namespace HanokBuildingSystem
         /// </summary>
         private IEnumerator DragBuildingCoroutine()
         {
+            bool lastValidPlacement = true;
             while (isDragging && selectedBuilding != null)
             {
                 Vector3 newPosition = ScreenToWorldPosition(currentMousePosition);
@@ -358,7 +357,11 @@ namespace HanokBuildingSystem
                 }                
 
                 // 시각적 피드백 (옵션)
-                UpdateVisualFeedback(selectedBuilding, isValidPlacement);
+                if(lastValidPlacement != isValidPlacement)
+                {
+                    lastValidPlacement = isValidPlacement; 
+                }
+                
 
                 yield return new WaitForSeconds(0.02f);
             }
@@ -624,17 +627,6 @@ namespace HanokBuildingSystem
             }
 
             return Vector3.zero;
-        }
-
-        private void UpdateVisualFeedback(Building building, bool isValid)
-        {
-            Renderer renderer = building.GetComponentInChildren<Renderer>();
-            if (renderer != null)
-            {
-                MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-                propertyBlock.SetColor("_BaseMap", isValid ? validColor : invalidColor);
-                renderer.SetPropertyBlock(propertyBlock);
-            }
         }
         #endregion
 

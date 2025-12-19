@@ -817,6 +817,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Building
   size: {x: 4, y: 1, z: 2}
   statusData: {fileID: 0}
+  allowManualRotation: 1
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10

@@ -337,6 +337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.WallBuilding
   size: {x: 1, y: 1, z: 1}
   statusData: {fileID: 11400000, guid: 94dbc6e4ec0ae774eb0a6f1c4a853cbd, type: 2}
+  allowManualRotation: 1
   currentStageIndex: 0
   constructionMode: 0
   constructionDuration: 10
@@ -349,6 +350,7 @@ MonoBehaviour:
   doorWidth: 1.5
   allowMultipleDoors: 0
   maxDoors: 1
+  Walls: []
 --- !u!114 &2844068327807263116
 MonoBehaviour:
   m_ObjectHideFlags: 0

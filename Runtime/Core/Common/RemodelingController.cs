@@ -180,8 +180,6 @@ namespace HanokBuildingSystem
                 {
                     Debug.LogWarning($"[RemodelingController] Original position for {selectedBuilding.name} is no longer valid. " +
                     "Building may overlap or be outside house bounds.");
-
-                    UpdateVisualFeedback(selectedBuilding, isValid);
                 }
             }
         }
@@ -312,12 +310,6 @@ namespace HanokBuildingSystem
 
             isDragging = true;
             draggingCoroutine = StartCoroutine(DragBuildingCoroutine());
-
-            IPlacementFeedback placementFeedback = selectedBuilding?.GetComponent<IPlacementFeedback>();
-            if(placementFeedback != null)
-            {
-                placementFeedback.SetPlacementState(PlacementVisualState.Selected);
-            }
         }
 
         private void StopDragging()
@@ -327,13 +319,6 @@ namespace HanokBuildingSystem
                 StopCoroutine(draggingCoroutine);
                 draggingCoroutine = null;
             }
-
-            IPlacementFeedback placementFeedback = selectedBuilding?.GetComponent<IPlacementFeedback>();
-            if(placementFeedback != null)
-            {
-                placementFeedback.SetPlacementState(PlacementVisualState.None);
-            }  
-
             isDragging = false;
         }
 
@@ -374,8 +359,7 @@ namespace HanokBuildingSystem
                 // 시각적 피드백 (옵션)
                 if(lastValidPlacement != isValidPlacement)
                 {
-                    lastValidPlacement = isValidPlacement;
-                    UpdateVisualFeedback(selectedBuilding, isValidPlacement);   
+                    lastValidPlacement = isValidPlacement; 
                 }
                 
 
@@ -643,16 +627,6 @@ namespace HanokBuildingSystem
             }
 
             return Vector3.zero;
-        }
-
-        private void UpdateVisualFeedback(Building building, bool isValid)
-        {
-            IPlacementFeedback placementFeedback = building?.GetComponent<IPlacementFeedback>();
-            if(placementFeedback != null)
-            {
-                if(isValidPlacement) placementFeedback.SetPlacementState(PlacementVisualState.Valid);
-                if(!isValidPlacement) placementFeedback.SetPlacementState(PlacementVisualState.Invalid);
-            }
         }
         #endregion
 
