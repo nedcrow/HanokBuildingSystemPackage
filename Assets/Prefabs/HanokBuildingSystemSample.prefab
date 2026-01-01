@@ -48,16 +48,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.RemodelingController
   buildingSystem: {fileID: 0}
   mainCamera: {fileID: 0}
+  clampPlacementPosition: 1
   buildingLayerMask:
     serializedVersion: 2
     m_Bits: 1
   raycastDistance: 1000
   shouldCheckCollision: 1
+  collisionCheckLayers:
+    serializedVersion: 2
+    m_Bits: 1
   collisionResponse: 2
   validColor: {r: 0, g: 1, b: 0, a: 0.5}
   invalidColor: {r: 1, g: 0, b: 0, a: 0.5}
   ruleSources:
   - {fileID: 3297352506825253912}
+  - {fileID: 7224442736635102691}
+  selectedBuilding: {fileID: 0}
+  targetBuilding: {fileID: 0}
+  targetHouse: {fileID: 0}
+  isDragging: 0
 --- !u!1 &2537292056039576241
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,13 +162,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f8a9e2c4b3d5a1f6e0c9d8b7a4e5f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.WallGenerator
-  memberCatalog: {fileID: 0}
-  wallPrefabName: Dam_A_Center
-  cornerPrefabName: Dam_A_Corner
-  endPrefabName: Dam_A_End
-  wallSegmentLength: 1
+  memberCatalog: {fileID: 2419407458928891290}
   heightOffset: 0
-  useCornerPieces: 1
+  adjustmentCount: 1
+  useCornerPieces: 0
   useEndPieces: 1
   showDebugGizmos: 1
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
@@ -212,9 +218,7 @@ MonoBehaviour:
   buildingPrefabs:
   - {fileID: 7810427692713562516, guid: 767a6a23f8117b74b9a2e2471cd72af4, type: 3}
   - {fileID: 7810427692713562516, guid: d8574d359e183b84c9c7e609de2226b4, type: 3}
-  - {fileID: 7810427692713562516, guid: d21bcb9a0c829d54185f5f8c3d7eec7a, type: 3}
   - {fileID: 7810427692713562516, guid: 24feae7dfbc90ee4ca1a4738a1e7e38f, type: 3}
-  - {fileID: 7810427692713562516, guid: 5fc3df92c39d34142a18b5a7216fef32, type: 3}
   - {fileID: 7810427692713562516, guid: 3ddf596a7f8054a49987ef2e639d6247, type: 3}
   - {fileID: 7810427692713562516, guid: 8c0bdc01453a8f741b56853052e14535, type: 3}
 --- !u!1 &4645962474501914544
@@ -358,8 +362,61 @@ MonoBehaviour:
   mousePositionAction: {fileID: -1690676792368505966, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
   leftButtonAction: {fileID: -465974705752489037, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
   rightButtonAction: {fileID: -2570682182395963499, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
-  doubleClickInterval: 0.25
-  dragStartDistance: 1
+  rotateLeftAction: {fileID: 2735785801234865069, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
+  rotateRightAction: {fileID: 6707454358872895932, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
+  doubleClickInterval: 0.2
+  dragStartDistance: 10
+--- !u!1 &6359338958083648233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3518927134159571622}
+  - component: {fileID: 4739977222333781336}
+  m_Layer: 0
+  m_Name: ResourceCatalog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3518927134159571622
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6359338958083648233}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3052043478448017481}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4739977222333781336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6359338958083648233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 283ebe291ce730744aad958562d13638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.ResourceTypeCatalog
+  resourceTypes:
+  - {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
+  - {fileID: 11400000, guid: 4807cc5fd06229f4bb96e44ac3e939c0, type: 2}
+  - {fileID: 11400000, guid: 1b0082e655bd90e4ab443b46683d52bf, type: 2}
+  - {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
+  - {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
+  showDebugInfo: 1
 --- !u!1 &6819828400935592361
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,6 +449,7 @@ Transform:
   - {fileID: 2714452770191807437}
   - {fileID: 6315151006544714229}
   - {fileID: 7756832388320677595}
+  - {fileID: 3518927134159571622}
   m_Father: {fileID: 8136752329970946030}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7407213257174742257
@@ -446,12 +504,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokSystemController
   buildingSystem: {fileID: 439504990842044987}
   inputHandler: {fileID: 8482222856146161250}
-  plotController: {fileID: 0}
+  plotController: {fileID: 7548693506095678399}
+  wallGenerator: {fileID: 6915263287050264867}
   houseLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 16
   mainCamera: {fileID: 0}
   minYPosition: 0
+  targetHoverTime_PreSelect: 0.5
+  targetHoverTime_Phuse: 60
+  currentHoverTime: 0
+  moveThresholdPx: 5
 --- !u!114 &439504990842044987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,6 +532,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HanokBuildingSystem
   plotController: {fileID: 7548693506095678399}
   remodelingController: {fileID: 8025097793016976325}
+  wallGenerator: {fileID: 6915263287050264867}
   houseCatalog: {fileID: 4920192036757626759}
   buildingCatalog: {fileID: 3341540988524704928}
   buildingMemberCatalog: {fileID: 0}

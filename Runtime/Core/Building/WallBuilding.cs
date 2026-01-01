@@ -42,9 +42,9 @@ namespace HanokBuildingSystem
 
             Walls = wallGenerator.GenerateWallsForPlot(plot, this);
 
-            if (body != null)
+            if (Body != null)
             {
-                body.SetActive(false);
+                Body.SetActive(false);
             }
         }
     }

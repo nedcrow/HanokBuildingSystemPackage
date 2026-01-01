@@ -227,6 +227,7 @@ namespace HanokBuildingSystem
             }
 
             targetHouse = house;
+            targetHouse.ShowModelHouse(targetHouse.BoundaryPlot);
             BackupHouseState(house);
         }
 

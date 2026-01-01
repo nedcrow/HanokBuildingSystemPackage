@@ -31,6 +31,9 @@ public class HBSPanelHouseInfo : MonoBehaviour
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button confirmButton;
 
+    [Header("Debug Buttons")]
+    [SerializeField] private Button fillAllResourcesButton;
+
     private House currentHouse;
     private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
 
@@ -142,6 +145,59 @@ public class HBSPanelHouseInfo : MonoBehaviour
                 Debug.Log("[HBSPanelHouseInfo] Remodeling completed successfully.");
             }
         }
+    }
+
+    /// <summary>
+    /// [디버깅용] 현재 하우스의 모든 빌딩에 필요한 자원을 완납
+    /// </summary>
+    public void OnClickFillAllResources()
+    {
+        if (currentHouse == null)
+        {
+            Debug.LogWarning("[HBSPanelHouseInfo] No house selected.");
+            return;
+        }
+
+        int buildingCount = 0;
+        int stageCount = 0;
+
+        foreach (var building in currentHouse.Buildings)
+        {
+            if (building == null || building.IsCompleted) continue;
+
+            buildingCount++;
+
+            // 현재 단계의 필요 자원 가져오기
+            Cost[] requiredResources = building.GetCurrentStageRequiredResources();
+
+            if (requiredResources == null || requiredResources.Length == 0)
+            {
+                Debug.Log($"[Debug] {building.name} Stage {building.CurrentStageIndex}: No required resources");
+                continue;
+            }
+
+            // 각 필요 자원을 대기 자원에 완납
+            foreach (var cost in requiredResources)
+            {
+                if (cost.ResourceType == null) continue;
+
+                int currentAmount = building.GetCollectedAmount(cost.ResourceType);
+                int needed = cost.Amount - currentAmount;
+
+                if (needed > 0)
+                {
+                    building.AddPendingResource(cost.ResourceType, needed);
+                    Debug.Log($"[Debug] {building.name} Stage {building.CurrentStageIndex}: Added {cost.ResourceType.name} x{needed} to pending resources");
+                }
+            }
+
+            stageCount++;
+        }
+
+        Debug.Log($"[HBSPanelHouseInfo] Filled resources for {stageCount} stages in {buildingCount} buildings");
+
+        // UI 갱신
+        RefreshInfo();
     }
 
     private void HandleHouseSelected(House house)

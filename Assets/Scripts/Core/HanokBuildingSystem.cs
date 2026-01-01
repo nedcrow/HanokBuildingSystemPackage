@@ -574,7 +574,7 @@ namespace HanokBuildingSystem
                 House house = currentHouses[i];
                 if (house == null) continue;
 
-                house.ShowModelHouse(currentPlot);
+                house.StartConstruction(currentPlot);
 
                 Events.RaiseConstructionStarted(house);
 

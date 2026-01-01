@@ -27,6 +27,25 @@ namespace HanokBuildingSystem
         public bool isSatisfied;
     }
 
+    /// <summary>
+    /// House 이벤트 시스템
+    /// </summary>
+    public class HouseEvents
+    {
+        public event Action<House, Plot> OnConstructionStarted;
+        public event Action<House, Plot> OnShowModelHouse;
+
+        public void RaiseConstructionStarted(House house, Plot plot)
+        {
+            OnConstructionStarted?.Invoke(house, plot);
+        }
+
+        public void RaiseShowModelHouse(House house, Plot plot)
+        {
+            OnShowModelHouse?.Invoke(house, plot);
+        }
+    }
+
     public class House : MonoBehaviour
     {
     [Header("Sample Size")]
@@ -61,6 +80,9 @@ namespace HanokBuildingSystem
     [SerializeField] private float durability = 100f;
     [SerializeField] private HouseConditionState state = HouseConditionState.Normal;
     [SerializeField] private HouseOccupancyState usageState = HouseOccupancyState.UnderConstruction;
+
+    private HouseEvents events = new HouseEvents();
+    public HouseEvents Events => events;
 
     public Vector2 SampleSize => sampleSize;
     public HouseTypeData HouseType => houseType;
@@ -205,6 +227,29 @@ namespace HanokBuildingSystem
         }
     }
 
+    /// <summary>
+    /// 하우스의 모든 빌딩을 건설 시작 단계(Stage 0)로 초기화
+    /// </summary>
+    public void StartConstruction(Plot plot)
+    {
+        if (plot == null)
+        {
+            Debug.LogWarning("[House] Cannot start construction: plot is null");
+            return;
+        }
+
+        // Plot 저장
+        boundaryPlot = plot;
+
+        Vector3 plotCenter = plot.GetCenter();
+        transform.position = plotCenter;
+
+        // 이벤트 발행 - 각 빌딩이 자율적으로 반응
+        events.RaiseConstructionStarted(this, plot);
+
+        Debug.Log($"[House] {name}: Construction started with {buildings.Count} buildings");
+    }
+
     public void ShowModelHouse(Plot plot)
     {
         if (plot == null)
@@ -233,6 +278,7 @@ namespace HanokBuildingSystem
             return;
         }
 
+        // 빌딩 인스턴스 생성
         foreach (Transform child in markersParent)
         {
             MarkerComponent marker = child.GetComponent<MarkerComponent>();
@@ -252,7 +298,7 @@ namespace HanokBuildingSystem
             if (building != null)
             {
                 marker.SetCurrentBuilding(building);
-                AddBuilding(building);                
+                AddBuilding(building);
             }
             else
             {
@@ -260,10 +306,8 @@ namespace HanokBuildingSystem
             }
         }
 
-        foreach(Building building in buildings)
-        {
-            building.ShowModelBuilding(plot, transform);
-        }
+        // 이벤트 발행 - 각 빌딩이 자율적으로 모델 비주얼 표시
+        events.RaiseShowModelHouse(this, plot);
 
         SetUsageState(HouseOccupancyState.UnderConstruction);
     }

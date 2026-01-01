@@ -419,7 +419,7 @@ MonoBehaviour:
   statusData: {fileID: 0}
   allowManualRotation: 1
   currentStageIndex: 0
-  constructionMode: 0
+  constructionMode: 1
   constructionDuration: 10
   requiredLaborPerStage: 100
   buildingMembers: []
