@@ -549,6 +549,26 @@ namespace HanokBuildingSystem
                     stageVisuals[i].SetActive(i <= currentStageIndex ? true : false);
                 }
             }
+
+            // BuildingMember들도 동기화
+            UpdateBuildingMembersStage();
+        }
+
+        /// <summary>
+        /// 모든 BuildingMember를 현재 스테이지로 동기화
+        /// </summary>
+        private void UpdateBuildingMembersStage()
+        {
+            foreach (var memberObj in buildingMembers)
+            {
+                if (memberObj == null) continue;
+
+                BuildingMember member = memberObj.GetComponent<BuildingMember>();
+                if (member != null)
+                {
+                    member.SetStage(currentStageIndex);
+                }
+            }
         }
 
         public void Rotate(float angle)
@@ -570,6 +590,18 @@ namespace HanokBuildingSystem
             foreach(GameObject stage in StageVisuals)
             {
                 stage.SetActive(true);
+            }
+
+            // BuildingMember들도 모든 스테이지 표시
+            foreach (var memberObj in buildingMembers)
+            {
+                if (memberObj == null) continue;
+
+                BuildingMember member = memberObj.GetComponent<BuildingMember>();
+                if (member != null)
+                {
+                    member.ShowAllStages();
+                }
             }
         }
 

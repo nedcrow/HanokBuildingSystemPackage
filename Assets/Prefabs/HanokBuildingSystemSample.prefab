@@ -116,7 +116,7 @@ MonoBehaviour:
   memberPrefabs:
   - {fileID: 7810427692713562516, guid: eba76f806106c4d42b718ab403e2a391, type: 3}
   - {fileID: 7810427692713562516, guid: 8167e8d1a9e0c734f8c358d7a7177d00, type: 3}
-  - {fileID: 7810427692713562516, guid: 5a4994e5112b20f4cab978a47aac0086, type: 3}
+  - {fileID: 7810427692713562516, guid: 27c1a706461b5204e8328f478377d310, type: 3}
   filterOutBuildingAndHouse: 1
 --- !u!1 &2977865806728210408
 GameObject:

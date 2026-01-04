@@ -20,6 +20,7 @@ namespace HanokBuildingSystem
         [SerializeField] private bool useEndPieces = true;
 
         private List<GameObject> generatedWalls = new List<GameObject>();
+        private WallBuilding currentWallBuilding; // 현재 작업 중인 WallBuilding 참조
 
         private void Start()
         {
@@ -77,6 +78,9 @@ namespace HanokBuildingSystem
             {
                 Debug.LogWarning("[WallGenerator] WallEnd is null, end pieces will not be generated.");
             }
+
+            // 현재 작업 중인 WallBuilding 저장
+            currentWallBuilding = wallBuilding;
 
             ClearGeneratedWalls();
 
@@ -154,7 +158,21 @@ namespace HanokBuildingSystem
                 {
                     wallPiece.transform.SetParent(parent);
                 }
+
+                // BuildingMember 컴포넌트 추가 (없을 경우)
+                BuildingMember member = wallPiece.GetComponent<BuildingMember>();
+                if (member == null)
+                {
+                    member = wallPiece.AddComponent<BuildingMember>();
+                }
+
                 generatedWalls.Add(wallPiece);
+
+                // WallBuilding에 멤버 등록
+                if (currentWallBuilding != null)
+                {
+                    currentWallBuilding.AddBuildingMember(wallPiece);
+                }
             }
         }
 
@@ -276,6 +294,12 @@ namespace HanokBuildingSystem
                 {
                     if (wall != null)
                     {
+                        // WallBuilding에서 멤버 제거
+                        if (currentWallBuilding != null)
+                        {
+                            currentWallBuilding.RemoveBuildingMember(wall);
+                        }
+
                         memberCatalog.ReturnMember(wall);
                     }
                 }
@@ -295,6 +319,12 @@ namespace HanokBuildingSystem
             {
                 if (wall != null && generatedWalls.Contains(wall))
                 {
+                    // WallBuilding에서 멤버 제거
+                    if (currentWallBuilding != null)
+                    {
+                        currentWallBuilding.RemoveBuildingMember(wall);
+                    }
+
                     memberCatalog.ReturnMember(wall);
                     generatedWalls.Remove(wall);
                 }

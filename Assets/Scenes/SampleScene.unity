@@ -330,17 +330,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2337160494482925094, guid: 8a75d80c0906fc644975eccec7e7dcff, type: 3}
   m_PrefabInstance: {fileID: 259472381}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &312318026 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7224442736635102691, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-  m_PrefabInstance: {fileID: 91512609680110267}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7808e223ad708cb44acaf91c0ef2a57a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSRemodelingRule_Door
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,57 +512,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HBSUIManager
   houseInfoPanel: {fileID: 944220745}
---- !u!1 &387858088
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 387858089}
-  - component: {fileID: 387858090}
-  m_Layer: 0
-  m_Name: ResourceCatalog
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &387858089
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 387858088}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1814365520}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &387858090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 387858088}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 283ebe291ce730744aad958562d13638, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.ResourceTypeCatalog
-  resourceTypes:
-  - {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
-  - {fileID: 11400000, guid: 4807cc5fd06229f4bb96e44ac3e939c0, type: 2}
-  - {fileID: 11400000, guid: 1b0082e655bd90e4ab443b46683d52bf, type: 2}
-  - {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
-  - {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
-  showDebugInfo: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,17 +639,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &420848723 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-  m_PrefabInstance: {fileID: 91512609680110267}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bebc65ea3dd13b4cad534048595d56c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.BuildingMemberCatalog
 --- !u!1 &768479684
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,28 +1003,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1478886328 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6915263287050264867, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-  m_PrefabInstance: {fileID: 91512609680110267}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f8a9e2c4b3d5a1f6e0c9d8b7a4e5f3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.WallGenerator
---- !u!114 &1501401058 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7548693506095678399, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-  m_PrefabInstance: {fileID: 91512609680110267}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6b245b79bd881d44a75badffe343237, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.PlotController
 --- !u!1 &1770294326
 GameObject:
   m_ObjectHideFlags: 0
@@ -1247,11 +1152,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1799462939}
   m_CullTransparentMesh: 1
---- !u!4 &1814365520 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3052043478448017481, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-  m_PrefabInstance: {fileID: 91512609680110267}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1834457600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,77 +1441,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1925857604}
     m_Modifications:
-    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: wallGenerator
+    - target: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: 'memberPrefabs.Array.data[2]'
       value: 
-      objectReference: {fileID: 1478886328}
-    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: plotController
-      value: 
-      objectReference: {fileID: 1501401058}
-    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: currentHoverTime
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: targetHoverTime_Phuse
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: groundLayerMask.m_Bits
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: wallGenerator
-      value: 
-      objectReference: {fileID: 1478886328}
-    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: buildingPrefabs.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'buildingPrefabs.Array.data[2]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 24feae7dfbc90ee4ca1a4738a1e7e38f, type: 3}
-    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'buildingPrefabs.Array.data[3]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 3ddf596a7f8054a49987ef2e639d6247, type: 3}
-    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'buildingPrefabs.Array.data[4]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 8c0bdc01453a8f741b56853052e14535, type: 3}
-    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'buildingPrefabs.Array.data[5]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: 5fc3df92c39d34142a18b5a7216fef32, type: 3}
-    - target: {fileID: 3341540988524704928, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'buildingPrefabs.Array.data[6]'
-      value: 
-      objectReference: {fileID: 7810427692713562516, guid: d21bcb9a0c829d54185f5f8c3d7eec7a, type: 3}
-    - target: {fileID: 6915263287050264867, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: memberCatalog
-      value: 
-      objectReference: {fileID: 420848723}
-    - target: {fileID: 6915263287050264867, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: useCornerPieces
-      value: 0
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7810427692713562516, guid: 27c1a706461b5204e8328f478377d310, type: 3}
     - target: {fileID: 7407213257174742257, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_Name
       value: HanokBuildingSystem
-      objectReference: {fileID: 0}
-    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: ruleSources.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: 'ruleSources.Array.data[1]'
-      value: 
-      objectReference: {fileID: 312318026}
-    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: collisionCheckLayers.m_Bits
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8136752329970946030, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1653,28 +1489,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: rotateLeftAction
-      value: 
-      objectReference: {fileID: 2735785801234865069, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
-    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: dragStartDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: rotateRightAction
-      value: 
-      objectReference: {fileID: 6707454358872895932, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
-    - target: {fileID: 8482222856146161250, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: doubleClickInterval
-      value: 0.2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 3052043478448017481, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 387858089}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
 --- !u!1001 &2969110761446407077
@@ -1685,22 +1502,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1454208651}
     m_Modifications:
-    - target: {fileID: 3671050357196102375, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickConfirmButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671050357196102375, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: HBSPanelHouseInfo, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 4448654696057066377, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickCancelButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 4448654696057066377, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: HBSPanelHouseInfo, Assembly-CSharp
-      objectReference: {fileID: 0}
     - target: {fileID: 4901586805474302720, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_Name
       value: Panel_HouseInfo
@@ -1784,10 +1585,6 @@ PrefabInstance:
     - target: {fileID: 5945858641500481352, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8571649054004479307, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 240
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
