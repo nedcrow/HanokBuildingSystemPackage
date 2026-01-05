@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 8403505635089089461}
   - component: {fileID: 3267108363686940709}
   - component: {fileID: 4118542422314339128}
-  - component: {fileID: 706935033585880764}
+  - component: {fileID: 8513846194342911073}
   m_Layer: 5
   m_Name: Btn_House_Icon
   m_TagString: Untagged
@@ -197,9 +197,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 706935033585880764}
-        m_TargetAssemblyTypeName: HanokBuildingSystem.HanokBuildingSystemButton,
-          Assembly-CSharp
+      - m_Target: {fileID: 8513846194342911073}
+        m_TargetAssemblyTypeName: HanokBuildingSystem.HBSSampleStateButton, Assembly-CSharp
         m_MethodName: OnClickedHouseButton
         m_Mode: 1
         m_Arguments:
@@ -210,7 +209,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &706935033585880764
+--- !u!114 &8513846194342911073
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -219,6 +218,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7699969441249074363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f846f45427e5c941af4d0dc2d32d5d4, type: 3}
+  m_Script: {fileID: 11500000, guid: dfefa69577127834bae44e744c829a41, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystemButton
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSSampleStateButton

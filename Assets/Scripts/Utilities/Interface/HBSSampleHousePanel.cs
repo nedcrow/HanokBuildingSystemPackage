@@ -6,10 +6,32 @@ using System.Collections.Generic;
 using System;
 
 /// <summary>
-/// House 정보를 표시하는 UI 패널
-/// Panel_HouseInfo 프리팹에 붙여서 사용
+/// [Sample] House 정보 표시 및 리모델링 워크플로우 UI 패널
+///
+/// 샘플 용도:
+/// - House 정보(거주민, 내구도, 저장소 등) UI 표시 예제
+/// - 리모델링 모드 진입/완료/취소 워크플로우 데모
+/// - 리모델링 중 Building 추가 기능 예제
+/// - HanokBuildingSystem 이벤트 기반 UI 업데이트 패턴 예제
+///
+/// 사용 방법:
+/// 1. UI Canvas에 Panel GameObject 생성
+/// 2. 이 컴포넌트를 Panel에 추가
+/// 3. Inspector에서 TextMeshProUGUI 및 Button UI 요소 할당
+/// 4. 버튼의 OnClick 이벤트에 해당 메서드 연결:
+///    - OnClickRemodelingButton(): 리모델링 모드 진입
+///    - OnClickCancelButton(): 리모델링 취소 (백업 복원)
+///    - OnClickConfirmButton(): 리모델링 완료 (UnderConstruction 전환)
+///    - OnClickAddBuilding(): 리모델링 중 Building 추가
+///    - OnClickFillAllResources(): [디버그] 모든 자원 완납
+///
+/// 이벤트 연동:
+/// - OnHouseSelected: House 선택 시 정보 갱신
+/// - OnRemodelingStarted: 리모델링 시작 시 UI 모드 전환
+/// - OnRemodelingCompleted: 리모델링 완료 시 UI 모드 복귀
+/// - OnRemodelingCancelled: 리모델링 취소 시 UI 모드 복귀
 /// </summary>
-public class HBSPanelHouseInfo : MonoBehaviour
+public class HBSSampleHousePanel : MonoBehaviour
 {
     [Header("UI Elements - Basic Info")]
     [SerializeField] private TextMeshProUGUI houseName;
@@ -34,11 +56,12 @@ public class HBSPanelHouseInfo : MonoBehaviour
     [Header("Debug Buttons")]
     [SerializeField] private Button fillAllResourcesButton;
 
+    [Header("Remodeling - Add Building")]
+    [SerializeField] private GameObject buildingPrefabToAdd;
+    [Tooltip("리모델링 중 추가할 Building 프리팹을 지정하세요 (GameObject)")]
+
     private House currentHouse;
     private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
-
-    private List<Building> modifiedBuildings;
-    private List<Building> addedBuildings;
 
     void Start()
     {
@@ -61,7 +84,7 @@ public class HBSPanelHouseInfo : MonoBehaviour
     {
         if (house == null)
         {
-            Debug.LogWarning("Panel_HouseInfo: House is null");
+            Debug.LogWarning("HBSSampleHousePanel: House is null");
             return;
         }
 
@@ -101,6 +124,9 @@ public class HBSPanelHouseInfo : MonoBehaviour
         currentHouse = null;
     }
 
+    /// <summary>
+    /// 현재 House 정보를 다시 읽어 UI 갱신
+    /// </summary>
     public void RefreshInfo()
     {
         if (currentHouse != null)
@@ -109,6 +135,10 @@ public class HBSPanelHouseInfo : MonoBehaviour
         }
     }
 
+    #region Button Handlers
+    /// <summary>
+    /// [Button] 리모델링 모드 진입
+    /// </summary>
     public void OnClickRemodelingButton()
     {
         if (buildingSystem != null && currentHouse != null)
@@ -117,6 +147,9 @@ public class HBSPanelHouseInfo : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// [Button] 리모델링 취소 - 백업된 상태로 복원
+    /// </summary>
     public void OnClickCancelButton()
     {
         if (buildingSystem != null && buildingSystem.RemodelingController != null)
@@ -127,11 +160,14 @@ public class HBSPanelHouseInfo : MonoBehaviour
             if (success)
             {
                 buildingSystem.SetState(SystemState.Off);
-                Debug.Log("[HBSPanelHouseInfo] Remodeling cancelled successfully.");
+                Debug.Log("[HBSSampleHousePanel] Remodeling cancelled successfully.");
             }
         }
     }
 
+    /// <summary>
+    /// [Button] 리모델링 완료 - House UnderConstruction, 변경된 Building 0단계로 초기화
+    /// </summary>
     public void OnClickConfirmButton()
     {
         if (buildingSystem != null && buildingSystem.RemodelingController != null)
@@ -142,19 +178,54 @@ public class HBSPanelHouseInfo : MonoBehaviour
             if (success)
             {
                 buildingSystem.SetState(SystemState.Off);
-                Debug.Log("[HBSPanelHouseInfo] Remodeling completed successfully.");
+                Debug.Log("[HBSSampleHousePanel] Remodeling completed successfully.");
             }
         }
     }
 
     /// <summary>
-    /// [디버깅용] 현재 하우스의 모든 빌딩에 필요한 자원을 완납
+    /// [Button] 리모델링 중 Building 추가 시작
+    /// Inspector에서 지정한 buildingPrefabToAdd를 드래그 모드로 배치합니다.
+    /// - 좌클릭: 배치 확정 (하우스에 추가)
+    /// - 우클릭: 취소 (카탈로그에 반환)
+    /// </summary>
+    public void OnClickAddBuilding()
+    {
+        if (buildingSystem == null || buildingSystem.RemodelingController == null)
+        {
+            Debug.LogWarning("[HBSSampleHousePanel] Building system or remodeling controller is null.");
+            return;
+        }
+
+        if (buildingPrefabToAdd == null)
+        {
+            Debug.LogWarning("[HBSSampleHousePanel] Building prefab to add is not assigned. Please assign it in the Inspector.");
+            return;
+        }
+
+        if (currentHouse == null)
+        {
+            Debug.LogWarning("[HBSSampleHousePanel] No house selected.");
+            return;
+        }
+
+        // RemodelingController를 통해 Building 추가 시작 (드래그 모드 진입)
+        Building newBuilding = buildingSystem.RemodelingController.AddBuildingDuringRemodeling(buildingPrefabToAdd);
+
+        if (newBuilding != null)
+        {
+            Debug.Log($"[HBSSampleHousePanel] Started adding building '{newBuilding.name}'. Drag to position, left-click to place, right-click to cancel.");
+        }
+    }
+
+    /// <summary>
+    /// [Button - Debug] 현재 하우스의 모든 빌딩에 필요한 자원을 완납
     /// </summary>
     public void OnClickFillAllResources()
     {
         if (currentHouse == null)
         {
-            Debug.LogWarning("[HBSPanelHouseInfo] No house selected.");
+            Debug.LogWarning("[HBSSampleHousePanel] No house selected.");
             return;
         }
 
@@ -194,12 +265,14 @@ public class HBSPanelHouseInfo : MonoBehaviour
             stageCount++;
         }
 
-        Debug.Log($"[HBSPanelHouseInfo] Filled resources for {stageCount} stages in {buildingCount} buildings");
+        Debug.Log($"[HBSSampleHousePanel] Filled resources for {stageCount} stages in {buildingCount} buildings");
 
         // UI 갱신
         RefreshInfo();
     }
+    #endregion
 
+    #region Event Handlers
     private void HandleHouseSelected(House house)
     {
         RemodelingToInformationMode();
@@ -232,23 +305,34 @@ public class HBSPanelHouseInfo : MonoBehaviour
             RefreshInfo();
         }
     }
+    #endregion
 
+    #region UI Mode Switching
     private void InformationToRemodelingMode()
     {
-        informationPanel.SetActive(false);
-        remodelingPanel.SetActive(true);
+        if (informationPanel != null)
+            informationPanel.SetActive(false);
+
+        if (remodelingPanel != null)
+            remodelingPanel.SetActive(true);
     }
+
     private void RemodelingToInformationMode()
     {
-        informationPanel.SetActive(true);
-        remodelingPanel.SetActive(false);
+        if (informationPanel != null)
+            informationPanel.SetActive(true);
+
+        if (remodelingPanel != null)
+            remodelingPanel.SetActive(false);
     }
+    #endregion
 
     private void OnDestroy()
     {
         // 이벤트 구독 해제
         if (buildingSystem != null)
         {
+            buildingSystem.Events.OnHouseSelected -= HandleHouseSelected;
             buildingSystem.Events.OnRemodelingStarted -= HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted -= HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled -= HandleRemodelingCancelled;

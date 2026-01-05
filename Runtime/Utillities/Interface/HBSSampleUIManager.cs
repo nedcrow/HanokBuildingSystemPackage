@@ -3,13 +3,28 @@ using HanokBuildingSystem;
 using System.Collections.Generic;
 
 /// <summary>
-/// House 관련 UI를 관리하는 클래스
-/// HanokBuildingSystem의 이벤트를 구독하여 UI를 표시/숨김
+/// [Sample] House 관련 UI 표시/숨김 관리
+///
+/// 샘플 용도:
+/// - HanokBuildingSystem 이벤트 구독을 통한 UI 반응 데모
+/// - House 선택/해제 시 UI 패널 표시/숨김 예제
+/// - 시스템 상태 변경 시 UI 동기화 워크플로우 예제
+///
+/// 사용 방법:
+/// 1. 씬의 빈 GameObject에 이 컴포넌트 추가
+/// 2. Inspector에서 HBSSampleHousePanel을 houseInfoPanel에 할당
+/// 3. HanokBuildingSystem 이벤트가 자동으로 연결되어 UI 관리
+///
+/// 이벤트 연동:
+/// - OnHouseSelected: House 선택 시 패널 표시
+/// - OnHouseDeselected: House 해제 시 패널 숨김 (선택된 House가 없을 때만)
+/// - OnSelectionClearing: 모든 선택 해제 시 패널 숨김
+/// - OnStateChanged: NewBuilding 모드 전환 시 패널 숨김
 /// </summary>
-public class HBSUIManager : MonoBehaviour
+public class HBSSampleUIManager : MonoBehaviour
 {
     [Header("UI Panels")]
-    [SerializeField] private HBSPanelHouseInfo houseInfoPanel;
+    [SerializeField] private HBSSampleHousePanel houseInfoPanel;
 
     private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
 

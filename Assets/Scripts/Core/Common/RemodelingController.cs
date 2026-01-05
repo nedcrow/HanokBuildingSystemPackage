@@ -18,6 +18,7 @@ namespace HanokBuildingSystem
     {
         [Header("Dependencies")]
         [SerializeField] private HanokBuildingSystem buildingSystem;
+        [SerializeField] private BuildingCatalog buildingCatalog;
         [SerializeField] private Camera mainCamera;
         [SerializeField] private bool clampPlacementPosition = true;
 
@@ -47,6 +48,7 @@ namespace HanokBuildingSystem
         private Coroutine draggingCoroutine;
         private Vector3 originalPosition;
         private Quaternion originalRotation;
+        private bool isNewlyAddedBuilding = false; // 현재 드래그 중인 빌딩이 새로 추가된 것인지 추적
 
         // Mouse position from new Input System
         private Vector2 currentMousePosition;
@@ -148,6 +150,14 @@ namespace HanokBuildingSystem
                 // 배치 성공
                 StopDragging();
 
+                // 새로 추가된 빌딩인 경우 하우스에 추가
+                if (isNewlyAddedBuilding && targetHouse != null)
+                {
+                    targetHouse.AddBuilding(selectedBuilding);
+                    Debug.Log($"[RemodelingController] Successfully added new building '{selectedBuilding.name}' to {targetHouse.name}");
+                    isNewlyAddedBuilding = false;
+                }
+
                 buildingSystem.Events.RaiseBuildingModified(targetHouse, selectedBuilding);
 
                 selectedBuilding = null;
@@ -157,29 +167,53 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// 현재 선택 취소 및 원래 위치로 복귀
+        /// 현재 선택 취소 및 원래 위치로 복귀 (새로 추가된 빌딩은 카탈로그에 반환)
         /// </summary>
         public void CancelSelection()
         {
-            if (selectedBuilding != null && targetHouse != null)
+            if (selectedBuilding != null)
             {
-                // 원래 위치로 복원
-                selectedBuilding.transform.position = originalPosition;
-                selectedBuilding.transform.rotation = originalRotation;
-
-                // 원래 위치의 유효성 검증
-                bool isValid = ValidatePlacement(selectedBuilding, targetHouse);
-
-                if (isValid)
+                // 새로 추가된 빌딩인 경우 카탈로그에 반환
+                if (isNewlyAddedBuilding)
                 {
+                    if (buildingCatalog != null)
+                    {
+                        buildingCatalog.ReturnBuilding(selectedBuilding);
+                        Debug.Log($"[RemodelingController] Cancelled adding new building '{selectedBuilding.name}' and returned to catalog.");
+                    }
+                    else
+                    {
+                        Destroy(selectedBuilding.gameObject);
+                        Debug.LogWarning($"[RemodelingController] BuildingCatalog is null. Destroyed building '{selectedBuilding.name}' instead.");
+                    }
+
                     StopDragging();
                     selectedBuilding = null;
                     targetHouse = null;
+                    isNewlyAddedBuilding = false;
+                    return;
                 }
-                else
+
+                // 기존 빌딩인 경우 원래 위치로 복원
+                if (targetHouse != null)
                 {
-                    Debug.LogWarning($"[RemodelingController] Original position for {selectedBuilding.name} is no longer valid. " +
-                    "Building may overlap or be outside house bounds.");
+                    selectedBuilding.transform.position = originalPosition;
+                    selectedBuilding.transform.rotation = originalRotation;
+
+                    // 원래 위치의 유효성 검증
+                    bool isValid = ValidatePlacement(selectedBuilding, targetHouse);
+
+                    if (isValid)
+                    {
+                        StopDragging();
+                        selectedBuilding = null;
+                        targetHouse = null;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[RemodelingController] Original position for {selectedBuilding.name} is no longer valid. " +
+                        "Building may overlap or be outside house bounds.");
+                    }
                 }
             }
         }
@@ -288,6 +322,63 @@ namespace HanokBuildingSystem
             ClearBackup();
             targetHouse = null;
             return true;
+        }
+
+        /// <summary>
+        /// 리모델링 중 새 Building 추가 시작 - 드래그 모드로 진입
+        /// 좌클릭으로 배치 확정, 우클릭으로 취소
+        /// </summary>
+        /// <param name="buildingPrefab">추가할 Building 프리팹</param>
+        /// <param name="position">초기 배치 위치 (기본값: 하우스 중심)</param>
+        public Building AddBuildingDuringRemodeling(GameObject buildingPrefab, Vector3? position = null)
+        {
+            if (targetHouse == null)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot add building: No target house in remodeling.");
+                return null;
+            }
+
+            if (buildingPrefab == null)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot add building: Building prefab is null.");
+                return null;
+            }
+
+            // 이미 드래그 중이면 취소
+            if (isDragging)
+            {
+                CancelSelection();
+            }
+
+            // 배치 위치 결정 (지정되지 않으면 하우스 중심)
+            Vector3 spawnPosition = position ?? targetHouse.transform.position;
+
+            // Building 인스턴스 생성 (카탈로그가 있으면 풀에서 가져오기)
+            Building newBuilding;
+            if (buildingCatalog != null)
+            {
+                newBuilding = buildingCatalog.GetBuilding(buildingPrefab, spawnPosition, Quaternion.identity);
+            }
+            else
+            {
+                newBuilding = Instantiate(buildingPrefab, spawnPosition, Quaternion.identity).GetComponent<Building>();
+            }
+
+            if (newBuilding == null)
+            {
+                Debug.LogError("[RemodelingController] Failed to create building instance.");
+                return null;
+            }
+
+            newBuilding.transform.SetParent(targetHouse.transform);
+
+            // 드래그 모드로 진입 (하우스에는 아직 추가하지 않음)
+            isNewlyAddedBuilding = true;
+            SelectBuilding(newBuilding, targetHouse);
+
+            Debug.Log($"[RemodelingController] Started adding new building '{newBuilding.name}'. Left-click to place, right-click to cancel.");
+
+            return newBuilding;
         }
         #endregion
 
@@ -631,7 +722,7 @@ namespace HanokBuildingSystem
         }
         #endregion
 
-        #region Backup & Restore
+        #region State Backup
         /// <summary>
         /// 하우스의 빌딩 상태 백업
         /// </summary>
@@ -661,7 +752,17 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// 백업된 상태로 복원
+        /// 백업 데이터 클리어
+        /// </summary>
+        private void ClearBackup()
+        {
+            buildingBackup.Clear();
+        }
+        #endregion
+
+        #region Remodeling Completion Helpers
+        /// <summary>
+        /// [Cancel 버튼용] 백업된 상태로 복원
         /// </summary>
         private void RestoreHouseState()
         {
@@ -678,11 +779,15 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// 백업 데이터와 비교하여 변경된 빌딩들의 건설 단계를 0으로 초기화
+        /// [Confirm 버튼용] 백업 데이터와 비교하여 리모델링 변경사항 적용
+        /// - 변경된 빌딩: stage 0으로 초기화
+        /// - 새로 추가된 빌딩: stage 0으로 초기화
+        /// - 변경되지 않은 빌딩: 백업된 원래 stage로 복원
         /// </summary>
         private void ResetModifiedBuildingsToStageZero()
         {
             int modifiedCount = 0;
+            int unchangedCount = 0;
 
             foreach (BuildingSnapshot snapshot in buildingBackup)
             {
@@ -694,9 +799,17 @@ namespace HanokBuildingSystem
 
                 if (positionChanged || rotationChanged)
                 {
+                    // 변경된 빌딩 → stage 0
                     snapshot.building.SetStageIndex(0);
                     modifiedCount++;
                     Debug.Log($"[RemodelingController] Reset {snapshot.building.name} to construction stage 0 (modified)");
+                }
+                else
+                {
+                    // 변경되지 않은 빌딩 → 백업된 원래 stage로 복원
+                    snapshot.building.SetStageIndex(snapshot.stageIndex);
+                    unchangedCount++;
+                    Debug.Log($"[RemodelingController] Restored {snapshot.building.name} to original stage {snapshot.stageIndex} (unchanged)");
                 }
             }
 
@@ -718,15 +831,7 @@ namespace HanokBuildingSystem
                 }
             }
 
-            Debug.Log($"[RemodelingController] Reset {modifiedCount} modified/added buildings to stage 0.");
-        }
-
-        /// <summary>
-        /// 백업 데이터 클리어
-        /// </summary>
-        private void ClearBackup()
-        {
-            buildingBackup.Clear();
+            Debug.Log($"[RemodelingController] Applied remodeling: {modifiedCount} modified/new buildings to stage 0, {unchangedCount} unchanged buildings restored.");
         }
         #endregion
     }
