@@ -191,7 +191,6 @@ namespace HanokBuildingSystem
             if (!IsCompleted && constructionMode == ConstructionMode.TimeBased)
             {
                 timeBasedCoroutine = StartCoroutine(TimeBasedConstructionCoroutine());
-                Debug.Log($"[Building] {name} started TimeBased construction (duration: {constructionDuration}s per stage)");
             }
         }
 

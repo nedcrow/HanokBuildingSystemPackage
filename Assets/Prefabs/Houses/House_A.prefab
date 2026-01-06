@@ -51,7 +51,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e6984f46f2a4ed74e8dc39aaedf02527, type: 2}
   - {fileID: 11400000, guid: cc508b7f466708b4e85fae6ab9f990f7, type: 2}
   - {fileID: 11400000, guid: f63bd6a9546a24b4db30cbaed4e035e4, type: 2}
-  houseType: {fileID: 0}
+  houseType: {fileID: 11400000, guid: fe31276e8ba19c64796a773b97114144, type: 2}
   boundaryPlot:
     allVertices: []
     defaultLineThickness: 0.1

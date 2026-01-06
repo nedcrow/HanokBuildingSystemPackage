@@ -49,6 +49,7 @@ namespace HanokBuildingSystem
         private Vector3 originalPosition;
         private Quaternion originalRotation;
         private bool isNewlyAddedBuilding = false; // 현재 드래그 중인 빌딩이 새로 추가된 것인지 추적
+        private bool isEraserMode = false; // 지우개 모드 활성화 여부
 
         // Mouse position from new Input System
         private Vector2 currentMousePosition;
@@ -88,7 +89,17 @@ namespace HanokBuildingSystem
 
         #region Public API
         /// <summary>
+        /// 지우개 모드 설정/해제
+        /// </summary>
+        public void SetEraserMode(bool enabled)
+        {
+            isEraserMode = enabled;
+            Debug.Log($"[RemodelingController] Eraser mode {(enabled ? "enabled" : "disabled")}");
+        }
+
+        /// <summary>
         /// 화면 위치에서 Building을 선택 시도
+        /// 지우개 모드일 때는 Building을 제거
         /// </summary>
         public bool TrySelectBuilding(Vector2 screenPosition, House house)
         {
@@ -104,6 +115,12 @@ namespace HanokBuildingSystem
                 return false;
             }
 
+            // 지우개 모드일 때는 건물 제거
+            if (isEraserMode)
+            {
+                return RemoveBuildingDuringRemodeling(building, house);
+            }
+            
             // 선택한 Building이 해당 House에 속하는지 확인
             if (!house.Buildings.Contains(building))
             {
@@ -111,6 +128,7 @@ namespace HanokBuildingSystem
                 return false;
             }
 
+            // 일반 모드일 때는 건물 선택
             SelectBuilding(building, house);
             return true;
         }
@@ -136,6 +154,14 @@ namespace HanokBuildingSystem
                     case CollisionResponseType.SwapTarget:
                         if (targetBuilding != null && targetHouse != null)
                         {
+                            // 새로 추가된 빌딩인 경우 하우스에 추가
+                            if (isNewlyAddedBuilding)
+                            {
+                                targetHouse.AddBuilding(selectedBuilding);
+                                Debug.Log($"[RemodelingController] Added new building '{selectedBuilding.name}' to {targetHouse.name} (via swap)");
+                                isNewlyAddedBuilding = false;
+                            }
+
                             StopDragging();
                             SelectBuilding(targetBuilding, targetHouse);
 
@@ -379,6 +405,91 @@ namespace HanokBuildingSystem
             Debug.Log($"[RemodelingController] Started adding new building '{newBuilding.name}'. Left-click to place, right-click to cancel.");
 
             return newBuilding;
+        }
+
+        /// <summary>
+        /// 리모델링 중 Building 제거
+        /// </summary>
+        /// <param name="building">제거할 Building</param>
+        /// <param name="house">Building이 속한 House</param>
+        /// <returns>제거 성공 여부</returns>
+        public bool RemoveBuildingDuringRemodeling(Building building, House house)
+        {
+            if (building == null || house == null)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot remove building: Building or House is null.");
+                return false;
+            }
+
+            if (targetHouse == null || targetHouse != house)
+            {
+                Debug.LogWarning("[RemodelingController] Cannot remove building: Not in remodeling mode for this house.");
+                return false;
+            }
+
+            // House의 Buildings 목록에 없으면 제거 불가
+            if (!house.Buildings.Contains(building))
+            {
+                Debug.LogWarning($"[RemodelingController] Cannot remove building: '{building.name}' does not belong to {house.name}");
+                return false;
+            }
+
+            // 필수 건물인지 확인
+            if (IsRequiredBuilding(building, house))
+            {
+                Debug.LogWarning($"[RemodelingController] Cannot remove building: '{building.name}' is a required building for {house.name}");
+                return false;
+            }
+
+            // House에서 Building 제거
+            house.RemoveBuilding(building);
+
+            // Building을 카탈로그에 반환
+            if (buildingCatalog != null)
+            {
+                buildingCatalog.ReturnBuilding(building);
+            }
+            else
+            {
+                Destroy(building.gameObject);
+            }
+
+            buildingSystem.Events.RaiseBuildingModified(house, building);
+            Debug.Log($"[RemodelingController] Removed building '{building.name}' from {house.name}");
+
+            return true;
+        }
+
+        /// <summary>
+        /// Building이 House의 필수 건물인지 확인
+        /// 필수 건물 타입이더라도 같은 타입이 2개 이상 있으면 제거 가능
+        /// </summary>
+        private bool IsRequiredBuilding(Building building, House house)
+        {
+            if (building == null || house == null || building.StatusData == null)
+                return false;
+
+            BuildingTypeData buildingType = building.StatusData.BuildingType;
+            if (buildingType == null)
+                return false;
+
+            // House의 RequiredBuildingTypes에 포함되어 있는지 확인
+            if (!house.RequiredBuildingTypes.Contains(buildingType))
+                return false;
+
+            // 같은 타입의 건물이 몇 개 있는지 확인
+            int count = 0;
+            foreach (var b in house.Buildings)
+            {
+                if (b != null && b.StatusData != null &&
+                    b.StatusData.BuildingType == buildingType)
+                {
+                    count++;
+                }
+            }
+
+            // 마지막 하나만 남은 경우에만 제거 불가 (true 반환)
+            return count <= 1;
         }
         #endregion
 

@@ -39,6 +39,12 @@ public class HBSSampleHousePanel : MonoBehaviour
     [SerializeField] private GameObject informationPanel;
     [SerializeField] private GameObject remodelingPanel;
 
+    [Header("Building List ScrollView")]
+    [SerializeField] private GameObject buildingScrollView;
+    [SerializeField] private RectTransform buildingListContent;
+    [SerializeField] private float buildingSlotHeight = 50f;
+    private List<GameObject> buildingSlots = new List<GameObject>();
+
     [Header("UI Elements - Status")]
     [SerializeField] private TextMeshProUGUI residents;
     [SerializeField] private TextMeshProUGUI durability;
@@ -58,10 +64,16 @@ public class HBSSampleHousePanel : MonoBehaviour
 
     [Header("Remodeling - Add Building")]
     [SerializeField] private GameObject buildingPrefabToAdd;
-    [Tooltip("리모델링 중 추가할 Building 프리팹을 지정하세요 (GameObject)")]
+
+    [Header("Remodeling - Eraser Mode")]
+    [SerializeField] private Button eraserButton;
+    [SerializeField] private UnityEngine.UI.Image eraserButtonImage;
+    [SerializeField] private Color eraserActiveColor = Color.red;
+    [SerializeField] private Color eraserInactiveColor = Color.white;
 
     private House currentHouse;
     private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
+    private bool isEraserMode = false;
 
     void Start()
     {
@@ -74,7 +86,111 @@ public class HBSSampleHousePanel : MonoBehaviour
             buildingSystem.Events.OnRemodelingStarted += HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted += HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled += HandleRemodelingCancelled;
+            buildingSystem.Events.OnBuildingModified += HandleBuildingModified;
         }
+
+        // Building 슬롯 초기화 (Content 하위의 자식들을 가져오기)
+        InitializeBuildingSlots();
+    }
+
+    /// <summary>
+    /// Content 하위의 미리 준비된 슬롯들을 리스트에 추가
+    /// </summary>
+    private void InitializeBuildingSlots()
+    {
+        // buildingListContent가 할당되지 않았으면 자동으로 찾기 시도
+        if (buildingListContent == null && buildingScrollView != null)
+        {
+            buildingListContent = FindContentInScrollView(buildingScrollView);
+
+            if (buildingListContent != null)
+            {
+                Debug.Log($"[HBSSampleHousePanel] Auto-found buildingListContent in ScrollView structure");
+            }
+        }
+
+        if (buildingListContent == null)
+        {
+            Debug.LogWarning("[HBSSampleHousePanel] buildingListContent is not assigned and could not be auto-detected");
+            return;
+        }
+
+        // Content에 Vertical Layout Group 자동 추가 (없는 경우)
+        EnsureLayoutGroup();
+
+        buildingSlots.Clear();
+
+        // Content 하위의 모든 자식을 슬롯으로 추가
+        for (int i = 0; i < buildingListContent.childCount; i++)
+        {
+            GameObject slot = buildingListContent.GetChild(i).gameObject;
+            buildingSlots.Add(slot);
+            slot.SetActive(false); // 초기에는 모두 비활성화
+        }
+
+        Debug.Log($"[HBSSampleHousePanel] Initialized {buildingSlots.Count} building slots");
+    }
+
+    /// <summary>
+    /// Content에 Vertical Layout Group이 있는지 확인하고 없으면 추가
+    /// </summary>
+    private void EnsureLayoutGroup()
+    {
+        if (buildingListContent == null) return;
+
+        UnityEngine.UI.VerticalLayoutGroup layoutGroup = buildingListContent.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
+
+        if (layoutGroup == null)
+        {
+            layoutGroup = buildingListContent.gameObject.AddComponent<UnityEngine.UI.VerticalLayoutGroup>();
+
+            // 기본 설정
+            layoutGroup.childControlHeight = true;
+            layoutGroup.childControlWidth = true;
+            layoutGroup.childForceExpandHeight = false;
+            layoutGroup.childForceExpandWidth = true;
+            layoutGroup.spacing = 0f;
+
+            Debug.Log($"[HBSSampleHousePanel] Added VerticalLayoutGroup to buildingListContent");
+        }
+    }
+
+    /// <summary>
+    /// ScrollView의 기본 구조(ScrollView - Viewport - Content)에서 Content 찾기
+    /// </summary>
+    private RectTransform FindContentInScrollView(GameObject scrollView)
+    {
+        if (scrollView == null) return null;
+
+        // ScrollView 직접 하위에서 "Viewport" 찾기
+        Transform viewport = scrollView.transform.Find("Viewport");
+        if (viewport != null)
+        {
+            // Viewport 하위에서 "Content" 찾기
+            Transform content = viewport.Find("Content");
+            if (content != null)
+            {
+                return content.GetComponent<RectTransform>();
+            }
+        }
+
+        // 대소문자 구분 없이 검색 시도
+        foreach (Transform child in scrollView.transform)
+        {
+            if (child.name.ToLower() == "viewport")
+            {
+                foreach (Transform grandChild in child)
+                {
+                    if (grandChild.name.ToLower() == "content")
+                    {
+                        return grandChild.GetComponent<RectTransform>();
+                    }
+                }
+            }
+        }
+
+        Debug.LogWarning($"[HBSSampleHousePanel] Could not find Content in ScrollView '{scrollView.name}'. Expected structure: ScrollView/Viewport/Content");
+        return null;
     }
 
     /// <summary>
@@ -92,7 +208,7 @@ public class HBSSampleHousePanel : MonoBehaviour
 
         // Basic Info
         if (houseName != null)
-            houseName.text = house.name;
+            houseName.text = house.HouseType.DisplayTypeName;
 
         if (houseType != null)
             houseType.text = house.HouseType.ToString();
@@ -113,6 +229,100 @@ public class HBSSampleHousePanel : MonoBehaviour
         // Storage
         if (storage != null)
             storage.text = $"저장소: {house.CurrentStorageUsed}/{house.StorageCapacity}";
+
+        // Building List
+        UpdateBuildingList(house);
+    }
+
+    /// <summary>
+    /// Building 목록 ScrollView 업데이트
+    /// 활성화된 슬롯 수에 맞춰 Content 높이 조정
+    /// </summary>
+    private void UpdateBuildingList(House house)
+    {
+        if (house == null || buildingListContent == null || buildingSlots.Count == 0)
+            return;
+
+        // 모든 슬롯 비활성화 및 클리어
+        foreach (var slot in buildingSlots)
+        {
+            slot.SetActive(false);
+
+            // HBSSampleBuildingSlot이 있으면 클리어
+            HBSSampleBuildingSlot slotComponent = slot.GetComponent<HBSSampleBuildingSlot>();
+            if (slotComponent != null)
+            {
+                slotComponent.Clear();
+            }
+        }
+
+        // 빌딩 개수만큼 슬롯 활성화 및 정보 표시
+        int buildingCount = house.Buildings.Count;
+        for (int i = 0; i < buildingCount && i < buildingSlots.Count; i++)
+        {
+            GameObject slot = buildingSlots[i];
+            Building building = house.Buildings[i];
+
+            slot.SetActive(true);
+
+            // HBSSampleBuildingSlot 컴포넌트를 통해 Building 정보 설정
+            HBSSampleBuildingSlot slotComponent = slot.GetComponent<HBSSampleBuildingSlot>();
+            if (slotComponent != null && building != null)
+            {
+                slotComponent.SetBuilding(building);
+
+                // 슬롯 클릭 이벤트 구독 (중복 구독 방지)
+                slotComponent.OnSlotClicked -= HandleBuildingSlotClicked;
+                slotComponent.OnSlotClicked += HandleBuildingSlotClicked;
+            }
+            else
+            {
+                // 폴백: 컴포넌트가 없으면 직접 TextMeshProUGUI 업데이트
+                TextMeshProUGUI slotText = slot.GetComponentInChildren<TextMeshProUGUI>();
+                if (slotText != null && building != null)
+                {
+                    slotText.text = building.name;
+                }
+            }
+        }
+
+        // Content 높이 조정 (VerticalLayoutGroup 여부와 관계없이 항상 수동 설정)
+        int activeSlotCount = Mathf.Min(buildingCount, buildingSlots.Count);
+        float totalHeight = 0f;
+
+        // 실제 슬롯 높이 가져오기 (buildingSlots가 있으면 첫 번째 슬롯의 높이 사용)
+        float slotHeight = buildingSlotHeight; // 기본값
+        if (buildingSlots.Count > 0 && buildingSlots[0] != null)
+        {
+            RectTransform slotRect = buildingSlots[0].GetComponent<RectTransform>();
+            if (slotRect != null)
+            {
+                slotHeight = slotRect.rect.height;
+            }
+        }
+
+        // VerticalLayoutGroup이 있으면 spacing 고려
+        VerticalLayoutGroup layoutGroup = buildingListContent.GetComponent<VerticalLayoutGroup>();
+        if (layoutGroup != null)
+        {
+            // 각 슬롯 높이 + spacing
+            totalHeight = activeSlotCount * slotHeight;
+            if (activeSlotCount > 1)
+            {
+                totalHeight += layoutGroup.spacing * (activeSlotCount - 1);
+            }
+
+            // LayoutGroup의 padding 고려
+            totalHeight += layoutGroup.padding.top + layoutGroup.padding.bottom;
+        }
+        else
+        {
+            // LayoutGroup이 없으면 단순 계산
+            totalHeight = activeSlotCount * slotHeight;
+        }
+
+        // Content 높이 설정
+        buildingListContent.sizeDelta = new Vector2(buildingListContent.sizeDelta.x, totalHeight);
     }
 
     /// <summary>
@@ -216,6 +426,74 @@ public class HBSSampleHousePanel : MonoBehaviour
         {
             Debug.Log($"[HBSSampleHousePanel] Started adding building '{newBuilding.name}'. Drag to position, left-click to place, right-click to cancel.");
         }
+
+        // 지우개 모드 해제
+        SetEraserMode(false);
+    }
+
+    /// <summary>
+    /// [Button] 지우개 모드 토글
+    /// 지우개 모드에서 Building을 클릭하면 철거됩니다 (필수 건물 제외)
+    /// </summary>
+    public void OnClickEraser()
+    {
+        if (buildingSystem == null || buildingSystem.RemodelingController == null)
+        {
+            Debug.LogWarning("[HBSSampleHousePanel] Building system or remodeling controller is null.");
+            return;
+        }
+
+        if (currentHouse == null)
+        {
+            Debug.LogWarning("[HBSSampleHousePanel] No house selected.");
+            return;
+        }
+
+        // 지우개 모드 토글
+        SetEraserMode(!isEraserMode);
+    }
+
+    /// <summary>
+    /// 지우개 모드 상태 설정 및 UI 업데이트
+    /// </summary>
+    private void SetEraserMode(bool enabled)
+    {
+        isEraserMode = enabled;
+
+        // RemodelingController에도 지우개 모드 상태 전달
+        if (buildingSystem?.RemodelingController != null)
+        {
+            buildingSystem.RemodelingController.SetEraserMode(enabled);
+        }
+
+        // 지우개 버튼 색상 변경 (Button의 ColorBlock을 수정해서 상태 색상이 덮어쓰지 않도록)
+        if (eraserButton != null)
+        {
+            ColorBlock colorBlock = eraserButton.colors;
+            Color targetColor = isEraserMode ? eraserActiveColor : eraserInactiveColor;
+
+            // 모든 상태의 색상을 동일하게 설정하여 버튼 상태 변화에도 색상 유지
+            colorBlock.normalColor = targetColor;
+            colorBlock.highlightedColor = targetColor;
+            colorBlock.pressedColor = targetColor;
+            colorBlock.selectedColor = targetColor;
+
+            eraserButton.colors = colorBlock;
+        }
+        else if (eraserButtonImage != null)
+        {
+            // eraserButton이 없으면 Image 색상만 변경 (폴백)
+            eraserButtonImage.color = isEraserMode ? eraserActiveColor : eraserInactiveColor;
+        }
+
+        if (isEraserMode)
+        {
+            Debug.Log("[HBSSampleHousePanel] Eraser mode enabled. Click a building to remove it (required buildings cannot be removed).");
+        }
+        else
+        {
+            Debug.Log("[HBSSampleHousePanel] Eraser mode disabled.");
+        }
     }
 
     /// <summary>
@@ -293,6 +571,7 @@ public class HBSSampleHousePanel : MonoBehaviour
         if (house == currentHouse)
         {
             RemodelingToInformationMode();
+            SetEraserMode(false); // 지우개 모드 해제
             RefreshInfo();
         }
     }
@@ -302,7 +581,50 @@ public class HBSSampleHousePanel : MonoBehaviour
         if (house == currentHouse)
         {
             RemodelingToInformationMode();
+            SetEraserMode(false); // 지우개 모드 해제
             RefreshInfo();
+        }
+    }
+
+    private void HandleBuildingModified(House house, Building building)
+    {
+        if (house == currentHouse)
+        {
+            // Building 목록이 변경되었으므로 업데이트
+            UpdateBuildingList(currentHouse);
+        }
+    }
+
+    private void HandleBuildingSlotClicked(Building building)
+    {
+        if (building == null || currentHouse == null)
+            return;
+
+        // 지우개 모드가 활성화되어 있으면 건물 제거
+        if (isEraserMode)
+        {
+            if (buildingSystem == null || buildingSystem.RemodelingController == null)
+            {
+                Debug.LogWarning("[HBSSampleHousePanel] Cannot remove building: RemodelingController is not available.");
+                return;
+            }
+
+            bool removed = buildingSystem.RemodelingController.RemoveBuildingDuringRemodeling(building, currentHouse);
+
+            if (removed)
+            {
+                Debug.Log($"[HBSSampleHousePanel] Successfully removed building: {building.name}");
+                // 지우개 모드 유지 (계속 지울 수 있도록)
+            }
+            else
+            {
+                Debug.LogWarning($"[HBSSampleHousePanel] Failed to remove building: {building.name}");
+            }
+        }
+        else
+        {
+            // 지우개 모드가 아닐 때의 동작 (필요시 확장)
+            Debug.Log($"[HBSSampleHousePanel] Building clicked: {building.name}");
         }
     }
     #endregion
@@ -336,6 +658,7 @@ public class HBSSampleHousePanel : MonoBehaviour
             buildingSystem.Events.OnRemodelingStarted -= HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted -= HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled -= HandleRemodelingCancelled;
+            buildingSystem.Events.OnBuildingModified -= HandleBuildingModified;
         }
     }
 }
