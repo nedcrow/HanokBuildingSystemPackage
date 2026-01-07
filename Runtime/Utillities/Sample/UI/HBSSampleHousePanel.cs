@@ -525,17 +525,25 @@ public class HBSSampleHousePanel : MonoBehaviour
                 continue;
             }
 
+            // 자원 컴포넌트가 있는 경우에만 자원 추가
+            ConstructionResourceComponent resourceComp = building.GetComponent<ConstructionResourceComponent>();
+            if (resourceComp == null)
+            {
+                Debug.LogWarning($"[Debug] {building.name} has no ConstructionResourceComponent. Skipping resource fill.");
+                continue;
+            }
+
             // 각 필요 자원을 대기 자원에 완납
             foreach (var cost in requiredResources)
             {
                 if (cost.ResourceType == null) continue;
 
-                int currentAmount = building.GetCollectedAmount(cost.ResourceType);
+                int currentAmount = resourceComp.GetCollectedAmount(cost.ResourceType);
                 int needed = cost.Amount - currentAmount;
 
                 if (needed > 0)
                 {
-                    building.AddPendingResource(cost.ResourceType, needed);
+                    resourceComp.AddPendingResource(cost.ResourceType, needed);
                     Debug.Log($"[Debug] {building.name} Stage {building.CurrentStageIndex}: Added {cost.ResourceType.name} x{needed} to pending resources");
                 }
             }

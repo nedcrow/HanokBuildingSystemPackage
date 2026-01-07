@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 8894082429240679417}
   - component: {fileID: 8715093340988692931}
   - component: {fileID: 4825714995169319402}
+  - component: {fileID: 4442108894727759291}
   - component: {fileID: 5389226059938747695}
   m_Layer: 0
   m_Name: B_AnChe_3x1
@@ -415,14 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Building
   statusData: {fileID: 11400000, guid: 46c8e3900acc3e34788673bdaf80b4f1, type: 2}
   allowManualRotation: 1
-  stageVisuals:
-  - {fileID: 5944463784607224373}
-  - {fileID: 8398357051447881052}
-  - {fileID: 4127016148790111449}
-  currentStageIndex: 0
   constructionMode: 1
-  pendingResources: []
-  collectedResourcesForCurrentStage: []
   constructionDuration: 10
   currentConstructionDuration: 0
   requiredLaborPerStage: 100
@@ -446,6 +440,25 @@ MonoBehaviour:
   maxDurability: 100
   currentEnvironmentState: 0
   isDeteriorated: 0
+--- !u!114 &4442108894727759291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810427692713562516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8f9e3d4b2c1a5e6f7d8c9b0a1e2f3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.ConstructionResourceComponent
+  stageVisuals:
+  - {fileID: 5944463784607224373}
+  - {fileID: 8398357051447881052}
+  - {fileID: 4127016148790111449}
+  currentStageIndex: 0
+  pendingResources: []
+  collectedResourcesForCurrentStage: []
 --- !u!65 &5389226059938747695
 BoxCollider:
   m_ObjectHideFlags: 0

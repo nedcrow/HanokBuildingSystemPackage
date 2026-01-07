@@ -417,6 +417,7 @@ GameObject:
   - component: {fileID: 8715093340988692931}
   - component: {fileID: -1544146076648169946}
   - component: {fileID: 1121489863910775141}
+  - component: {fileID: 8998350658775851689}
   m_Layer: 0
   m_Name: B_JangDokDae_1x1
   m_TagString: Untagged
@@ -454,12 +455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Building
   statusData: {fileID: 11400000, guid: d945a14070b9d4840a8139a2f6e93ec8, type: 2}
   allowManualRotation: 1
-  stageVisuals:
-  - {fileID: 1514553683723014719}
-  currentStageIndex: 0
   constructionMode: 1
-  pendingResources: []
-  collectedResourcesForCurrentStage: []
   constructionDuration: 10
   currentConstructionDuration: 0
   requiredLaborPerStage: 100
@@ -504,3 +500,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8998350658775851689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810427692713562516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8f9e3d4b2c1a5e6f7d8c9b0a1e2f3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.ConstructionResourceComponent
+  stageVisuals:
+  - {fileID: 1514553683723014719}
+  currentStageIndex: 0
+  pendingResources: []
+  collectedResourcesForCurrentStage: []

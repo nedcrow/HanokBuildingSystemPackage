@@ -17,15 +17,9 @@ namespace HanokBuildingSystem
         [SerializeField] private BuildingStatusData statusData;
         [SerializeField] private bool allowManualRotation = true;
 
-        [Header("Stage Visuals")]
-        [SerializeField] private GameObject[] stageVisuals = new GameObject[0];
-
         [Header("Construction")]
-        [SerializeField] private int currentStageIndex = 0;
         [SerializeField] private ConstructionMode constructionMode = ConstructionMode.Instant;
-        [SerializeField] private List<Cost> pendingResources = new List<Cost>(); // 대기 자원
-        [SerializeField] private List<Cost> collectedResourcesForCurrentStage = new List<Cost>(); // 현재 스테이지에 할당된 자원
-        
+
         [Header("Time-Based Settings")]
         [SerializeField] private float constructionDuration = 10f; // TimeBased: 각 단계당 소요 시간(초)
         [SerializeField] private float currentConstructionDuration = 0f; // 현재 단계의 진행 시간
@@ -42,12 +36,53 @@ namespace HanokBuildingSystem
         public Vector3 Size => statusData != null ? statusData.DefaultSize : Vector3.one;
         public BuildingStatusData StatusData => statusData;
         public bool AllowManualRotation => allowManualRotation;
-        public GameObject[] StageVisuals => stageVisuals;
-        public int CurrentStageIndex => currentStageIndex;
-        public int TotalStages => statusData.ConstructionStages.Count;
-        public bool IsCompleted => currentStageIndex >= statusData.ConstructionStages.Count;
-        public float ConstructionProgress => statusData.ConstructionStages.Count > 0 ? (float)currentStageIndex / statusData.ConstructionStages.Count : 1f;
         public List<GameObject> BuildingMembers => buildingMembers;
+
+        // Stage 관련 속성들 - ConstructionResourceComponent에 위임
+        public GameObject[] StageVisuals
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.StageVisuals : new GameObject[0];
+            }
+        }
+
+        public int CurrentStageIndex
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.CurrentStageIndex : 0;
+            }
+        }
+
+        public int TotalStages
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.TotalStages : (statusData?.ConstructionStages.Count ?? 0);
+            }
+        }
+
+        public bool IsCompleted
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.IsCompleted : true;
+            }
+        }
+
+        public float ConstructionProgress
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.ConstructionProgress : 1f;
+            }
+        }
         
         // Construction Mode Properties
         public ConstructionMode Mode => constructionMode;
@@ -132,11 +167,14 @@ namespace HanokBuildingSystem
         {
             if (statusData == null) return;
 
-            currentStageIndex = 0;
-            collectedResourcesForCurrentStage.Clear(); // 현재 스테이지 자원만 초기화 (대기 자원은 유지)
-            ResetStageProgress(); // 건설 진행도 초기화
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
+            {
+                constructionComp.Setup();
+            }
 
-            UpdateStageVisual(); // 현재 단계의 비주얼 활성화
+            ResetStageProgress(); // 건설 진행도 초기화
 
             DurabilityComponent durability = GetComponent<DurabilityComponent>();
             if (durability != null)
@@ -148,15 +186,13 @@ namespace HanokBuildingSystem
             {
                 StartTimeBasedConstruction();
             }
-
-            // Setup 후 대기 자원이 있으면 할당 시도
-            TryAllocateResourcesFromPending();
         }
 
         #region Construction Progress Methods
         private System.Collections.IEnumerator TimeBasedConstructionCoroutine()
         {
             const float updateInterval = 0.1f; // 0.1초마다 업데이트
+            ConstructionResourceComponent resourceComp = GetComponent<ConstructionResourceComponent>();
 
             while (!IsCompleted)
             {
@@ -168,7 +204,9 @@ namespace HanokBuildingSystem
                     yield return new WaitForSeconds(updateInterval);
 
                     // 현재 단계에 필요한 자원이 모두 마련되어야만 진행
-                    if (AreAllResourcesCollected())
+                    // 자원 컴포넌트가 없으면 자원 체크 생략
+                    bool resourcesReady = resourceComp == null || resourceComp.AreAllResourcesCollected();
+                    if (resourcesReady)
                     {
                         currentConstructionDuration += updateInterval;
                     }
@@ -271,25 +309,18 @@ namespace HanokBuildingSystem
         {
             if (IsCompleted) return false;
 
-            currentStageIndex++;
-            collectedResourcesForCurrentStage.Clear(); // 다음 단계로 넘어갈 때 현재 스테이지 자원만 초기화 (대기 자원은 유지)
-            ResetStageProgress(); // 다음 단계를 위해 진행도 초기화
-            UpdateStageVisual(); // 단계 변경 시 비주얼 업데이트
-
-            if (IsCompleted)
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
             {
-                OnConstructionCompleted();
-                // 건설 완료 시에도 대기 자원은 유지
-            }
-            else
-            {
-                Debug.Log($"[Building] {name} advanced to stage {currentStageIndex}/{TotalStages} (Progress: {StageProgress:P0})");
-
-                // 다음 스테이지로 이동했으니 대기 자원에서 할당 시도
-                TryAllocateResourcesFromPending();
+                bool result = constructionComp.AdvanceStage();
+                ResetStageProgress(); // 다음 단계를 위해 진행도 초기화
+                return result;
             }
 
-            return true;
+            // 컴포넌트가 없으면 기본 동작 (호환성)
+            Debug.LogWarning($"[Building] {name}: AdvanceStage called but no ConstructionResourceComponent found.");
+            return false;
         }
 
         public bool CanAdvanceStage()
@@ -299,9 +330,9 @@ namespace HanokBuildingSystem
 
         public ConstructionStage GetCurrentStage()
         {
-            if (currentStageIndex >= 0 && currentStageIndex < statusData.ConstructionStages.Count)
+            if (CurrentStageIndex >= 0 && CurrentStageIndex < statusData.ConstructionStages.Count)
             {
-                return statusData.ConstructionStages[currentStageIndex];
+                return statusData.ConstructionStages[CurrentStageIndex];
             }
             return null;
         }
@@ -312,202 +343,33 @@ namespace HanokBuildingSystem
             return stage?.RequiredResources ?? new Cost[0];
         }
 
-        /// <summary>
-        /// 대기 자원에 추가
-        /// </summary>
-        public void AddPendingResource(ResourceTypeData resourceType, int amount)
+        public void SetStageIndex(int index)
         {
-            if (resourceType == null || amount <= 0) return;
-
-            // 이미 대기 중인 자원 타입이면 합산
-            for (int i = 0; i < pendingResources.Count; i++)
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
             {
-                if (pendingResources[i].ResourceType == resourceType)
-                {
-                    Cost existingCost = pendingResources[i];
-                    pendingResources[i] = new Cost(resourceType, existingCost.Amount + amount);
-                    TryAllocateResourcesFromPending(); // 할당 시도
-                    return;
-                }
-            }
-
-            // 새로운 자원 타입이면 추가
-            pendingResources.Add(new Cost(resourceType, amount));
-            TryAllocateResourcesFromPending(); // 할당 시도
-        }
-
-        /// <summary>
-        /// 대기 자원에서 현재 스테이지로 자원 할당 시도
-        /// 스테이지 진행 중이 아닐 때만 할당
-        /// </summary>
-        private void TryAllocateResourcesFromPending()
-        {
-            if (IsCompleted) return;
-
-            // 스테이지 진행 중이면 할당하지 않음
-            if (IsStageInProgress())
-            {
+                constructionComp.SetStageIndex(index);
                 return;
             }
 
-            Cost[] requiredResources = GetCurrentStageRequiredResources();
-            if (requiredResources == null || requiredResources.Length == 0) return;
-
-            // 각 필요 자원에 대해 대기 자원에서 할당
-            foreach (var required in requiredResources)
-            {
-                if (required.ResourceType == null) continue;
-
-                int currentCollected = GetCollectedAmount(required.ResourceType);
-                int stillNeeded = required.Amount - currentCollected;
-
-                if (stillNeeded <= 0) continue; // 이미 충분히 수집됨
-
-                // 대기 자원에서 해당 타입 찾기
-                for (int i = 0; i < pendingResources.Count; i++)
-                {
-                    if (pendingResources[i].ResourceType == required.ResourceType)
-                    {
-                        int availableAmount = pendingResources[i].Amount;
-                        int toAllocate = Mathf.Min(availableAmount, stillNeeded);
-
-                        if (toAllocate > 0)
-                        {
-                            // 대기 자원에서 차감
-                            int remaining = availableAmount - toAllocate;
-                            if (remaining > 0)
-                            {
-                                pendingResources[i] = new Cost(required.ResourceType, remaining);
-                            }
-                            else
-                            {
-                                pendingResources.RemoveAt(i);
-                            }
-
-                            // 현재 스테이지에 할당
-                            AllocateToCurrentStage(required.ResourceType, toAllocate);
-
-                            Debug.Log($"[Building] {name}: Allocated {required.ResourceType.name} x{toAllocate} to Stage {currentStageIndex}");
-                        }
-                        break;
-                    }
-                }
-            }
-
-            // 모든 자원이 충족되었는지 확인
-            if (AreAllResourcesCollected())
-            {
-                Debug.Log($"[Building] {name}: Stage {currentStageIndex} resources fully collected!");
-            }
-        }
-
-        /// <summary>
-        /// 현재 스테이지에 자원 직접 할당 (내부 사용)
-        /// </summary>
-        private void AllocateToCurrentStage(ResourceTypeData resourceType, int amount)
-        {
-            if (resourceType == null || amount <= 0) return;
-
-            // 이미 할당된 자원 타입이면 합산
-            for (int i = 0; i < collectedResourcesForCurrentStage.Count; i++)
-            {
-                if (collectedResourcesForCurrentStage[i].ResourceType == resourceType)
-                {
-                    Cost existingCost = collectedResourcesForCurrentStage[i];
-                    collectedResourcesForCurrentStage[i] = new Cost(resourceType, existingCost.Amount + amount);
-                    return;
-                }
-            }
-
-            // 새로운 자원 타입이면 추가
-            collectedResourcesForCurrentStage.Add(new Cost(resourceType, amount));
-        }
-
-        /// <summary>
-        /// 현재 스테이지가 진행 중인지 확인
-        /// </summary>
-        private bool IsStageInProgress()
-        {
-            // 자원이 모두 모였고, 건설 진행도가 100% 미만이면 진행 중
-            if (AreAllResourcesCollected() && StageProgress < 1.0f)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 현재 단계에 수집된 자원 목록
-        /// </summary>
-        public List<Cost> GetCollectedResources()
-        {
-            return new List<Cost>(collectedResourcesForCurrentStage);
-        }
-
-        /// <summary>
-        /// 대기 자원 목록
-        /// </summary>
-        public List<Cost> GetPendingResources()
-        {
-            return new List<Cost>(pendingResources);
-        }
-
-        /// <summary>
-        /// 현재 단계에서 특정 자원이 얼마나 수집되었는지 확인
-        /// </summary>
-        public int GetCollectedAmount(ResourceTypeData resourceType)
-        {
-            if (resourceType == null) return 0;
-
-            foreach (var cost in collectedResourcesForCurrentStage)
-            {
-                if (cost.ResourceType == resourceType)
-                    return cost.Amount;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// 현재 단계의 모든 필요 자원이 충족되었는지 확인
-        /// </summary>
-        public bool AreAllResourcesCollected()
-        {
-            Cost[] required = GetCurrentStageRequiredResources();
-
-            foreach (var requiredCost in required)
-            {
-                int collected = GetCollectedAmount(requiredCost.ResourceType);
-                if (collected < requiredCost.Amount)
-                    return false;
-            }
-
-            return true;
-        }
-
-        public void SetStageIndex(int index)
-        {
-            currentStageIndex = Mathf.Clamp(index, 0, statusData.ConstructionStages.Count);
-            UpdateStageVisual();
-
-            if (IsCompleted)
-            {
-                OnConstructionCompleted();
-            }
+            // 컴포넌트가 없으면 기본 동작 (호환성)
+            Debug.LogWarning($"[Building] {name}: SetStageIndex called but no ConstructionResourceComponent found.");
         }
 
         public void CompleteConstruction()
         {
-            currentStageIndex = statusData.ConstructionStages.Count;
-            ResetStageProgress();
-            UpdateStageVisual();
-            OnConstructionCompleted();
-        }
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
+            {
+                constructionComp.CompleteConstruction();
+                ResetStageProgress();
+                return;
+            }
 
-        private void OnConstructionCompleted()
-        {
-            Debug.Log($"Building {name} construction completed!");
+            // 컴포넌트가 없으면 기본 동작 (호환성)
+            Debug.LogWarning($"[Building] {name}: CompleteConstruction called but no ConstructionResourceComponent found.");
         }
 
         public void AddBuildingMember(GameObject member)
@@ -533,42 +395,6 @@ namespace HanokBuildingSystem
             }
         }
 
-        /// <summary>
-        /// 현재 단계에 해당하는 비주얼만 활성화
-        /// </summary>
-        private void UpdateStageVisual()
-        {
-            if (stageVisuals == null || stageVisuals.Length == 0) return;
-
-            // 모든 단계 비주얼 비활성화
-            for (int i = 0; i < stageVisuals.Length; i++)
-            {
-                if (stageVisuals[i] != null)
-                {
-                    stageVisuals[i].SetActive(i <= currentStageIndex ? true : false);
-                }
-            }
-
-            // BuildingMember들도 동기화
-            UpdateBuildingMembersStage();
-        }
-
-        /// <summary>
-        /// 모든 BuildingMember를 현재 스테이지로 동기화
-        /// </summary>
-        private void UpdateBuildingMembersStage()
-        {
-            foreach (var memberObj in buildingMembers)
-            {
-                if (memberObj == null) continue;
-
-                BuildingMember member = memberObj.GetComponent<BuildingMember>();
-                if (member != null)
-                {
-                    member.SetStage(currentStageIndex);
-                }
-            }
-        }
 
         public void Rotate(float angle)
         {
@@ -585,13 +411,15 @@ namespace HanokBuildingSystem
         /// </summary>
         public virtual void ShowModelBuilding(Plot plot, Transform parent = null)
         {
-            // 완성 단계의 모습
-            foreach(GameObject stage in StageVisuals)
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
             {
-                stage.SetActive(true);
+                constructionComp.ShowModelBuilding();
+                return;
             }
 
-            // BuildingMember들도 모든 스테이지 표시
+            // 컴포넌트가 없으면 BuildingMember들만 모든 스테이지 표시 (호환성)
             foreach (var memberObj in buildingMembers)
             {
                 if (memberObj == null) continue;
@@ -665,45 +493,21 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// BuildingStatusData의 StageName을 기반으로 Body 아래의 GameObject를 자동으로 찾아 stageVisuals 배열에 할당
+        /// [Editor] BuildingStatusData의 StageName을 기반으로 Body 아래의 GameObject를 자동으로 찾아 stageVisuals 배열에 할당
+        /// ConstructionResourceComponent에 위임
         /// </summary>
         public void AutoAssignStageVisuals4Editor()
         {
-            if (statusData == null || body == null)
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
             {
-                Debug.LogWarning($"[Building] {name}: Cannot auto-assign stage visuals. StatusData or Body is null.");
+                constructionComp.AutoAssignStageVisuals();
                 return;
             }
 
-            SetBody();
-
-            int stageCount = statusData.ConstructionStages.Count;
-            stageVisuals = new GameObject[stageCount];
-
-            for (int i = 0; i < stageCount; i++)
-            {
-                ConstructionStage stage = statusData.ConstructionStages[i];
-                string stageName = stage.StageName;
-
-                if (string.IsNullOrEmpty(stageName))
-                {
-                    Debug.LogWarning($"[Building] {name}: Stage {i} has no name. Skipping.");
-                    continue;
-                }
-
-                // Body 아래에서 stageName과 일치하는 GameObject 찾기
-                Transform stageTransform = body.transform.Find(stageName);
-
-                if (stageTransform == null)
-                {                    
-                    Debug.LogWarning($"[Building] {name}: Stage {i} '{stageName}' not found under Body.");
-                }
-                else
-                {
-                    stageTransform.gameObject.SetActive(true);
-                    stageVisuals[i] = stageTransform.gameObject;
-                }
-            }
+            // 컴포넌트가 없으면 경고
+            Debug.LogWarning($"[Building] {name}: AutoAssignStageVisuals called but no ConstructionResourceComponent found. Please add ConstructionResourceComponent to use stage visuals.");
         }
 #endif
     }
