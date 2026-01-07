@@ -149,12 +149,27 @@
 
 ## Use Components: MonoBehaviour
 ### Building
+Building 클래스는 **컴포넌트 기반 아키텍처**를 채택하여 사용자 요구에 맞게 기능을 선택적으로 추가할 수 있습니다.
+
+#### 사용 레벨별 구성
+1. **Simple (간단한 사용)**: Building 컴포넌트만 사용
+   - 건설 과정 없이 **즉시 완성된 건물** 표시
+   - 비주얼과 기본 Transform 관리만 필요한 경우
+
+2. **Standard (표준 사용)**: Building + ConstructionResourceComponent
+   - **건설 단계 및 자원 관리 시스템** 활성화
+   - 단계별 비주얼 변화, 자원 수집 및 할당
+   - 대부분의 건설 시뮬레이션 요구사항 충족
+
+3. **Advanced (고급 사용)**: Building + Custom Component (ConstructionResourceComponent 상속)
+   - **커스텀 자원 시스템** 구현 (예: 게임 고유의 자원 타입)
+   - 특수한 건설 로직 추가
+   - ConstructionResourceComponent를 상속하여 확장
+
+#### Building 기본 속성
 - Transform 외에 **별도의 크기**를 가진다. 크기는 외부 수정 가능하다.
-- **건설단계, 환경상태**는 수량이 수정 가능한 `int` 형식이다.
-- 건설단계, 환경상태는 Building을 상속한 클래스에서 **가독성을 위한 가공을 권고**한다.
-- **건설 단계는 앞 단계가 이뤄져야** 다음 단계로 변경 가능하다.
-- 건설 단계가 진행되면 **각 단계별 자식 GameObject를 활성화** 시킨다.
-- **비용(Cost struct) 리스트**를 가진다.
+- **3가지 건설 모드** 지원 (Instant, TimeBased, LaborBased)
+- BuildingStatusData로 건물 속성 관리
 - **CRUD**
 
 #### 건설 진행 모드 (ConstructionMode)
@@ -188,6 +203,56 @@ Building은 **3가지 건설 방식** 중 하나를 선택할 수 있습니다:
   - TimeBased: 코루틴 진행 중이면 0.5, 대기 중이면 0
   - LaborBased: currentLabor / requiredLaborPerStage (LaborComponent 참조)
 
+
+### ConstructionResourceComponent
+- **건설 단계 및 자원 관리**를 담당하는 **선택적 컴포넌트**
+- **RequireComponent(typeof(Building))** - Building에 추가하여 사용
+- Building에 추가하지 않으면 건설 시스템이 비활성화되어 **간단한 사용 가능**
+
+#### 주요 기능
+1. **건설 단계 관리**
+   - `stageVisuals`: 각 단계별 비주얼 GameObject 배열
+   - `CurrentStageIndex`: 현재 건설 단계 (0부터 시작)
+   - `SetStageIndex(int)`: 단계 변경
+   - `AdvanceStage()`: 다음 단계로 진행
+   - `CompleteConstruction()`: 건설 완료 처리
+   - `AutoAssignStageVisuals()`: 에디터에서 Body 하위 GameObject 자동 할당
+
+2. **자원 관리**
+   - `AddPendingResource(ResourceTypeData, int)`: 대기 자원에 추가
+   - `TryAllocateResourcesFromPending()`: 대기 자원에서 현재 단계로 할당
+   - `GetCollectedAmount(ResourceTypeData)`: 현재 단계에서 수집된 자원량 확인
+   - `AreAllResourcesCollected()`: 현재 단계의 모든 자원이 충족되었는지 확인
+   - `GetResourceProgress()`: 자원 수집 진행도 (0~1)
+
+3. **자원 흐름**
+   ```
+   AddPendingResource() → pendingResources (대기 자원)
+        ↓ TryAllocateResourcesFromPending()
+   collectedResourcesForCurrentStage (현재 단계 할당 자원)
+        ↓ AreAllResourcesCollected() == true
+   AdvanceStage() → 다음 단계로 진행
+   ```
+
+#### 에디터 지원
+- **ConstructionResourceComponentEditor**: 전용 커스텀 인스펙터
+  - Stage Visuals 자동 할당 버튼
+  - 현재 단계 자원 현황 (진행도 바)
+  - 대기 자원 표시 (할당되었으나 사용되지 않은 자원)
+  - 각 스테이지 이름 및 할당 상태 표시 (✓/✗)
+
+#### 사용 예시
+```csharp
+// Standard 사용 - Building에 ConstructionResourceComponent 추가
+ConstructionResourceComponent resourceComp = building.GetComponent<ConstructionResourceComponent>();
+
+// 자원 추가
+resourceComp.AddPendingResource(woodType, 100);
+resourceComp.AddPendingResource(stoneType, 50);
+
+// 자원이 자동으로 현재 단계에 할당됨
+// 모든 자원이 모이고 건설 모드에 따라 시간/노동이 충족되면 AdvanceStage() 자동 호출
+```
 
 ### LaborComponent
 - **노동력 기반 건설**을 담당하는 컴포넌트

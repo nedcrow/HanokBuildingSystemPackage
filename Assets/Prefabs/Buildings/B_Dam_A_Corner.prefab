@@ -246,7 +246,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1963218458936992127}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -255,7 +255,7 @@ Transform:
   - {fileID: 2757468941081999832}
   - {fileID: 2623211393089246455}
   - {fileID: 1427276094123539906}
-  m_Father: {fileID: 8894082429240679417}
+  m_Father: {fileID: 3205296127904455970}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &2045288697164706717
 GameObject:
@@ -614,7 +614,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6923311985386989930}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -623,7 +623,7 @@ Transform:
   - {fileID: 7055806436608140284}
   - {fileID: 2416386598809948719}
   - {fileID: 3507041985166782262}
-  m_Father: {fileID: 8894082429240679417}
+  m_Father: {fileID: 3205296127904455970}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &7478591769962144395
 GameObject:
@@ -768,8 +768,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1718316504979586687}
-  - {fileID: 7956061128396820707}
+  - {fileID: 3205296127904455970}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8715093340988692931
@@ -784,25 +783,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 7
   size: {x: 1, y: 1, z: 1}
   statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
-      amount: 30
-    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
-      amount: 30
-  - requiredResources:
-    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
-      amount: 30
-    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
-      amount: 30
-  - requiredResources:
-    - resourceType: {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
-      amount: 30
+  allowManualRotation: 1
   currentStageIndex: 0
-  constructionMode: 0
+  constructionMode: 1
   constructionDuration: 10
   requiredLaborPerStage: 100
   buildingMembers: []
@@ -818,9 +803,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
   currentDurability: 100
   maxDurability: 100
-  durabilityDecayRate: 1
   currentEnvironmentState: 0
   isDeteriorated: 0
 --- !u!65 &-6995591202372115656
@@ -1066,3 +1052,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &8472245536268199943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3205296127904455970}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3205296127904455970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8472245536268199943}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1718316504979586687}
+  - {fileID: 7956061128396820707}
+  m_Father: {fileID: 8894082429240679417}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

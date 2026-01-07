@@ -121,7 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2157594749096217641}
   m_Layer: 0
-  m_Name: GameObject (3)
+  m_Name: Stage_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,7 +135,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046943698289321356}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1.25}
   m_ConstrainProportionsScale: 0
@@ -143,7 +143,7 @@ Transform:
   - {fileID: 6393877359053849390}
   - {fileID: 8354786327805296041}
   - {fileID: 8580551398205540337}
-  m_Father: {fileID: 8894082429240679417}
+  m_Father: {fileID: 7517303586332828758}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1801200944723673633
 GameObject:
@@ -266,7 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1718316504979586687}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Stage_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -280,7 +280,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1963218458936992127}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
@@ -289,7 +289,7 @@ Transform:
   - {fileID: 2757468941081999832}
   - {fileID: 6643357598375345085}
   - {fileID: 1427276094123539906}
-  m_Father: {fileID: 8894082429240679417}
+  m_Father: {fileID: 7517303586332828758}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2045288697164706717
 GameObject:
@@ -735,6 +735,39 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &6289876006240463472
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7517303586332828758}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7517303586332828758
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289876006240463472}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1718316504979586687}
+  - {fileID: 2157594749096217641}
+  m_Father: {fileID: 8894082429240679417}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7810427692713562516
 GameObject:
   m_ObjectHideFlags: 0
@@ -767,8 +800,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1718316504979586687}
-  - {fileID: 2157594749096217641}
+  - {fileID: 7517303586332828758}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8715093340988692931
@@ -783,28 +815,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f22a1e227bdd142afd564dd7c1777b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  type: 1
-  size: {x: 4, y: 1, z: 2}
   statusData: {fileID: 0}
-  constructionStages:
-  - requiredResources:
-    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
-      amount: 30
-    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
-      amount: 30
-  - requiredResources:
-    - resourceType: {fileID: 11400000, guid: d4abe5049d7c91240997593c0e102c6f, type: 2}
-      amount: 30
-    - resourceType: {fileID: 11400000, guid: 8e3d10df8f8ef374ea175737a35c2769, type: 2}
-      amount: 30
-  - requiredResources:
-    - resourceType: {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
-      amount: 30
-  currentStageIndex: 0
-  constructionMode: 0
+  allowManualRotation: 1
+  constructionMode: 1
   constructionDuration: 10
+  currentConstructionDuration: 0
   requiredLaborPerStage: 100
   buildingMembers: []
+  body: {fileID: 6289876006240463472}
 --- !u!114 &3134727060689934381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,9 +835,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50ede05d33bbdb469591fa43d4a3e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.DurabilityComponent
+  durabilityPercent: 1
+  durabilityDecayRate: 1
   currentDurability: 100
   maxDurability: 100
-  durabilityDecayRate: 1
   currentEnvironmentState: 0
   isDeteriorated: 0
 --- !u!65 &-3740338001444487322

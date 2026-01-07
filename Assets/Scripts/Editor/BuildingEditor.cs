@@ -7,21 +7,19 @@ namespace HanokBuildingSystem.Editor
     [CanEditMultipleObjects]
     public class BuildingEditor : UnityEditor.Editor
     {
-        private SerializedProperty sizeProp;
         private SerializedProperty statusDataProp;
-        private SerializedProperty currentStageIndexProp;
         private SerializedProperty constructionModeProp;
         private SerializedProperty constructionDurationProp;
+        private SerializedProperty currentConstructionDuration;
         private SerializedProperty requiredLaborPerStageProp;
         private SerializedProperty buildingMembersProp;
 
         private void OnEnable()
         {
-            sizeProp                    = serializedObject.FindProperty("size");
             statusDataProp              = serializedObject.FindProperty("statusData");
-            currentStageIndexProp       = serializedObject.FindProperty("currentStageIndex");
             constructionModeProp        = serializedObject.FindProperty("constructionMode");
             constructionDurationProp    = serializedObject.FindProperty("constructionDuration");
+            currentConstructionDuration = serializedObject.FindProperty("currentConstructionDuration");
             requiredLaborPerStageProp   = serializedObject.FindProperty("requiredLaborPerStage");
             buildingMembersProp         = serializedObject.FindProperty("buildingMembers");
         }
@@ -41,13 +39,22 @@ namespace HanokBuildingSystem.Editor
             EditorGUILayout.Space();
 
             // ▶ Building Configuration
-            EditorGUILayout.PropertyField(sizeProp);
             EditorGUILayout.PropertyField(statusDataProp);
 
             EditorGUILayout.Space();
 
-            // ▶ Construction
-            EditorGUILayout.PropertyField(currentStageIndexProp);
+            // Stage visuals and construction stages are now managed by ConstructionResourceComponent
+            Building building = target as Building;
+            ConstructionResourceComponent resourceComp = building?.GetComponent<ConstructionResourceComponent>();
+            if (resourceComp == null && building != null && building.StatusData != null && building.StatusData.ConstructionStages.Count > 0)
+            {
+                EditorGUILayout.HelpBox(
+                    "StatusData에 건설 단계가 지정되어있습니다.\n" +
+                    "ConstructionResourceComponent를 추가하여 건설 단계와 자원을 관리하세요.\n" +
+                    "(Add Component → ConstructionResourceComponent)",
+                    MessageType.Info
+                );
+            }
 
             EditorGUILayout.Space();
 
@@ -61,6 +68,7 @@ namespace HanokBuildingSystem.Editor
             using (new EditorGUI.DisabledScope(!isTimeBased))
             {
                 EditorGUILayout.PropertyField(constructionDurationProp);
+                EditorGUILayout.PropertyField(currentConstructionDuration);
             }
 
             // ▶ Labor-Based Settings
@@ -92,12 +100,11 @@ namespace HanokBuildingSystem.Editor
                 serializedObject,
                 "m_Script",
                 "type",
-                "size",
                 "statusData",
                 "constructionStages",
-                "currentStageIndex",
                 "constructionMode",
                 "constructionDuration",
+                "currentConstructionDuration",
                 "requiredLaborPerStage",
                 "buildingMembers"
             );

@@ -58,17 +58,21 @@ namespace HanokBuildingSystem
     [Serializable]
     public class ConstructionStage
     {
+        [SerializeField] private string stageName;
         [SerializeField] private Cost[] requiredResources;
 
+        public string StageName => stageName;
         public Cost[] RequiredResources => requiredResources;
 
         public ConstructionStage()
         {
+            this.stageName = "";
             this.requiredResources = new Cost[0];
         }
 
-        public ConstructionStage(Cost[] requiredResources)
+        public ConstructionStage(string stageName, Cost[] requiredResources)
         {
+            this.stageName = stageName;
             this.requiredResources = requiredResources;
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HanokBuildingSystem
@@ -30,6 +31,7 @@ namespace HanokBuildingSystem
         #region House Selection Events
         public event Action<House> OnHouseSelected;
         public event Action<House> OnHouseDeselected;
+        public event Action<List<House>> OnSelectionClearing;
         public event Action OnSelectionCleared;
         public event Action<House> OnHouseHoverEnter;
         public event Action<House> OnHouseHoverExit;
@@ -43,9 +45,9 @@ namespace HanokBuildingSystem
         #endregion
 
         #region Construction Events
-        public event Action OnConstructionStarted;
+        public event Action<House> OnConstructionStarted;
         public event Action<Building> OnBuildingConstructed;
-        public event Action OnConstructionCancelled;
+        public event Action<House> OnConstructionCancelled;
         #endregion
 
         #region Remodeling Events
@@ -68,6 +70,9 @@ namespace HanokBuildingSystem
         internal void RaiseHouseDeselected(House house)
             => OnHouseDeselected?.Invoke(house);
 
+        internal void RaiseSelectionClearing(List<House> houses)
+            => OnSelectionClearing?.Invoke(houses);
+
         internal void RaiseSelectionCleared()
             => OnSelectionCleared?.Invoke();
 
@@ -89,14 +94,14 @@ namespace HanokBuildingSystem
         internal void RaiseVertexRemoved(Plot plot, int index)
             => OnVertexRemoved?.Invoke(plot, index);
 
-        internal void RaiseConstructionStarted()
-            => OnConstructionStarted?.Invoke();
+        internal void RaiseConstructionStarted(House house)
+            => OnConstructionStarted?.Invoke(house);
 
         internal void RaiseBuildingConstructed(Building building)
             => OnBuildingConstructed?.Invoke(building);
 
-        internal void RaiseConstructionCancelled()
-            => OnConstructionCancelled?.Invoke();
+        internal void RaiseConstructionCancelled(House house)
+            => OnConstructionCancelled?.Invoke(house);
 
         internal void RaiseRemodelingStarted(House house)
             => OnRemodelingStarted?.Invoke(house);

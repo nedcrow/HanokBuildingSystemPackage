@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace HanokBuildingSystem
@@ -12,19 +14,15 @@ namespace HanokBuildingSystem
     public class Building : MonoBehaviour
     {
         [Header("Building Configuration")]
-        [SerializeField] private BuildingType type = BuildingType.None;
-        [SerializeField] private Vector3 size = Vector3.one;
         [SerializeField] private BuildingStatusData statusData;
+        [SerializeField] private bool allowManualRotation = true;
 
         [Header("Construction")]
-        [SerializeField] private List<ConstructionStage> constructionStages = new List<ConstructionStage>();
-        [SerializeField] private int currentStageIndex = 0;
-
-        [Header("Construction Progress")]
         [SerializeField] private ConstructionMode constructionMode = ConstructionMode.Instant;
-        
+
         [Header("Time-Based Settings")]
         [SerializeField] private float constructionDuration = 10f; // TimeBased: 각 단계당 소요 시간(초)
+        [SerializeField] private float currentConstructionDuration = 0f; // 현재 단계의 진행 시간
         private Coroutine timeBasedCoroutine = null;
 
         [Header("Labor-Based Settings")]
@@ -33,15 +31,58 @@ namespace HanokBuildingSystem
         [Header("Building Members")]
         [SerializeField] private List<GameObject> buildingMembers = new List<GameObject>();
 
-        public BuildingType Type => type;
-        public Vector3 Size => size;
+        [SerializeField] private GameObject body;
+        [SerializeField] public GameObject Body => body;
+        public Vector3 Size => statusData != null ? statusData.DefaultSize : Vector3.one;
         public BuildingStatusData StatusData => statusData;
-        public List<ConstructionStage> ConstructionStages => constructionStages;
-        public int CurrentStageIndex => currentStageIndex;
-        public int TotalStages => constructionStages.Count;
-        public bool IsCompleted => currentStageIndex >= constructionStages.Count;
-        public float ConstructionProgress => constructionStages.Count > 0 ? (float)currentStageIndex / constructionStages.Count : 1f;
+        public bool AllowManualRotation => allowManualRotation;
         public List<GameObject> BuildingMembers => buildingMembers;
+
+        // Stage 관련 속성들 - ConstructionResourceComponent에 위임
+        public GameObject[] StageVisuals
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.StageVisuals : new GameObject[0];
+            }
+        }
+
+        public int CurrentStageIndex
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.CurrentStageIndex : 0;
+            }
+        }
+
+        public int TotalStages
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.TotalStages : (statusData?.ConstructionStages.Count ?? 0);
+            }
+        }
+
+        public bool IsCompleted
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.IsCompleted : true;
+            }
+        }
+
+        public float ConstructionProgress
+        {
+            get
+            {
+                var constructionComp = GetComponent<ConstructionResourceComponent>();
+                return constructionComp != null ? constructionComp.ConstructionProgress : 1f;
+            }
+        }
         
         // Construction Mode Properties
         public ConstructionMode Mode => constructionMode;
@@ -55,14 +96,14 @@ namespace HanokBuildingSystem
             get
             {
                 if (IsCompleted) return 1f;
-                
+
                 switch (constructionMode)
                 {
                     case ConstructionMode.Instant:
                         return 1f;
                     case ConstructionMode.TimeBased:
-                        // 코루틴 진행 중이면 진행 중으로 표시
-                        return timeBasedCoroutine != null ? 0.5f : 0f;
+                        if (constructionDuration <= 0f) return 0f;
+                        return Mathf.Clamp01(currentConstructionDuration / constructionDuration);
                     case ConstructionMode.LaborBased:
                         LaborComponent laborComp = GetComponent<LaborComponent>();
                         return laborComp != null ? laborComp.LaborProgress : 0f;
@@ -72,12 +113,23 @@ namespace HanokBuildingSystem
             }
         }
 
+        private House parentHouse;
+
         private void Awake()
         {
             InitializeBuilding();
         }
 
-
+        private void Start()
+        {
+            // 부모 House 찾기 및 이벤트 구독
+            parentHouse = GetComponentInParent<House>();
+            if (parentHouse != null)
+            {
+                parentHouse.Events.OnConstructionStarted += HandleConstructionStarted;
+                parentHouse.Events.OnShowModelHouse += HandleShowModelHouse;
+            }
+        }
 
         private void InitializeBuilding()
         {
@@ -86,68 +138,87 @@ namespace HanokBuildingSystem
                 buildingMembers = new List<GameObject>();
             }
 
-            if (statusData != null)
+            SetBody();
+        }
+
+        public void SetBody()
+        {
+            if(body == null)
             {
-                LoadFromStatusData();
+                Transform[] childs = GetComponentsInChildren<Transform>();
+                foreach(var child in childs)
+                {
+                    if(child.name == "Body") {
+                        body = child.gameObject;
+                        break;
+                    }
+                }
             }
 
-            // 초기 ConstructionMode에 따라 설정
+            if(body == null)
+            {
+                body = new GameObject("Body");
+                body.transform.position = Vector3.zero;
+                body.transform.SetParent(transform);
+            }
+        }
+
+        public void Setup()
+        {
+            if (statusData == null) return;
+
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
+            {
+                constructionComp.Setup();
+            }
+
+            ResetStageProgress(); // 건설 진행도 초기화
+
+            DurabilityComponent durability = GetComponent<DurabilityComponent>();
+            if (durability != null)
+            {
+                durability.SetupFromStatusData(statusData);
+            }
+
             if (constructionMode == ConstructionMode.TimeBased)
             {
                 StartTimeBasedConstruction();
             }
         }
 
-        public void LoadFromStatusData()
-        {
-            if (statusData == null) return;
-
-            type = statusData.BuildingType;
-            size = statusData.DefaultSize;
-            constructionStages = new List<ConstructionStage>(statusData.ConstructionStages);
-            currentStageIndex = 0;
-            ResetStageProgress(); // 건설 진행도 초기화
-
-            UpdateBuildingScale();
-
-            DurabilityComponent durability = GetComponent<DurabilityComponent>();
-            if (durability != null)
-            {
-                durability.LoadFromStatusData(statusData);
-            }
-        }
-
-        public void SetStatusData(BuildingStatusData data)
-        {
-            statusData = data;
-            LoadFromStatusData();
-        }
-
-        public void SetType(BuildingType newType)
-        {
-            type = newType;
-        }
-
-        public void SetSize(Vector3 newSize)
-        {
-            size = newSize;
-            UpdateBuildingScale();
-        }
-
         #region Construction Progress Methods
         private System.Collections.IEnumerator TimeBasedConstructionCoroutine()
         {
+            const float updateInterval = 0.1f; // 0.1초마다 업데이트
+            ConstructionResourceComponent resourceComp = GetComponent<ConstructionResourceComponent>();
+
             while (!IsCompleted)
             {
-                yield return new WaitForSeconds(constructionDuration);
-                
+                currentConstructionDuration = 0f;
+
+                // 현재 단계 진행
+                while (currentConstructionDuration < constructionDuration && !IsCompleted)
+                {
+                    yield return new WaitForSeconds(updateInterval);
+
+                    // 현재 단계에 필요한 자원이 모두 마련되어야만 진행
+                    // 자원 컴포넌트가 없으면 자원 체크 생략
+                    bool resourcesReady = resourceComp == null || resourceComp.AreAllResourcesCollected();
+                    if (resourcesReady)
+                    {
+                        currentConstructionDuration += updateInterval;
+                    }
+                }
+
                 if (!IsCompleted)
                 {
                     AdvanceStage();
                     Debug.Log($"[Building] {name} TimeBased construction advanced to stage {CurrentStageIndex}/{TotalStages}");
                 }
             }
-            
+
             timeBasedCoroutine = null;
         }
 
@@ -158,7 +229,6 @@ namespace HanokBuildingSystem
             if (!IsCompleted && constructionMode == ConstructionMode.TimeBased)
             {
                 timeBasedCoroutine = StartCoroutine(TimeBasedConstructionCoroutine());
-                Debug.Log($"[Building] {name} started TimeBased construction (duration: {constructionDuration}s per stage)");
             }
         }
 
@@ -220,11 +290,13 @@ namespace HanokBuildingSystem
 
         private void ResetStageProgress()
         {
+            currentConstructionDuration = 0f;
+
             if (constructionMode == ConstructionMode.TimeBased)
             {
                 StartTimeBasedConstruction();
             }
-            
+
             LaborComponent laborComp = GetComponent<LaborComponent>();
             if (laborComp != null)
             {
@@ -237,19 +309,18 @@ namespace HanokBuildingSystem
         {
             if (IsCompleted) return false;
 
-            currentStageIndex++;
-            ResetStageProgress(); // 다음 단계를 위해 진행도 초기화
-
-            if (IsCompleted)
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
             {
-                OnConstructionCompleted();
-            }
-            else
-            {
-                Debug.Log($"[Building] {name} advanced to stage {currentStageIndex}/{TotalStages} (Progress: {StageProgress:P0})");
+                bool result = constructionComp.AdvanceStage();
+                ResetStageProgress(); // 다음 단계를 위해 진행도 초기화
+                return result;
             }
 
-            return true;
+            // 컴포넌트가 없으면 기본 동작 (호환성)
+            Debug.LogWarning($"[Building] {name}: AdvanceStage called but no ConstructionResourceComponent found.");
+            return false;
         }
 
         public bool CanAdvanceStage()
@@ -259,9 +330,9 @@ namespace HanokBuildingSystem
 
         public ConstructionStage GetCurrentStage()
         {
-            if (currentStageIndex >= 0 && currentStageIndex < constructionStages.Count)
+            if (CurrentStageIndex >= 0 && CurrentStageIndex < statusData.ConstructionStages.Count)
             {
-                return constructionStages[currentStageIndex];
+                return statusData.ConstructionStages[CurrentStageIndex];
             }
             return null;
         }
@@ -274,24 +345,31 @@ namespace HanokBuildingSystem
 
         public void SetStageIndex(int index)
         {
-            currentStageIndex = Mathf.Clamp(index, 0, constructionStages.Count);
-
-            if (IsCompleted)
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
             {
-                OnConstructionCompleted();
+                constructionComp.SetStageIndex(index);
+                return;
             }
+
+            // 컴포넌트가 없으면 기본 동작 (호환성)
+            Debug.LogWarning($"[Building] {name}: SetStageIndex called but no ConstructionResourceComponent found.");
         }
 
         public void CompleteConstruction()
         {
-            currentStageIndex = constructionStages.Count;
-            ResetStageProgress();
-            OnConstructionCompleted();
-        }
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
+            {
+                constructionComp.CompleteConstruction();
+                ResetStageProgress();
+                return;
+            }
 
-        private void OnConstructionCompleted()
-        {
-            Debug.Log($"Building {name} construction completed!");
+            // 컴포넌트가 없으면 기본 동작 (호환성)
+            Debug.LogWarning($"[Building] {name}: CompleteConstruction called but no ConstructionResourceComponent found.");
         }
 
         public void AddBuildingMember(GameObject member)
@@ -317,10 +395,6 @@ namespace HanokBuildingSystem
             }
         }
 
-        private void UpdateBuildingScale()
-        {
-            transform.localScale = size;
-        }
 
         public void Rotate(float angle)
         {
@@ -332,14 +406,77 @@ namespace HanokBuildingSystem
             transform.position = position;
         }
 
+        /// <summary>
+        /// 완성 단계의 모습
+        /// </summary>
+        public virtual void ShowModelBuilding(Plot plot, Transform parent = null)
+        {
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
+            {
+                constructionComp.ShowModelBuilding();
+                return;
+            }
+
+            // 컴포넌트가 없으면 BuildingMember들만 모든 스테이지 표시 (호환성)
+            foreach (var memberObj in buildingMembers)
+            {
+                if (memberObj == null) continue;
+
+                BuildingMember member = memberObj.GetComponent<BuildingMember>();
+                if (member != null)
+                {
+                    member.ShowAllStages();
+                }
+            }
+        }
+
+        #region House Event Handlers
+        /// <summary>
+        /// House의 건설 시작 이벤트 핸들러
+        /// </summary>
+        private void HandleConstructionStarted(House house, Plot plot)
+        {
+            if (house != parentHouse) return;
+
+            // 빌딩을 Stage 0으로 초기화
+            Setup();
+            SetStageIndex(0);
+
+            Debug.Log($"[Building] {name}: Initialized to Stage 0 for construction");
+        }
+
+        /// <summary>
+        /// House의 모델 하우스 표시 이벤트 핸들러
+        /// </summary>
+        private void HandleShowModelHouse(House house, Plot plot)
+        {
+            if (house != parentHouse) return;
+
+            // 완성 단계의 모습 표시
+            ShowModelBuilding(plot, house.transform);
+        }
+        #endregion
+
         private void OnDestroy()
         {
             StopTimeBasedConstruction();
+
+            // 이벤트 구독 해제
+            if (parentHouse != null)
+            {
+                parentHouse.Events.OnConstructionStarted -= HandleConstructionStarted;
+                parentHouse.Events.OnShowModelHouse -= HandleShowModelHouse;
+            }
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            // Body
+            SetBody();
+
             // LaborBased 모드일 때 LaborComponent 설정 동기화
             if (constructionMode == ConstructionMode.LaborBased)
             {
@@ -353,6 +490,24 @@ namespace HanokBuildingSystem
             // 값 검증
             constructionDuration = Mathf.Max(0.1f, constructionDuration);
             requiredLaborPerStage = Mathf.Max(1f, requiredLaborPerStage);
+        }
+
+        /// <summary>
+        /// [Editor] BuildingStatusData의 StageName을 기반으로 Body 아래의 GameObject를 자동으로 찾아 stageVisuals 배열에 할당
+        /// ConstructionResourceComponent에 위임
+        /// </summary>
+        public void AutoAssignStageVisuals4Editor()
+        {
+            // ConstructionResourceComponent가 있으면 위임
+            ConstructionResourceComponent constructionComp = GetComponent<ConstructionResourceComponent>();
+            if (constructionComp != null)
+            {
+                constructionComp.AutoAssignStageVisuals();
+                return;
+            }
+
+            // 컴포넌트가 없으면 경고
+            Debug.LogWarning($"[Building] {name}: AutoAssignStageVisuals called but no ConstructionResourceComponent found. Please add ConstructionResourceComponent to use stage visuals.");
         }
 #endif
     }

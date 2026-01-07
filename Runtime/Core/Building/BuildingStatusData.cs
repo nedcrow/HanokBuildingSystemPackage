@@ -8,7 +8,7 @@ namespace HanokBuildingSystem
     {
         [Header("Building Information")]
         [SerializeField] private string buildingName;
-        [SerializeField] private BuildingType buildingType;
+        [SerializeField] private BuildingTypeData buildingType;
         [SerializeField] private string description;
 
         [Header("Construction Stage")]
@@ -24,7 +24,6 @@ namespace HanokBuildingSystem
         [SerializeField] private float quakeResistance = 0.8f;
 
         [Header("Visual Prefabs")]
-        [SerializeField] private GameObject completedPrefab;
         [SerializeField] private Material normalMaterial;
         [SerializeField] private Material fireMaterial;
         [SerializeField] private Material rainMaterial;
@@ -32,7 +31,7 @@ namespace HanokBuildingSystem
         [SerializeField] private Material deterioratedMaterial;
 
         public string BuildingName => buildingName;
-        public BuildingType BuildingType => buildingType;
+        public BuildingTypeData BuildingType => buildingType;
         public string Description => description;
         public List<ConstructionStage> ConstructionStages => constructionStages;
         public float MaxDurability => maxDurability;
@@ -40,7 +39,6 @@ namespace HanokBuildingSystem
         public float FireResistance => fireResistance;
         public float WaterResistance => waterResistance;
         public float SnowResistance => quakeResistance;
-        public GameObject CompletedPrefab => completedPrefab;
         public Material NormalMaterial => normalMaterial;
         public Material FireMaterial => fireMaterial;
         public Material RainMaterial => rainMaterial;

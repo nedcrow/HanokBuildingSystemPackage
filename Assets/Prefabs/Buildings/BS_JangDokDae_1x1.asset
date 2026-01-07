@@ -16,7 +16,8 @@ MonoBehaviour:
   buildingType: {fileID: 11400000, guid: f63bd6a9546a24b4db30cbaed4e035e4, type: 2}
   description: "1x1 \uC0AC\uC774\uC988"
   constructionStages:
-  - requiredResources:
+  - stageName: Stage_0
+    requiredResources:
     - resourceType: {fileID: 11400000, guid: 18f5aec11951d044da3b8983d2b28c94, type: 2}
       amount: 50
   maxDurability: 100

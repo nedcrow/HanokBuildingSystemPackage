@@ -69,6 +69,17 @@ namespace HanokBuildingSystem
             }
         }
 
+        public void HideAllPlot()
+        {
+            foreach (var kvp in plotVisuals)
+            {
+                if (kvp.Value != null)
+                    Destroy(kvp.Value);
+            }
+
+            plotVisuals.Clear();
+        }
+
         public List<Plot> DividePlot_Horizontal(Plot plot, int count)
         {
             if (count <= 1)
