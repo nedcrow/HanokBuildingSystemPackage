@@ -200,6 +200,8 @@ namespace HanokBuildingSystem
 
         public override void ShowModelBuilding(Plot plot, Transform parent = null)
         {
+            base.ShowModelBuilding(plot, transform);
+
             if (plot != null)
             {
                 SnapToClosestOutlinePoint(plot);

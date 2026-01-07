@@ -19,9 +19,6 @@ namespace HanokBuildingSystem
         [SerializeField] private bool useCornerPieces = true;
         [SerializeField] private bool useEndPieces = true;
 
-        private List<GameObject> generatedWalls = new List<GameObject>();
-        private WallBuilding currentWallBuilding; // 현재 작업 중인 WallBuilding 참조
-
         private void Start()
         {
             if (memberCatalog == null)
@@ -40,7 +37,8 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// Plot 경계를 따라 담장을 생성
+        /// Plot 경계를 따라 담장을 생성/업데이트
+        /// 기존 벽을 재사용하고, 남는 벽은 풀로 반환, 부족한 벽은 새로 생성
         /// </summary>
         public List<GameObject> GenerateWallsForPlot(Plot plot, WallBuilding wallBuilding)
         {
@@ -79,11 +77,6 @@ namespace HanokBuildingSystem
                 Debug.LogWarning("[WallGenerator] WallEnd is null, end pieces will not be generated.");
             }
 
-            // 현재 작업 중인 WallBuilding 저장
-            currentWallBuilding = wallBuilding;
-
-            ClearGeneratedWalls();
-
             // 벽 크기에 맞춘 plot 반복 보정
             List<List<Vector3>> lineList = plot.LineList;
             for(int i=0; i<adjustmentCount; i++)
@@ -91,28 +84,38 @@ namespace HanokBuildingSystem
                 lineList = ResampleOutlineSegments(plot.LineList, wallBuilding.WallSegmentLength);
             }
 
-            // 각 외곽선(outline)에 대해 담장 생성
+            // 필요한 벽 위치/회전 정보 계산
+            List<WallInfo> requiredWalls = new List<WallInfo>();
             foreach (List<Vector3> outline in lineList)
             {
-                if (outline == null || outline.Count < 2)
-                {
-                    continue;
-                }
-
-                GenerateWallSegmentsForOutline(outline, wallBuilding);
+                if (outline == null || outline.Count < 2) continue;
+                CalculateWallsForOutline(outline, wallBuilding, requiredWalls);
             }
-            
-            return new List<GameObject>(generatedWalls);
+
+            // 기존 벽 재사용 및 업데이트
+            UpdateWalls(wallBuilding, requiredWalls);
+
+            return wallBuilding.Walls;
         }
 
         /// <summary>
-        /// 하나의 외곽선에 대해 담장 세그먼트 생성
+        /// 벽 정보 (위치, 회전, 프리팹)
         /// </summary>
-        private void GenerateWallSegmentsForOutline(List<Vector3> outline, WallBuilding wallBuilding)
+        private struct WallInfo
+        {
+            public Vector3 Position;
+            public Quaternion Rotation;
+            public GameObject Prefab;
+        }
+
+        /// <summary>
+        /// 하나의 외곽선에 필요한 벽 정보를 계산
+        /// </summary>
+        private void CalculateWallsForOutline(List<Vector3> outline, WallBuilding wallBuilding, List<WallInfo> wallInfos)
         {
             int vertexCount = outline.Count;
 
-            // 각 정점 위치에 벽 배치
+            // 각 정점 위치에 필요한 벽 계산
             for (int i = 0; i < vertexCount; i++)
             {
                 Vector3 currentPos = outline[i];
@@ -127,51 +130,102 @@ namespace HanokBuildingSystem
                 Vector3 position = currentPos;
                 position.y += heightOffset;
 
-                GameObject wallPiece;
+                GameObject prefab;
+                Quaternion finalRotation;
+
                 if (i == 0)
                 {
                     // 시작점 - y축 180도 회전
-                    Quaternion startRotation = rotation * Quaternion.Euler(0, 180, 0);
-                    wallPiece = memberCatalog.GetMember(wallBuilding.WallEnd, position, startRotation);
+                    prefab = wallBuilding.WallEnd;
+                    finalRotation = rotation * Quaternion.Euler(0, 180, 0);
                 }
                 else if (i == vertexCount - 1)
                 {
                     // 마지막점
-                    Quaternion endRotation = rotation * Quaternion.Euler(0, 180, 0);
-                    wallPiece = memberCatalog.GetMember(wallBuilding.WallEnd, position, endRotation);
+                    prefab = wallBuilding.WallEnd;
+                    finalRotation = rotation * Quaternion.Euler(0, 180, 0);
                 }
                 else
                 {
                     // 중앙점
-                    wallPiece = memberCatalog.GetMember(wallBuilding.WallCenter, position, rotation);
+                    prefab = wallBuilding.WallCenter;
+                    finalRotation = rotation;
                 }
 
-                PlaceWallPiece(wallPiece, wallBuilding.transform);
+                wallInfos.Add(new WallInfo
+                {
+                    Position = position,
+                    Rotation = finalRotation,
+                    Prefab = prefab
+                });
             }
         }
 
-        private void PlaceWallPiece(GameObject wallPiece, Transform parent)
+        /// <summary>
+        /// WallBuilding의 기존 벽을 재사용하고, 필요한 만큼 추가/제거
+        /// </summary>
+        private void UpdateWalls(WallBuilding wallBuilding, List<WallInfo> requiredWalls)
         {
-            if (wallPiece != null)
+            if (wallBuilding.Walls == null)
             {
-                if (parent != null)
+                wallBuilding.Walls = new List<GameObject>();
+            }
+
+            int existingCount = wallBuilding.Walls.Count;
+            int requiredCount = requiredWalls.Count;
+
+            // 1. 기존 벽 재사용 (위치/회전 업데이트)
+            int reuseCount = Mathf.Min(existingCount, requiredCount);
+            for (int i = 0; i < reuseCount; i++)
+            {
+                GameObject wall = wallBuilding.Walls[i];
+                WallInfo info = requiredWalls[i];
+
+                if (wall != null)
                 {
-                    wallPiece.transform.SetParent(parent);
+                    wall.transform.position = info.Position;
+                    wall.transform.rotation = info.Rotation;
+                    wall.SetActive(true);
                 }
+            }
 
-                // BuildingMember 컴포넌트 추가 (없을 경우)
-                BuildingMember member = wallPiece.GetComponent<BuildingMember>();
-                if (member == null)
+            // 2. 남는 벽 풀로 반환
+            if (existingCount > requiredCount)
+            {
+                for (int i = existingCount - 1; i >= requiredCount; i--)
                 {
-                    member = wallPiece.AddComponent<BuildingMember>();
+                    GameObject wall = wallBuilding.Walls[i];
+                    if (wall != null)
+                    {
+                        wallBuilding.RemoveBuildingMember(wall);
+                        memberCatalog.ReturnMember(wall);
+                    }
+                    wallBuilding.Walls.RemoveAt(i);
                 }
+            }
 
-                generatedWalls.Add(wallPiece);
-
-                // WallBuilding에 멤버 등록
-                if (currentWallBuilding != null)
+            // 3. 부족한 벽 새로 생성
+            if (requiredCount > existingCount)
+            {
+                for (int i = existingCount; i < requiredCount; i++)
                 {
-                    currentWallBuilding.AddBuildingMember(wallPiece);
+                    WallInfo info = requiredWalls[i];
+                    GameObject wall = memberCatalog.GetMember(info.Prefab, info.Position, info.Rotation);
+
+                    if (wall != null)
+                    {
+                        wall.transform.SetParent(wallBuilding.transform);
+
+                        // BuildingMember 컴포넌트 추가 (없을 경우)
+                        BuildingMember member = wall.GetComponent<BuildingMember>();
+                        if (member == null)
+                        {
+                            member = wall.AddComponent<BuildingMember>();
+                        }
+
+                        wallBuilding.Walls.Add(wall);
+                        wallBuilding.AddBuildingMember(wall);
+                    }
                 }
             }
         }
@@ -269,91 +323,5 @@ namespace HanokBuildingSystem
             // 마지막을 살짝 넘는 경우엔 끝점 반환
             return outline[outline.Count - 1];
         }
-
-
-        /// <summary>
-        /// 세 점이 모서리를 이루는지 판단
-        /// </summary>
-        private bool IsCorner(Vector3 prev, Vector3 current, Vector3 next, Vector3 afterNext)
-        {
-            Vector3 dir1 = (current - prev).normalized;
-            Vector3 dir2 = (next - current).normalized;
-
-            float angle = Vector3.Angle(dir1, dir2);
-            return angle > 30f; // 30도 이상 꺾이면 코너로 간주
-        }
-
-        /// <summary>
-        /// 생성된 모든 담장을 제거하고 풀로 반환
-        /// </summary>
-        public void ClearGeneratedWalls()
-        {
-            if (memberCatalog != null)
-            {
-                foreach (GameObject wall in generatedWalls)
-                {
-                    if (wall != null)
-                    {
-                        // WallBuilding에서 멤버 제거
-                        if (currentWallBuilding != null)
-                        {
-                            currentWallBuilding.RemoveBuildingMember(wall);
-                        }
-
-                        memberCatalog.ReturnMember(wall);
-                    }
-                }
-            }
-
-            generatedWalls.Clear();
-        }
-
-        /// <summary>
-        /// 특정 담장 조각들을 제거
-        /// </summary>
-        public void RemoveWalls(List<GameObject> wallsToRemove)
-        {
-            if (memberCatalog == null || wallsToRemove == null) return;
-
-            foreach (GameObject wall in wallsToRemove)
-            {
-                if (wall != null && generatedWalls.Contains(wall))
-                {
-                    // WallBuilding에서 멤버 제거
-                    if (currentWallBuilding != null)
-                    {
-                        currentWallBuilding.RemoveBuildingMember(wall);
-                    }
-
-                    memberCatalog.ReturnMember(wall);
-                    generatedWalls.Remove(wall);
-                }
-            }
-        }
-
-        private void OnDestroy()
-        {
-            ClearGeneratedWalls();
-        }
-
-#if UNITY_EDITOR
-        [Header("Debug")]
-        [SerializeField] private bool showDebugGizmos = true;
-        [SerializeField] private Color gizmoColor = Color.cyan;
-
-        private void OnDrawGizmos()
-        {
-            if (!showDebugGizmos) return;
-
-            Gizmos.color = gizmoColor;
-            foreach (GameObject wall in generatedWalls)
-            {
-                if (wall != null)
-                {
-                    Gizmos.DrawWireCube(wall.transform.position, Vector3.one * 0.5f);
-                }
-            }
-        }
-#endif
     }
 }
