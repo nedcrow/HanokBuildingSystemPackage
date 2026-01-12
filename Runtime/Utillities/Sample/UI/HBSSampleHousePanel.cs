@@ -81,8 +81,6 @@ public class HBSSampleHousePanel : MonoBehaviour
         {
             buildingSystem = HanokBuildingSystem.HanokBuildingSystem.Instance;
 
-            buildingSystem.Events.OnHouseSelected += HandleHouseSelected;
-
             buildingSystem.Events.OnRemodelingStarted += HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted += HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled += HandleRemodelingCancelled;
@@ -129,6 +127,8 @@ public class HBSSampleHousePanel : MonoBehaviour
         }
 
         Debug.Log($"[HBSSampleHousePanel] Initialized {buildingSlots.Count} building slots");
+
+        UpdateInfo(currentHouse);
     }
 
     /// <summary>
@@ -332,17 +332,6 @@ public class HBSSampleHousePanel : MonoBehaviour
     {
         gameObject.SetActive(false);
         currentHouse = null;
-    }
-
-    /// <summary>
-    /// 현재 House 정보를 다시 읽어 UI 갱신
-    /// </summary>
-    public void RefreshInfo()
-    {
-        if (currentHouse != null)
-        {
-            UpdateInfo(currentHouse);
-        }
     }
 
     #region Button Handlers
@@ -554,23 +543,23 @@ public class HBSSampleHousePanel : MonoBehaviour
         Debug.Log($"[HBSSampleHousePanel] Filled resources for {stageCount} stages in {buildingCount} buildings");
 
         // UI 갱신
-        RefreshInfo();
+        UpdateInfo(currentHouse);
     }
     #endregion
 
     #region Event Handlers
-    private void HandleHouseSelected(House house)
-    {
-        RemodelingToInformationMode();
-        UpdateInfo(house);
-    }
+    // private void HandleHouseSelected(House house)
+    // {
+    //     RemodelingToInformationMode();
+    //     UpdateInfo(house);
+    // }
 
     private void HandleRemodelingStarted(House house)
     {
         if (house == currentHouse)
         {
             InformationToRemodelingMode();
-            RefreshInfo();
+            UpdateInfo(currentHouse);
         }
     }
 
@@ -580,7 +569,7 @@ public class HBSSampleHousePanel : MonoBehaviour
         {
             RemodelingToInformationMode();
             SetEraserMode(false); // 지우개 모드 해제
-            RefreshInfo();
+            UpdateInfo(currentHouse);
         }
     }
 
@@ -590,7 +579,7 @@ public class HBSSampleHousePanel : MonoBehaviour
         {
             RemodelingToInformationMode();
             SetEraserMode(false); // 지우개 모드 해제
-            RefreshInfo();
+            UpdateInfo(currentHouse);
         }
     }
 
@@ -662,7 +651,6 @@ public class HBSSampleHousePanel : MonoBehaviour
         // 이벤트 구독 해제
         if (buildingSystem != null)
         {
-            buildingSystem.Events.OnHouseSelected -= HandleHouseSelected;
             buildingSystem.Events.OnRemodelingStarted -= HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted -= HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled -= HandleRemodelingCancelled;
