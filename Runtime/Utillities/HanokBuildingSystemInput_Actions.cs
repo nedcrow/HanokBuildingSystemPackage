@@ -138,6 +138,15 @@ namespace HanokBuildingSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Delete"",
+                    ""type"": ""Button"",
+                    ""id"": ""c3d4e5f6-a7b8-4c9d-a123-456789abcdef"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -195,6 +204,17 @@ namespace HanokBuildingSystem
                     ""action"": ""RotateRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d5e6f7a8-b9c0-4d1e-a234-567890abcdef"",
+                    ""path"": ""<Keyboard>/delete"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Delete"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -208,6 +228,7 @@ namespace HanokBuildingSystem
             m_HBS_MousePosition = m_HBS.FindAction("MousePosition", throwIfNotFound: true);
             m_HBS_RotateLeft = m_HBS.FindAction("RotateLeft", throwIfNotFound: true);
             m_HBS_RotateRight = m_HBS.FindAction("RotateRight", throwIfNotFound: true);
+            m_HBS_Delete = m_HBS.FindAction("Delete", throwIfNotFound: true);
         }
 
         ~@HBS_InputActions()
@@ -293,6 +314,7 @@ namespace HanokBuildingSystem
         private readonly InputAction m_HBS_MousePosition;
         private readonly InputAction m_HBS_RotateLeft;
         private readonly InputAction m_HBS_RotateRight;
+        private readonly InputAction m_HBS_Delete;
         /// <summary>
         /// Provides access to input actions defined in input action map "HBS".
         /// </summary>
@@ -324,6 +346,10 @@ namespace HanokBuildingSystem
             /// Provides access to the underlying input action "HBS/RotateRight".
             /// </summary>
             public InputAction @RotateRight => m_Wrapper.m_HBS_RotateRight;
+            /// <summary>
+            /// Provides access to the underlying input action "HBS/Delete".
+            /// </summary>
+            public InputAction @Delete => m_Wrapper.m_HBS_Delete;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -365,6 +391,9 @@ namespace HanokBuildingSystem
                 @RotateRight.started += instance.OnRotateRight;
                 @RotateRight.performed += instance.OnRotateRight;
                 @RotateRight.canceled += instance.OnRotateRight;
+                @Delete.started += instance.OnDelete;
+                @Delete.performed += instance.OnDelete;
+                @Delete.canceled += instance.OnDelete;
             }
 
             /// <summary>
@@ -391,6 +420,9 @@ namespace HanokBuildingSystem
                 @RotateRight.started -= instance.OnRotateRight;
                 @RotateRight.performed -= instance.OnRotateRight;
                 @RotateRight.canceled -= instance.OnRotateRight;
+                @Delete.started -= instance.OnDelete;
+                @Delete.performed -= instance.OnDelete;
+                @Delete.canceled -= instance.OnDelete;
             }
 
             /// <summary>
@@ -466,6 +498,13 @@ namespace HanokBuildingSystem
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnRotateRight(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Delete" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnDelete(InputAction.CallbackContext context);
         }
     }
 }

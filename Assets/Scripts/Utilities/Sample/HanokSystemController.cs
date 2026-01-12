@@ -79,6 +79,7 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragEnd += HandleDragEnd;
             inputHandler.OnRotateLeft += HandleRotateLeft;
             inputHandler.OnRotateRight += HandleRotateRight;
+            inputHandler.OnDelete += HandleDelete;
         }
 
         if (buildingSystem != null)
@@ -103,6 +104,7 @@ public class HanokSystemController : MonoBehaviour
             inputHandler.OnDragEnd -= HandleDragEnd;
             inputHandler.OnRotateLeft -= HandleRotateLeft;
             inputHandler.OnRotateRight -= HandleRotateRight;
+            inputHandler.OnDelete -= HandleDelete;
         }
 
         if (buildingSystem != null)
@@ -290,6 +292,15 @@ public class HanokSystemController : MonoBehaviour
         if (buildingSystem.CurrentState == SystemState.Remodeling)
         {
             buildingSystem.RemodelingController?.RotateRight();
+        }
+    }
+
+    private void HandleDelete()
+    {
+        if (buildingSystem.CurrentHouses != null && buildingSystem.CurrentHouses.Count > 0)
+        {
+            buildingSystem.ReturnCurrentHouses();
+            buildingSystem.ClearSelection();
         }
     }
     #endregion
