@@ -9,31 +9,18 @@ namespace HanokBuildingSystem
     {
         [SerializeField] private List<List<Vector3>> lineList;
         [SerializeField] private List<Vector3> allVertices;
-        [SerializeField] private float defaultLineThickness;
-        [SerializeField] private float defaultMinAngle;
-        [SerializeField] private float defaultMaxAngle;
-        [SerializeField] private bool isBuildable;
 
         public List<List<Vector3>> LineList => lineList;
 
         public List<Vector3> AllVertices => allVertices;
 
-        public float LineThickness { get => defaultLineThickness; set => defaultLineThickness = value; }
-        public float MinAngle { get => defaultMinAngle; set => defaultMinAngle = value; }
-        public float MaxAngle { get => defaultMaxAngle; set => defaultMaxAngle = value; }
-        public bool IsBuildable { get => isBuildable; set => isBuildable = value; }
-
         public Plot()
         {
             lineList = new List<List<Vector3>>();
             allVertices = new List<Vector3>();
-            defaultLineThickness = 0.1f;
-            defaultMinAngle = 45f;
-            defaultMaxAngle = 135f;
-            isBuildable = false;
         }
 
-        public Plot(List<List<Vector3>> verticesList, float lineThickness = 0.1f, float minAngle = 45f, float maxAngle = 135f)
+        public Plot(List<List<Vector3>> verticesList)
         {
             this.lineList = new List<List<Vector3>>();
             this.allVertices = new List<Vector3>();
@@ -41,10 +28,6 @@ namespace HanokBuildingSystem
             {
                 this.lineList.Add(new List<Vector3>(line));
             }
-            this.defaultLineThickness = lineThickness;
-            this.defaultMinAngle = minAngle;
-            this.defaultMaxAngle = maxAngle;
-            this.isBuildable = false;
             UpdateAllVertices();
         }
 
@@ -55,7 +38,7 @@ namespace HanokBuildingSystem
                 lineList = new List<List<Vector3>>();
             }
             lineList.Add(new List<Vector3>(line));
-            UpdateBuildableState();
+            UpdateAllVertices();
         }
 
         public void AddVertexToLine(int lineIndex, Vector3 vertex)
@@ -63,7 +46,7 @@ namespace HanokBuildingSystem
             if (lineIndex >= 0 && lineIndex < lineList.Count)
             {
                 lineList[lineIndex].Add(vertex);
-                UpdateBuildableState();
+                UpdateAllVertices();
             }
         }
 
@@ -72,7 +55,7 @@ namespace HanokBuildingSystem
             if (lineIndex >= 0 && lineIndex < lineList.Count)
             {
                 lineList.RemoveAt(lineIndex);
-                UpdateBuildableState();
+                UpdateAllVertices();
                 return true;
             }
             return false;
@@ -86,7 +69,7 @@ namespace HanokBuildingSystem
                 if (vertexIndex >= 0 && vertexIndex < line.Count)
                 {
                     line.RemoveAt(vertexIndex);
-                    UpdateBuildableState();
+                    UpdateAllVertices();
                     return true;
                 }
             }
@@ -101,9 +84,23 @@ namespace HanokBuildingSystem
                 if (vertexIndex >= 0 && vertexIndex < line.Count)
                 {
                     line[vertexIndex] = newPosition;
-                    UpdateBuildableState();
+                    UpdateAllVertices();
                     return true;
                 }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 라인의 모든 정점을 새로운 리스트로 교체
+        /// </summary>
+        public bool UpdateVertices(int lineIndex, List<Vector3> newVertices)
+        {
+            if (lineIndex >= 0 && lineIndex < lineList.Count && newVertices != null)
+            {
+                lineList[lineIndex] = new List<Vector3>(newVertices);
+                UpdateAllVertices();
+                return true;
             }
             return false;
         }
@@ -111,7 +108,7 @@ namespace HanokBuildingSystem
         public void Clear()
         {
             lineList.Clear();
-            isBuildable = false;
+            allVertices.Clear();
         }
 
         public int GetLineCount()
@@ -150,12 +147,6 @@ namespace HanokBuildingSystem
             return Vector3.zero;
         }
 
-        private void UpdateBuildableState()
-        {
-            UpdateAllVertices();
-            isBuildable = GetTotalVertexCount() >= 4 && ValidateAngles();
-        }
-
         private void UpdateAllVertices()
         {
             allVertices.Clear();
@@ -166,42 +157,6 @@ namespace HanokBuildingSystem
                     allVertices.Add(vertex);
                 }
             }
-        }
-
-        private int GetTotalVertexCount()
-        {
-            int count = 0;
-            foreach (var line in lineList)
-            {
-                count += line.Count;
-            }
-            return count;
-        }
-
-        private bool ValidateAngles()
-        {
-            foreach (var line in lineList)
-            {
-                if (line.Count < 3) continue;
-
-                for (int i = 0; i < line.Count; i++)
-                {
-                    int prevIndex = (i - 1 + line.Count) % line.Count;
-                    int nextIndex = (i + 1) % line.Count;
-
-                    Vector3 v1 = line[prevIndex] - line[i];
-                    Vector3 v2 = line[nextIndex] - line[i];
-
-                    float angle = Vector3.Angle(v1, v2);
-
-                    if (angle < defaultMinAngle || angle > defaultMaxAngle)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
 
         public float GetArea()

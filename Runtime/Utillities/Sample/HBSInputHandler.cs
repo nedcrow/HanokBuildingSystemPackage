@@ -13,6 +13,7 @@ namespace HanokBuildingSystem
     [SerializeField] private InputActionReference rightButtonAction;     // <Mouse>/rightButton
     [SerializeField] private InputActionReference rotateLeftAction;      // Q key
     [SerializeField] private InputActionReference rotateRightAction;     // E key
+    [SerializeField] private InputActionReference deleteAction;          // Delete key
 
     [Header("Double Click")]
     [SerializeField] private float doubleClickInterval = 0.25f; // 두 번 클릭 사이 최대 간격(초)
@@ -36,6 +37,7 @@ namespace HanokBuildingSystem
     public event Action<Vector2> OnDragEnd;        // 드래그 끝났을 때(손 뗐을 때)
     public event Action OnRotateLeft;              // Q 키 눌렀을 때
     public event Action OnRotateRight;             // E 키 눌렀을 때
+    public event Action OnDelete;                  // Delete 키 눌렀을 때
 
     private void OnEnable()
     {
@@ -47,6 +49,7 @@ namespace HanokBuildingSystem
         if (rightButtonAction == null) unassignedActions.Add("rightButtonAction");
         if (rotateLeftAction == null) unassignedActions.Add("rotateLeftAction");
         if (rotateRightAction == null) unassignedActions.Add("rotateRightAction");
+        if (deleteAction == null) unassignedActions.Add("deleteAction");
 
         if (unassignedActions.Count > 0)
         {
@@ -58,6 +61,7 @@ namespace HanokBuildingSystem
         var rightBtn = rightButtonAction?.action;
         var rotateLeft = rotateLeftAction?.action;
         var rotateRight = rotateRightAction?.action;
+        var delete = deleteAction?.action;
 
         if (pos != null)
         {
@@ -90,6 +94,12 @@ namespace HanokBuildingSystem
             rotateRight.performed += OnRotateRightInternal;
             rotateRight.Enable();
         }
+
+        if (delete != null)
+        {
+            delete.performed += OnDeleteInternal;
+            delete.Enable();
+        }
     }
 
     private void OnDisable()
@@ -99,6 +109,7 @@ namespace HanokBuildingSystem
         var rightBtn = rightButtonAction?.action;
         var rotateLeft = rotateLeftAction?.action;
         var rotateRight = rotateRightAction?.action;
+        var delete = deleteAction?.action;
 
         if (pos != null)
         {
@@ -130,6 +141,12 @@ namespace HanokBuildingSystem
         {
             rotateRight.performed -= OnRotateRightInternal;
             rotateRight.Disable();
+        }
+
+        if (delete != null)
+        {
+            delete.performed -= OnDeleteInternal;
+            delete.Disable();
         }
     }
 
@@ -228,6 +245,13 @@ namespace HanokBuildingSystem
     {
         Debug.Log("HandleRotateRight");
         OnRotateRight?.Invoke();
+    }
+
+    // Delete 키 눌렀을 때
+    private void OnDeleteInternal(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("HandleDelete");
+        OnDelete?.Invoke();
     }
     }
 }
