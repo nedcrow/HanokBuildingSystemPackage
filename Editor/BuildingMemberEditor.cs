@@ -1,5 +1,7 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
+using Nedcrow.HanokBuildingSystem.Runtime;
 
 namespace HanokBuildingSystem.Editor
 {
@@ -91,3 +93,4 @@ namespace HanokBuildingSystem.Editor
         }
     }
 }
+#endif
