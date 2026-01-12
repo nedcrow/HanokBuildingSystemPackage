@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.RemodelingController
   buildingSystem: {fileID: 0}
+  buildingCatalog: {fileID: 0}
   mainCamera: {fileID: 0}
   clampPlacementPosition: 1
   buildingLayerMask:
@@ -167,8 +168,6 @@ MonoBehaviour:
   adjustmentCount: 1
   useCornerPieces: 0
   useEndPieces: 1
-  showDebugGizmos: 1
-  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &2996276106009203258
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +314,10 @@ MonoBehaviour:
   lineStyle: 1
   dashLength: 0.2
   gapLength: 0.2
+  defaultLineThickness: 0.1
+  minAngle: 60
+  maxAngle: 120
+  maxAllowedSlope: 30
 --- !u!1 &6343764425253730236
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,11 +539,17 @@ MonoBehaviour:
   houseCatalog: {fileID: 4920192036757626759}
   buildingCatalog: {fileID: 3341540988524704928}
   buildingMemberCatalog: {fileID: 0}
+  maxAllowedSlope: 30
   currentState: 0
   currentPlots: []
   currentHouses: []
   isPlotDivisionEnabled: 0
   maxVertexCount: 4
+  enableIntermediatePoints: 1
+  intermediatePointSpacing: 2
+  terrainLayer:
+    serializedVersion: 2
+    m_Bits: 16
 --- !u!1 &8215144608226104894
 GameObject:
   m_ObjectHideFlags: 0

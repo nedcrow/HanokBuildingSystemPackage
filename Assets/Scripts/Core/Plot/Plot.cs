@@ -91,6 +91,20 @@ namespace HanokBuildingSystem
             return false;
         }
 
+        /// <summary>
+        /// 라인의 모든 정점을 새로운 리스트로 교체
+        /// </summary>
+        public bool UpdateVertices(int lineIndex, List<Vector3> newVertices)
+        {
+            if (lineIndex >= 0 && lineIndex < lineList.Count && newVertices != null)
+            {
+                lineList[lineIndex] = new List<Vector3>(newVertices);
+                UpdateAllVertices();
+                return true;
+            }
+            return false;
+        }
+
         public void Clear()
         {
             lineList.Clear();

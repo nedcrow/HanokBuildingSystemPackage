@@ -250,7 +250,7 @@ namespace HanokBuildingSystem
         Debug.Log($"[House] {name}: Construction started with {buildings.Count} buildings");
     }
 
-    public void ShowModelHouse(Plot plot)
+    public void ShowModelHouse(Plot plot, bool useTerrainHeight = false, LayerMask terrainLayer = default)
     {
         if (plot == null)
         {
@@ -289,9 +289,16 @@ namespace HanokBuildingSystem
             if (marker.CurrentBuilding != null)
                 continue;
 
+            // 마커 위치에서 지형 높이 계산
+            Vector3 buildingPosition = child.position;
+            if (useTerrainHeight && terrainLayer != 0)
+            {
+                buildingPosition = GetTerrainPosition(child.position, terrainLayer);
+            }
+
             Building building = buildingCatalog.GetBuildingByType(
                 marker.BuildingType,
-                child.position,
+                buildingPosition,
                 child.rotation
             );
 
@@ -310,6 +317,24 @@ namespace HanokBuildingSystem
         events.RaiseShowModelHouse(this, plot);
 
         SetUsageState(HouseOccupancyState.UnderConstruction);
+    }
+
+    /// <summary>
+    /// XZ 위치에서 지형 높이를 Raycast로 구하여 반환
+    /// </summary>
+    private Vector3 GetTerrainPosition(Vector3 markerPosition, LayerMask terrainLayer)
+    {
+        // 위에서 아래로 Raycast
+        Vector3 rayOrigin = new Vector3(markerPosition.x, 1000f, markerPosition.z);
+        Ray ray = new Ray(rayOrigin, Vector3.down);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 2000f, terrainLayer))
+        {
+            return hit.point;
+        }
+
+        // Raycast 실패 시 원래 위치 반환
+        return markerPosition;
     }
 
 #if UNITY_EDITOR

@@ -352,6 +352,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 918794912}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -401,12 +405,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1132945423}
   m_SourcePrefab: {fileID: 100100000, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
 --- !u!1 &312971417
 GameObject:
@@ -745,7 +752,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &359280139
 Transform:
   m_ObjectHideFlags: 0
@@ -2573,11 +2580,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1102346059}
   m_CullTransparentMesh: 1
+--- !u!1 &1132945419 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
+  m_PrefabInstance: {fileID: 255885661}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1132945420 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
   m_PrefabInstance: {fileID: 255885661}
   m_PrefabAsset: {fileID: 0}
+--- !u!64 &1132945423
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132945419}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6792426182135718314, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
 --- !u!1 &1144103209
 GameObject:
   m_ObjectHideFlags: 0
@@ -4914,24 +4948,24 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1925857604}
     m_Modifications:
-    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: maxAllowedSlope
-      value: 45
+    - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: useTerrainHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: groundLayerMask.m_Bits
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: intermediatePointSpacing
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7407213257174742257, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_Name
       value: HanokBuildingSystem
       objectReference: {fileID: 0}
-    - target: {fileID: 7548693506095678399, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: maxAngle
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 7548693506095678399, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: minAngle
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 7548693506095678399, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
-      propertyPath: enableTerrainAdaptation
+    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: buildingLayerMask.m_Bits
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8136752329970946030, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
@@ -5075,6 +5109,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 917525480857385327, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2003696193217290572, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5114,6 +5152,10 @@ PrefabInstance:
     - target: {fileID: 2703488506829291220, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3429436281630686571, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3912012848413143666, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -5337,6 +5379,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6947382484397421680, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7963996372403837084, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8000532641044022561, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}

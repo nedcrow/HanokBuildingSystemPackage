@@ -287,7 +287,12 @@ namespace HanokBuildingSystem
             }
 
             targetHouse = house;
-            targetHouse.ShowModelHouse(targetHouse.BoundaryPlot);
+
+            // HanokBuildingSystem에서 지형 설정 가져오기
+            bool useTerrainHeight = HanokBuildingSystem.Instance != null && HanokBuildingSystem.Instance.UseTerrainHeight;
+            LayerMask terrainLayer = HanokBuildingSystem.Instance != null ? HanokBuildingSystem.Instance.GroundLayerMask : default;
+
+            targetHouse.ShowModelHouse(targetHouse.BoundaryPlot, useTerrainHeight, terrainLayer);
             BackupHouseState(house);
         }
 
@@ -531,9 +536,14 @@ namespace HanokBuildingSystem
         private IEnumerator DragBuildingCoroutine()
         {
             bool lastValidPlacement = true;
+
+            // HanokBuildingSystem에서 지형 설정 가져오기
+            bool useTerrainHeight = HanokBuildingSystem.Instance != null && HanokBuildingSystem.Instance.UseTerrainHeight;
+            LayerMask terrainLayer = HanokBuildingSystem.Instance != null ? HanokBuildingSystem.Instance.GroundLayerMask : default;
+
             while (isDragging && selectedBuilding != null)
             {
-                Vector3 newPosition = ScreenToWorldPosition(currentMousePosition);
+                Vector3 newPosition = ScreenToWorldPosition(currentMousePosition, useTerrainHeight, terrainLayer);
 
                 // 하우스 영역 내부로 제한
                 if (clampPlacementPosition)
@@ -813,7 +823,7 @@ namespace HanokBuildingSystem
             return null;
         }
 
-        private Vector3 ScreenToWorldPosition(Vector2 screenPosition)
+        private Vector3 ScreenToWorldPosition(Vector2 screenPosition, bool useTerrainHeight = false, LayerMask terrainLayer = default)
         {
             if (mainCamera == null)
             {
@@ -822,7 +832,16 @@ namespace HanokBuildingSystem
 
             Ray ray = mainCamera.ScreenPointToRay(screenPosition);
 
-            // 지면과의 교차점 계산
+            // 지형 높이 사용 시 Raycast로 지형과의 교차점 찾기
+            if (useTerrainHeight && terrainLayer != 0)
+            {
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, terrainLayer))
+                {
+                    return hit.point;
+                }
+            }
+
+            // 지형 높이 미사용 또는 Raycast 실패 시 y=0 평면 사용
             Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
             if (groundPlane.Raycast(ray, out float enter))
             {

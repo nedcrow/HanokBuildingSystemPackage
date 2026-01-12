@@ -469,7 +469,10 @@ namespace HanokBuildingSystem
                 float connectionAngle = Vector3.Angle(v1, v2);
 
                 bool isValid = connectionAngle >= minAngle && connectionAngle <= maxAngle;
-                if (!isValid) return false;
+                if (!isValid) {
+                    // Debug.LogWarning($"[PlotController] Line {lineIdx} 내부 최소각 검증 실패: {minAngle:F1}° < {connectionAngle:F1}° < {maxAngle:F1}°");
+                    return false;
+                }
             }
 
             return true;
