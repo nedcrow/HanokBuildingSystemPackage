@@ -26,7 +26,27 @@ namespace HanokBuildingSystem
         [Tooltip("점선 사이 공백 (LineStyle이 Dashed일 때만 적용)")]
         [SerializeField] private float gapLength = 0.5f;
 
+        [Header("Plot Settings")]
+        [Tooltip("Plot 라인 두께")]
+        [SerializeField] private float defaultLineThickness = 0.1f;
+        [Tooltip("허용 최소 각도")]
+        [Range(0f, 179f)]
+        [SerializeField] private float minAngle = 45f;
+        [Tooltip("허용 최대 각도")]
+        [Range(0f, 179f)]
+        [SerializeField] private float maxAngle = 135f;
+
+        [Header("Terrain Settings")]
+        [Tooltip("허용 가능한 최대 기울기 (0~90도)")]
+        [Range(0f, 90f)]
+        [SerializeField] private float maxAllowedSlope = 30f;
+
         private Dictionary<Plot, GameObject> plotVisuals = new Dictionary<Plot, GameObject>();
+
+        public float LineThickness { get => defaultLineThickness; set => defaultLineThickness = value; }
+        public float MinAngle { get => minAngle; set => minAngle = value; }
+        public float MaxAngle { get => maxAngle; set => maxAngle = value; }
+        public float MaxAllowedSlope { get => maxAllowedSlope; set => maxAllowedSlope = value; }
 
         public void ShowPlot(Plot plot)
         {
@@ -50,8 +70,11 @@ namespace HanokBuildingSystem
                 // 각 라인마다 별도의 LineRenderer 생성
                 CreateLineMesh(plotVisual, line, i);
 
-                // 3개 이상의 라인이 있으면 면(Fill Mesh)도 생성
-                if (line.Count >= 3)
+                if(plot.LineList.Count > 1 )
+                {
+                    IsBuildable(plot);
+                }
+                else if (plot.LineList.Count > 2)
                 {
                     CreateFillMesh(plotVisual, line, i);
                 }
@@ -143,12 +166,7 @@ namespace HanokBuildingSystem
                         newLineVertices.Add(new Vector3(bounds.min.x, bounds.max.y, endZ));
                     }
 
-                    Plot newPlot = new Plot(
-                        new List<List<Vector3>> { newLineVertices },
-                        plot.LineThickness,
-                        plot.MinAngle,
-                        plot.MaxAngle
-                    );
+                    Plot newPlot = new Plot(new List<List<Vector3>> { newLineVertices });
 
                     dividedPlots.Add(newPlot);
                 }
@@ -323,6 +341,153 @@ namespace HanokBuildingSystem
             mesh.RecalculateNormals();
 
             meshFilter.mesh = mesh;
+        }
+
+        /// <summary>
+        /// Plot의 최대 기울기 계산 (0~90도)
+        /// 가장 낮은 정점과 가장 높은 정점 사이의 기울기를 반환
+        /// </summary>
+        public float CalculateMaxSlope(Plot plot)
+        {
+            if (plot == null || plot.AllVertices == null || plot.AllVertices.Count < 2)
+                return 0f;
+
+            // 가장 낮은 정점과 가장 높은 정점 찾기
+            Vector3 lowestVertex = plot.AllVertices[0];
+            Vector3 highestVertex = plot.AllVertices[0];
+
+            foreach (var vertex in plot.AllVertices)
+            {
+                if (vertex.y < lowestVertex.y)
+                    lowestVertex = vertex;
+                if (vertex.y > highestVertex.y)
+                    highestVertex = vertex;
+            }
+
+            // 높이 차이
+            float heightDiff = highestVertex.y - lowestVertex.y;
+
+            // 높이가 같으면 기울기 0
+            if (Mathf.Approximately(heightDiff, 0f))
+                return 0f;
+
+            // 수평 거리 (XZ 평면)
+            float horizontalDistance = new Vector2(
+                highestVertex.x - lowestVertex.x,
+                highestVertex.z - lowestVertex.z
+            ).magnitude;
+
+            // 수평 거리가 0이면 90도 (수직)
+            if (Mathf.Approximately(horizontalDistance, 0f))
+                return 90f;
+
+            // 기울기 각도 = atan(높이차 / 수평거리) * (180 / π)
+            float slopeAngle = Mathf.Atan(heightDiff / horizontalDistance) * Mathf.Rad2Deg;
+
+            return slopeAngle;
+        }
+
+        /// <summary>
+        /// Plot의 기울기가 허용 범위 내인지 확인
+        /// </summary>
+        public bool IsSlopeValid(Plot plot)
+        {
+            float currentSlope = CalculateMaxSlope(plot);
+            bool isValid = currentSlope <= maxAllowedSlope;
+
+            // 디버그 로그 (기울기 초과 시)
+            if (!isValid)
+            {
+                Debug.LogWarning($"[PlotController] 기울기 초과: {currentSlope:F1}° > {maxAllowedSlope:F1}°");
+            }
+
+            return isValid;
+        }
+
+        /// <summary>
+        /// Plot의 각도 검증
+        /// 1. Line 내부: 최소각(A)만 검사 (minAngle 이상)
+        /// 2. Line 간 접점: minAngle ~ maxAngle 범위 검사
+        /// </summary>
+        public bool IsValidateAngles(Plot plot)
+        {
+            if (plot == null || plot.LineList == null) return false;
+            if (plot.LineList.Count == 0) return true;
+
+            // 1. 각 Line 내부의 최소각 검사
+            for (int lineIdx = 0; lineIdx < plot.LineList.Count; lineIdx++)
+            {
+                var line = plot.LineList[lineIdx];
+
+                if (line == null || line.Count < 2) continue;
+
+                // Line 내부 정점들 (시작점과 끝점 제외)
+                float minAngleInLine = float.MaxValue;
+
+                for (int i = 1; i < line.Count - 1; i++)
+                {
+                    Vector3 v1 = line[i - 1] - line[i];
+                    Vector3 v2 = line[i + 1] - line[i];
+                    float angle = Vector3.Angle(v1, v2);
+
+                    if (angle < minAngleInLine)
+                        minAngleInLine = angle;
+                }
+
+                // 내부 정점이 있는 경우 최소각 검사
+                if (minAngleInLine != float.MaxValue)
+                {
+                    if (minAngleInLine < minAngle)
+                    {
+                        Debug.LogWarning($"[PlotController] Line {lineIdx} 내부 최소각 검증 실패: {minAngleInLine:F1}° < {minAngle:F1}°");
+                        return false;
+                    }
+                }
+            }
+
+            // 2. Line 간 접점에서의 각도 검사
+            for (int lineIdx = 0; lineIdx < plot.LineList.Count; lineIdx++)
+            {
+                var currentLine = plot.LineList[lineIdx];
+                var nextLine = plot.LineList[(lineIdx + 1) % plot.LineList.Count];
+
+                if (currentLine == null || currentLine.Count < 2) continue;
+                if (nextLine == null || nextLine.Count < 2) continue;
+
+                // 접점은 currentLine의 마지막 점이자 nextLine의 첫 점
+                Vector3 connectionPoint = currentLine[currentLine.Count - 1];
+
+                // 접점 이전 점 (currentLine의 마지막에서 두 번째)
+                Vector3 prevPoint = currentLine[currentLine.Count - 2];
+
+                // 접점 이후 점 (nextLine의 두 번째 점)
+                Vector3 nextPoint = nextLine.Count > 1 ? nextLine[1] : nextLine[0];
+
+                Vector3 v1 = prevPoint - connectionPoint;
+                Vector3 v2 = nextPoint - connectionPoint;
+
+                float connectionAngle = Vector3.Angle(v1, v2);
+
+                bool isValid = connectionAngle >= minAngle && connectionAngle <= maxAngle;
+                if (!isValid) return false;
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Plot의 건축 가능 여부 판정
+        /// </summary>
+        public bool IsBuildable(Plot plot)
+        {
+            if (plot == null) return false;
+
+            bool hasEnoughVertices = plot.AllVertices != null && plot.AllVertices.Count >= 4;
+            bool anglesValid = IsValidateAngles(plot);
+            bool slopeValid = IsSlopeValid(plot);
+
+            return hasEnoughVertices && anglesValid && slopeValid;
         }
 
         private void OnDestroy()

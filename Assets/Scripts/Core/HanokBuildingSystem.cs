@@ -43,12 +43,18 @@ namespace HanokBuildingSystem
         [SerializeField] private BuildingCatalog buildingCatalog;
         [SerializeField] private BuildingMemberCatalog buildingMemberCatalog;
 
+        [Header("Terrain Settings")]
+        [Tooltip("허용 가능한 최대 기울기 (0~90도)")]
+        [Range(0f, 90f)]
+        [SerializeField] private float maxAllowedSlope = 30f;
+
         public PlotController PlotController => plotController;
         public RemodelingController RemodelingController => remodelingController;
         public WallGenerator WallGenerator => wallGenerator;
         public HouseCatalog HouseCatalog => houseCatalog;
         public BuildingCatalog BuildingCatalog => buildingCatalog;
         public BuildingMemberCatalog BuildingMemberCatalog => buildingMemberCatalog;
+        public float MaxAllowedSlope { get => maxAllowedSlope; set => maxAllowedSlope = value; }
         #endregion
 
         #region Events
@@ -181,6 +187,12 @@ namespace HanokBuildingSystem
                 currentLineIndex = 0;
                 currentPlots.Add(newPlot);
                 Events.RaisePlotCreated(newPlot);
+
+                // PlotController에 허용 기울기 전달
+                if (plotController != null)
+                {
+                    plotController.MaxAllowedSlope = maxAllowedSlope;
+                }
             }
         }
 
@@ -317,8 +329,8 @@ namespace HanokBuildingSystem
                 Vector3 firstVertex = currentPlot.GetVertex(0, 0);
                 currentLineIndex++;
                 currentPlot.AddLine(new List<Vector3>());
-                currentPlot.AddVertexToLine(currentLineIndex, firstVertex);  // 점3
-                currentPlot.AddVertexToLine(currentLineIndex, worldPosition);    // 점1
+                currentPlot.AddVertexToLine(currentLineIndex, worldPosition);  // 점3
+                currentPlot.AddVertexToLine(currentLineIndex, firstVertex);    // 점1
 
                 Events.RaiseVertexAdded(currentPlot, worldPosition);
                 return;
@@ -334,11 +346,7 @@ namespace HanokBuildingSystem
                 }
                 else if (lineCount >= maxVertexCount)
                 {
-                    // 건설 가능하면 건설 시작
-                    if (currentPlot.IsBuildable)
-                    {
-                        CheckPlotCompletion();
-                    }
+                    CheckPlotCompletion();
                     return;
                 }
             }
@@ -405,10 +413,15 @@ namespace HanokBuildingSystem
             if (currentLine != null && currentLine.Count > 0)
             {
                 int lastIndex = currentLine.Count - 1;
-                currentPlot.UpdateVertex(currentLineIndex, lastIndex, worldPosition);
+
                 if(currentPlot.GetLineCount() > maxVertexCount - 2)
                 {
+                    currentPlot.UpdateVertex(currentLineIndex, 0, worldPosition);
                     currentPlot.UpdateVertex(currentLineIndex-1, lastIndex, worldPosition);
+                }
+                else
+                {
+                    currentPlot.UpdateVertex(currentLineIndex, lastIndex, worldPosition);
                 }
             }
         }
@@ -446,10 +459,10 @@ namespace HanokBuildingSystem
         }
 
         private void CheckPlotCompletion()
-        {            
+        {
             Plot currentPlot = GetCurrentPlot();
-            if (currentPlot != null && currentPlot.IsBuildable)
-            {                
+            if (currentPlot != null && plotController != null && plotController.IsBuildable(currentPlot))
+            {
                 ValidatePlotForConstruction();
                 Events.RaisePlotCompleted(currentPlot);
             }

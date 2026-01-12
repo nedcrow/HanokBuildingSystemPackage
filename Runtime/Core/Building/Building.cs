@@ -443,8 +443,6 @@ namespace HanokBuildingSystem
             // 빌딩을 Stage 0으로 초기화
             Setup();
             SetStageIndex(0);
-
-            Debug.Log($"[Building] {name}: Initialized to Stage 0 for construction");
         }
 
         /// <summary>
