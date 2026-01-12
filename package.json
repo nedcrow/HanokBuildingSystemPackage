@@ -1,5 +1,5 @@
 {
-  "name": "com.harim.hanokbuildingsystem",
+  "name": "com.nedcrow.hanokbuildingsystem",
   "version": "0.1.18",
   "displayName": "Hanok Building System",
   "description": "Hanok Building System Package for Unity",
@@ -9,7 +9,7 @@
     "com.unity.textmeshpro": "3.0.6"
   },
   "author": {
-    "name": "Harim",
-    "url": "https://github.com/harim"
+    "name": "Nedcrow",
+    "url": "https://github.com/nedcrow"
   }
 }
