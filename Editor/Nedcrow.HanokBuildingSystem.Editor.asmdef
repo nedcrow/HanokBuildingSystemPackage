@@ -1,0 +1,10 @@
+{
+  "name": "Nedcrow.HanokBuildingSystem.Editor",
+  "references": [
+    "Nedcrow.HanokBuildingSystem.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}
