@@ -10,7 +10,7 @@ Unity 패키지로 만든 한옥 건물 시스템입니다.
 2. '+' 버튼 클릭 > "Add package from git URL..." 선택
 3. 다음 URL을 입력합니다:
    ```
-   https://github.com/harim/HanokBuildingSystemPackage.git
+   https://github.com/nedcrow/HanokBuildingSystemPackage.git
    ```
 
 ## 📁 패키지 구조
