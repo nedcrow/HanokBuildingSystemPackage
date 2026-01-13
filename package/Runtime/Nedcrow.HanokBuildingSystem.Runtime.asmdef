@@ -1,6 +1,6 @@
 {
     "name": "Nedcrow.HanokBuildingSystem.Runtime",
-    "rootNamespace": "Nedcrow.HanokBuildingSystem.Runtime",
+    "rootNamespace": "HanokBuildingSystem",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
