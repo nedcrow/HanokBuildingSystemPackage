@@ -4,6 +4,15 @@
   "displayName": "Hanok Building System",
   "description": "Hanok Building System Package for Unity",
   "unity": "6000.2",
+  "samples": [
+    {
+      "displayName": "Hanok Building System Sample",
+      "description": "Sample scenes, prefabs, and assets.",
+      "path": "Samples~/Hanok Building System Sample"
+    }
+  ],
+  "documentationUrl": "https://github.com/nedcrow/HanokBuildingSystemPackage#readme",
+  "licensesUrl": "https://github.com/nedcrow/HanokBuildingSystemPackage/blob/main/LICENSE",
   "dependencies": {
     "com.unity.inputsystem": "1.14.2",
     "com.unity.textmeshpro": "3.0.6"
