@@ -4,6 +4,15 @@ Unity 패키지로 만든 한옥 건물 시스템입니다.
 
 ## 설치 방법
 
+### 사전 요구사항
+
+이 패키지는 **TextMesh Pro**를 사용합니다. 패키지 설치 전에 먼저 TextMesh Pro를 설치해주세요.
+
+1. Unity Editor에서 Window > Package Manager를 엽니다
+2. Packages 드롭다운에서 "Unity Registry" 선택
+3. "TextMesh Pro"를 찾아 Install 버튼 클릭
+4. 설치 완료 후 Package Manager를 닫습니다
+
 ### Git URL로 설치
 
 1. Unity Editor에서 Window > Package Manager를 엽니다
