@@ -1,9 +1,9 @@
 {
   "name": "com.nedcrow.hanokbuildingsystem",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "displayName": "Hanok Building System",
   "description": "Hanok Building System Package for Unity",
-  "unity": "2021.1",
+  "unity": "6000.2",
   "dependencies": {
     "com.unity.inputsystem": "1.14.2",
     "com.unity.textmeshpro": "3.0.6"
