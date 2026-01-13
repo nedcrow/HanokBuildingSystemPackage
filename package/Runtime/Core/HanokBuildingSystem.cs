@@ -312,6 +312,22 @@ namespace HanokBuildingSystem
                 }
             }
         }
+
+        public void NotifyHouseHoverEnter(House house)
+        {
+            if (house != null)
+            {
+                Events.RaiseHouseHoverEnter(house);
+            }
+        }
+
+        public void NotifyHouseHoverExit(House house)
+        {
+            if (house != null)
+            {
+                Events.RaiseHouseHoverExit(house);
+            }
+        }
         #endregion
 
         #region Public API - Vertex Management
