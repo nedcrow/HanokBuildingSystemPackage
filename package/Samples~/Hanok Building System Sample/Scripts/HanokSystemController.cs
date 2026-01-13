@@ -239,12 +239,12 @@ public class HanokSystemController : MonoBehaviour
         {
             if (currentHoveredHouse != null)
             {
-                buildingSystem.Events.RaiseHouseHoverExit(currentHoveredHouse);
+                buildingSystem.NotifyHouseHoverExit(currentHoveredHouse);
             }
 
             if (house != null)
             {
-                buildingSystem.Events.RaiseHouseHoverEnter(house);
+                buildingSystem.NotifyHouseHoverEnter(house);
             }
 
             currentHoveredHouse = house;
