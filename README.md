@@ -4,6 +4,15 @@ Unity 패키지로 만든 한옥 건물 시스템입니다.
 
 ## 설치 방법
 
+### 사전 요구사항
+
+이 패키지는 **TextMesh Pro**를 사용합니다. 패키지 설치 전에 먼저 TextMesh Pro를 설치해주세요.
+
+1. Unity Editor에서 Window > Package Manager를 엽니다
+2. Packages 드롭다운에서 "Unity Registry" 선택
+3. "TextMesh Pro"를 찾아 Install 버튼 클릭
+4. 설치 완료 후 Package Manager를 닫습니다
+
 ### Git URL로 설치
 
 1. Unity Editor에서 Window > Package Manager를 엽니다
@@ -15,91 +24,100 @@ Unity 패키지로 만든 한옥 건물 시스템입니다.
 
 ## 📁 패키지 구조
 
+이 패키지는 Unity Package Manager(UPM)를 통해 설치됩니다.
+
 ```
-HanokBuildingSystemPackage/
-├── Assets/
-│   ├── Scripts/
-│   │   ├── Core/                          # 핵심 시스템
-│   │   │   ├── HanokBuildingSystem.cs     # 메인 시스템 (싱글톤)
-│   │   │   ├── HanokBuildingSystemEvents.cs  # 이벤트 시스템
-│   │   │   │
-│   │   │   ├── Building/                  # Building 관련
-│   │   │   │   ├── Building.cs            # Building 기본 클래스
-│   │   │   │   ├── BuildingMember.cs      # BuildingMember 컴포넌트
-│   │   │   │   ├── BuildingStatusData.cs  # Building 설정 데이터
-│   │   │   │   ├── BuildingResource.cs    # 자원 정의 (Cost)
-│   │   │   │   ├── ConstructionResourceComponent.cs  # 자원 관리 컴포넌트
-│   │   │   │   ├── DurabilityComponent.cs # 내구도 시스템
-│   │   │   │   ├── LaborComponent.cs      # 노동력 시스템
-│   │   │   │   ├── WallBuilding.cs        # 벽 Building (Building 상속)
-│   │   │   │   ├── WallGenerator.cs       # 벽 자동 생성 유틸리티
-│   │   │   │   └── DoorBuilding.cs        # 문 Building (Building 상속)
-│   │   │   │
-│   │   │   ├── House/                     # House 관련
-│   │   │   │   ├── House.cs               # House 기본 클래스
-│   │   │   │   └── MarkerComponent.cs     # House 마커 컴포넌트
-│   │   │   │
-│   │   │   ├── Plot/                      # Plot 관련
-│   │   │   │   ├── Plot.cs                # Plot 기본 클래스
-│   │   │   │   └── PlotController.cs      # Plot 생성/관리 컨트롤러
-│   │   │   │
-│   │   │   ├── Catalog/                   # 오브젝트 풀링 카탈로그
-│   │   │   │   ├── CatalogBase.cs         # 카탈로그 기본 클래스
-│   │   │   │   ├── HouseCatalog.cs        # House 카탈로그
-│   │   │   │   ├── BuildingCatalog.cs     # Building 카탈로그
-│   │   │   │   ├── BuildingMemberCatalog.cs  # BuildingMember 카탈로그
-│   │   │   │   └── ResourceTypeCatalog.cs # 자원 타입 카탈로그
-│   │   │   │
-│   │   │   ├── TypeDefinitions/           # ScriptableObject 타입 정의
-│   │   │   │   ├── HouseTypeData.cs       # House 타입 정의
-│   │   │   │   ├── BuildingTypeData.cs    # Building 타입 정의
-│   │   │   │   └── ResourceTypeData.cs    # 자원 타입 정의
-│   │   │   │
-│   │   │   └── Common/                    # 공통 유틸리티
-│   │   │       ├── PoolingComponent.cs    # 오브젝트 풀링 기본 컴포넌트
-│   │   │       ├── RemodelingController.cs  # 리모델링 컨트롤러
-│   │   │       └── IRemodelingRule.cs     # 리모델링 규칙 인터페이스
+com.nedcrow.hanokbuildingsystem/
+├── Runtime/                               # 런타임 스크립트
+│   ├── Core/                              # 핵심 시스템
+│   │   ├── HanokBuildingSystem.cs         # 메인 시스템 (싱글톤)
+│   │   ├── HanokBuildingSystemEvents.cs   # 이벤트 시스템
 │   │   │
-│   │   ├── Editor/                        # Unity Editor 확장
-│   │   │   ├── BuildingEditor.cs          # Building 커스텀 인스펙터
-│   │   │   ├── BuildingMemberEditor.cs    # BuildingMember 커스텀 인스펙터
-│   │   │   ├── ConstructionResourceComponentEditor.cs  # 자원 컴포넌트 인스펙터
-│   │   │   └── ReadOnlyDrawer.cs          # ReadOnly 속성 드로어
+│   │   ├── Building/                      # Building 관련
+│   │   │   ├── Building.cs                # Building 기본 클래스
+│   │   │   ├── BuildingMember.cs          # BuildingMember 컴포넌트
+│   │   │   ├── BuildingStatusData.cs      # Building 설정 데이터
+│   │   │   ├── BuildingResource.cs        # 자원 정의 (Cost)
+│   │   │   ├── ConstructionResourceComponent.cs  # 자원 관리 컴포넌트
+│   │   │   ├── DurabilityComponent.cs     # 내구도 시스템
+│   │   │   ├── LaborComponent.cs          # 노동력 시스템
+│   │   │   ├── WallBuilding.cs            # 벽 Building (Building 상속)
+│   │   │   ├── WallGenerator.cs           # 벽 자동 생성 유틸리티
+│   │   │   └── DoorBuilding.cs            # 문 Building (Building 상속)
 │   │   │
-│   │   └── Utilities/                     # 샘플 및 유틸리티
-│   │       ├── Interface/                 # UI 유틸리티
-│   │       │   └── HBSPanelDragger.cs     # 패널 드래그 유틸리티
-│   │       │
-│   │       └── Sample/                    # 샘플 코드
-│   │           ├── HanokSystemController.cs  # 샘플 시스템 컨트롤러
-│   │           ├── HBSInputHandler.cs     # 샘플 입력 핸들러
-│   │           ├── HanokBuildingSystemInput_Actions.cs  # Input Actions
-│   │           ├── TutorialNotice.cs      # 튜토리얼 UI
-│   │           │
-│   │           ├── UI/                    # 샘플 UI
-│   │           │   ├── HBSSampleUIManager.cs
-│   │           │   ├── HBSSampleStateButton.cs
-│   │           │   ├── HBSSampleBuildingSlot.cs
-│   │           │   └── HBSSampleHousePanel.cs
-│   │           │
-│   │           └── Visualization/         # 시각화 규칙
-│   │               ├── HBSRemodelingRule_Wall.cs
-│   │               └── HBSRemodelingRule_Door.cs
+│   │   ├── House/                         # House 관련
+│   │   │   ├── House.cs                   # House 기본 클래스
+│   │   │   └── MarkerComponent.cs         # House 마커 컴포넌트
+│   │   │
+│   │   ├── Plot/                          # Plot 관련
+│   │   │   ├── Plot.cs                    # Plot 기본 클래스
+│   │   │   └── PlotController.cs          # Plot 생성/관리 컨트롤러
+│   │   │
+│   │   ├── Catalog/                       # 오브젝트 풀링 카탈로그
+│   │   │   ├── CatalogBase.cs             # 카탈로그 기본 클래스
+│   │   │   ├── HouseCatalog.cs            # House 카탈로그
+│   │   │   ├── BuildingCatalog.cs         # Building 카탈로그
+│   │   │   ├── BuildingMemberCatalog.cs   # BuildingMember 카탈로그
+│   │   │   └── ResourceTypeCatalog.cs     # 자원 타입 카탈로그
+│   │   │
+│   │   ├── TypeDefinitions/               # ScriptableObject 타입 정의
+│   │   │   ├── HouseTypeData.cs           # House 타입 정의
+│   │   │   ├── BuildingTypeData.cs        # Building 타입 정의
+│   │   │   └── ResourceTypeData.cs        # 자원 타입 정의
+│   │   │
+│   │   └── Common/                        # 공통 유틸리티
+│   │       ├── PoolingComponent.cs        # 오브젝트 풀링 기본 컴포넌트
+│   │       ├── RemodelingController.cs    # 리모델링 컨트롤러
+│   │       └── IRemodelingRule.cs         # 리모델링 규칙 인터페이스
 │   │
-│   ├── Prefabs/                           # 프리팹 (House, Building, BuildingMember)
-│   ├── Materials/                         # 머티리얼
-│   ├── Scenes/                            # 샘플 씬
-│   └── README.md                          # 상세 문서
+│   ├── Utilities/                         # 유틸리티 및 샘플
+│   │   ├── HanokBuildingSystemInput_Actions.cs  # Input Actions
+│   │   │
+│   │   ├── Interface/                     # UI 유틸리티
+│   │   │   └── HBSPanelDragger.cs         # 패널 드래그 유틸리티
+│   │   │
+│   │   └── Sample/                        # 샘플 코드
+│   │       ├── HanokSystemController.cs   # 샘플 시스템 컨트롤러
+│   │       ├── HBSInputHandler.cs         # 샘플 입력 핸들러
+│   │       ├── TutorialNotice.cs          # 튜토리얼 UI
+│   │       │
+│   │       ├── UI/                        # 샘플 UI
+│   │       │   ├── HBSSampleUIManager.cs
+│   │       │   ├── HBSSampleStateButton.cs
+│   │       │   ├── HBSSampleBuildingSlot.cs
+│   │       │   └── HBSSampleHousePanel.cs
+│   │       │
+│   │       └── Visualization/             # 시각화 규칙
+│   │           ├── HBSRemodelingRule_Wall.cs
+│   │           └── HBSRemodelingRule_Door.cs
+│   │
+│   ├── Attributes/                        # 커스텀 Attribute
+│   │   └── ReadOnlyAttribute.cs           # ReadOnly 속성
+│   │
+│   └── Nedcrow.HanokBuildingSystem.Runtime.asmdef
 │
-├── Runtime/                               # UPM 패키지용 (Assets/Scripts/Core와 동기화)
-│   └── Core/                              # Assets/Scripts/Core의 복사본
+├── Editor/                                # Unity Editor 확장
+│   ├── BuildingEditor.cs                  # Building 커스텀 인스펙터
+│   ├── BuildingMemberEditor.cs            # BuildingMember 커스텀 인스펙터
+│   ├── ConstructionResourceComponentEditor.cs  # 자원 컴포넌트 인스펙터
+│   ├── ReadOnlyDrawer.cs                  # ReadOnly 속성 드로어
+│   └── Nedcrow.HanokBuildingSystem.Editor.asmdef
 │
-└── README.md                              # 이 문서
+├── Samples~/                              # 샘플 콘텐츠 (Package Manager에서 임포트)
+│   └── Hanok Building System Sample/
+│       ├── Fonts/                         # 폰트 에셋
+│       ├── Materials/                     # 머티리얼
+│       ├── Meshes/                        # 3D 메시
+│       ├── Prefabs/                       # 프리팹 (House, Building 타입)
+│       ├── Scenes/                        # 샘플 씬
+│       └── Input/                         # Input Actions
+│
+└── package.json                           # 패키지 매니페스트
 ```
 
 ### 주요 폴더 설명
 
-- **Core/**: 핵심 시스템 로직
+- **Runtime/Core/**: 핵심 시스템 로직
   - **Building/**: 건물 관련 모든 클래스 (Building, 컴포넌트, 특수 Building)
   - **House/**: 한옥 단위 관련 클래스
   - **Plot/**: 건축 부지 관련 클래스
@@ -107,13 +125,21 @@ HanokBuildingSystemPackage/
   - **TypeDefinitions/**: ScriptableObject 기반 데이터 정의
   - **Common/**: 공통 유틸리티 및 인터페이스
 
-- **Editor/**: Unity Editor 전용 스크립트 (커스텀 인스펙터)
-
-- **Utilities/**: 샘플 코드 및 선택적 유틸리티
+- **Runtime/Utilities/**: 유틸리티 및 참고용 샘플 코드
   - **Sample/**: 참고용 샘플 구현 (프로젝트에 맞게 수정 가능)
   - **Interface/**: UI 유틸리티 컴포넌트
 
-- **Runtime/**: UPM 패키지 배포용 폴더 (Assets/Scripts/Core 미러)
+- **Editor/**: Unity Editor 전용 스크립트 (커스텀 인스펙터)
+
+- **Samples~/**: Package Manager를 통해 임포트할 수 있는 샘플 에셋
+  - 씬, 프리팹, 머티리얼 등 실행 가능한 샘플 포함
+
+### 샘플 임포트 방법
+
+1. Package Manager에서 "Hanok Building System" 패키지 선택
+2. "Samples" 탭 클릭
+3. "Hanok Building System Sample" 옆의 "Import" 버튼 클릭
+4. Assets/Samples/ 폴더에 샘플 콘텐츠가 임포트됩니다
 
 ## 주요 기능
 
