@@ -1,7 +1,6 @@
 using UnityEngine;
 using HanokBuildingSystem;
 using System.Collections;
-using Unity.Mathematics;
 using System.Collections.Generic;
 
 /// <summary>
@@ -419,12 +418,12 @@ public class HanokSystemController : MonoBehaviour
         currentHoverTime = 0;
         while (true)
         {
-            if(math.abs(targetHoverTime_PreSelect - currentHoverTime) < 0.01f)
+            if(Mathf.Abs(targetHoverTime_PreSelect - currentHoverTime) < 0.01f)
             {
                 House house = RaycastHouse(pos);
             }
 
-            if(math.abs(targetHoverTime_Phuse - currentHoverTime) < 0.01f)
+            if(Mathf.Abs(targetHoverTime_Phuse - currentHoverTime) < 0.01f)
             {
                 Debug.Log("Wake up!");
             }
