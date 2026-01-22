@@ -54,10 +54,7 @@ MonoBehaviour:
   houseType: {fileID: 11400000, guid: fe31276e8ba19c64796a773b97114144, type: 2}
   boundaryPlot:
     allVertices: []
-    defaultLineThickness: 0.1
-    defaultMinAngle: 45
-    defaultMaxAngle: 135
-    isBuildable: 0
+  boundaryColliderHeightOffset: 1
   buildings: []
   owner: {fileID: 0}
   currentResidents: 0

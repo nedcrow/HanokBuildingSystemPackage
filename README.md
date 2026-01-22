@@ -242,10 +242,14 @@ wallGenerator.GenerateWallsForPlot(plot, wallBuilding);
 
 ## 버전
 
-- 현재 버전: 0.1.0
+- 현재 버전: 0.1.26
 - Unity 최소 버전: 6000.2.2f1
 
 ## 주요 변경사항
+
+### v0.1.26 - House BoundaryCollider 및 코드 정리
+- ✨ **House BoundaryCollider**: Plot 기반 raycast 판정용 MeshCollider 생성 기능
+  - 기타 코드 가독성 및 유지보수성 향상
 
 ### v0.1.0 - 타입 시스템 리팩토링
 - ✨ **ScriptableObject 기반 타입 시스템**: enum → ScriptableObject 마이그레이션
