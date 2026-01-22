@@ -310,6 +310,7 @@ public class HanokSystemController : MonoBehaviour
         if (Camera.main == null) return null;
 
         Ray ray = Camera.main.ScreenPointToRay(screenPosition);
+        
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, houseLayerMask))
         {
             if (hit.collider != null)

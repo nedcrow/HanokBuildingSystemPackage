@@ -61,6 +61,9 @@ namespace HanokBuildingSystem
     [Tooltip("Plot defining the house boundary area")]
     [SerializeField] private Plot boundaryPlot;
 
+        [Tooltip("BoundaryCollider의 Y축 높이 오프셋")]
+        [SerializeField] private float boundaryColliderHeightOffset = 0f;
+
     [Header("Current Buildings")]
     [SerializeField] private List<Building> buildings = new List<Building>();
 
@@ -244,6 +247,8 @@ namespace HanokBuildingSystem
         Vector3 plotCenter = plot.GetCenter();
         transform.position = plotCenter;
 
+        CreateBoundaryCollider();
+
         // 이벤트 발행 - 각 빌딩이 자율적으로 반응
         events.RaiseConstructionStarted(this, plot);
 
@@ -317,6 +322,113 @@ namespace HanokBuildingSystem
         events.RaiseShowModelHouse(this, plot);
 
         SetUsageState(HouseOccupancyState.UnderConstruction);
+    }
+
+
+    /// <summary>
+    /// BoundaryPlot 기반으로 raycast 판정용 MeshCollider를 생성합니다.
+    /// </summary>
+    /// <param name="colliderName">생성될 collider GameObject 이름</param>
+    /// <returns>생성된 MeshCollider, 실패 시 null</returns>
+    public MeshCollider CreateBoundaryCollider(string colliderName = "BoundaryCollider")
+    {
+        if (boundaryPlot == null || boundaryPlot.AllVertices == null || boundaryPlot.AllVertices.Count < 3)
+        {
+            Debug.LogWarning("[House] Cannot create boundary collider: invalid plot data");
+            return null;
+        }
+
+        // 기존 collider가 있으면 제거
+        Transform existing = transform.Find(colliderName);
+        if (existing != null)
+        {
+            DestroyImmediate(existing.gameObject);
+        }
+
+        // Collider용 GameObject 생성
+        GameObject colliderObject = new GameObject(colliderName);
+        colliderObject.transform.SetParent(transform);
+        colliderObject.transform.localPosition = new Vector3(0f, boundaryColliderHeightOffset, 0f);
+        colliderObject.transform.localRotation = Quaternion.identity;
+
+        // 부모와 같은 레이어 설정
+        colliderObject.layer = gameObject.layer;
+
+        // Mesh 생성
+        Mesh mesh = CreateBoundaryMesh();
+        if (mesh == null)
+        {
+            DestroyImmediate(colliderObject);
+            return null;
+        }
+
+        // MeshCollider 추가
+        MeshCollider meshCollider = colliderObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = mesh;
+
+        return meshCollider;
+    }
+
+    /// <summary>
+    /// BoundaryPlot의 정점들로 Mesh를 생성합니다 (Fan triangulation).
+    /// </summary>
+    private Mesh CreateBoundaryMesh()
+    {
+        var lineList = boundaryPlot.LineList;
+        if (lineList == null || lineList.Count < 3)
+            return null;
+
+        // 각 라인의 첫 번째 정점만 추출
+        List<Vector3> cornerVertices = new List<Vector3>();
+        foreach (var line in lineList)
+        {
+            if (line != null && line.Count > 0)
+            {
+                cornerVertices.Add(line[0]);
+            }
+        }
+
+        if (cornerVertices.Count < 3)
+            return null;
+
+        Mesh mesh = new Mesh();
+        mesh.name = "BoundaryMesh";
+
+        // 월드 좌표를 로컬 좌표로 변환
+        Vector3[] meshVertices = new Vector3[cornerVertices.Count];
+        for (int i = 0; i < cornerVertices.Count; i++)
+        {
+            meshVertices[i] = transform.InverseTransformPoint(cornerVertices[i]);
+        }
+
+        // Fan triangulation (첫 정점을 중심으로 삼각형 생성)
+        int[] triangles = new int[(cornerVertices.Count - 2) * 3];
+        for (int i = 0; i < cornerVertices.Count - 2; i++)
+        {
+            triangles[i * 3] = 0;
+            triangles[i * 3 + 1] = i + 1;
+            triangles[i * 3 + 2] = i + 2;
+        }
+
+        mesh.vertices = meshVertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+
+        return mesh;
+    }
+
+    /// <summary>
+    /// BoundaryCollider를 제거합니다.
+    /// </summary>
+    /// <param name="colliderName">제거할 collider GameObject 이름</param>
+    public void RemoveBoundaryCollider(string colliderName = "BoundaryCollider")
+    {
+        Transform existing = transform.Find(colliderName);
+        if (existing != null)
+        {
+            DestroyImmediate(existing.gameObject);
+        }
     }
 
     /// <summary>

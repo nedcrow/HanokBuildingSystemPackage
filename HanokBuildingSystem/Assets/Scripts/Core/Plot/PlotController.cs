@@ -61,23 +61,13 @@ namespace HanokBuildingSystem
             GameObject plotVisual = new GameObject("PlotVisual");
             plotVisual.transform.SetParent(transform);
 
-            // VerticesList의 각 라인마다 LineRenderer와 Mesh 생성
+            // 각 라인마다 별도의 LineRenderer 생성
             for (int i = 0; i < plot.LineList.Count; i++)
             {
                 List<Vector3> line = plot.LineList[i];
                 if (line.Count < 2) continue;
-
-                // 각 라인마다 별도의 LineRenderer 생성
+                
                 CreateLineMesh(plotVisual, line, i);
-
-                if(plot.LineList.Count > 1 )
-                {
-                    IsBuildable(plot);
-                }
-                else if (plot.LineList.Count > 2)
-                {
-                    CreateFillMesh(plotVisual, line, i);
-                }
             }
 
             plotVisuals[plot] = plotVisual;
@@ -301,49 +291,6 @@ namespace HanokBuildingSystem
         }
 
         /// <summary>
-        /// 하나의 라인에 대한 Fill Mesh 생성
-        /// </summary>
-        /// <param name="parent">부모 GameObject</param>
-        /// <param name="vertices">라인의 정점들</param>
-        /// <param name="meshIndex">메시 인덱스 (이름 구분용)</param>
-        private void CreateFillMesh(GameObject parent, List<Vector3> vertices, int meshIndex)
-        {
-            GameObject meshObject = new GameObject($"PlotMesh_{meshIndex}");
-            meshObject.transform.SetParent(parent.transform);
-
-            MeshFilter meshFilter = meshObject.AddComponent<MeshFilter>();
-            MeshRenderer meshRenderer = meshObject.AddComponent<MeshRenderer>();
-
-            if (plotMeshMaterial != null)
-            {
-                meshRenderer.material = plotMeshMaterial;
-            }
-
-            Mesh mesh = new Mesh();
-            Vector3[] meshVertices = new Vector3[vertices.Count];
-            int[] triangles = new int[(vertices.Count - 2) * 3];
-
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                meshVertices[i] = vertices[i];
-            }
-
-            // Fan triangulation (첫 정점을 중심으로 삼각형 생성)
-            for (int i = 0; i < vertices.Count - 2; i++)
-            {
-                triangles[i * 3] = 0;
-                triangles[i * 3 + 1] = i + 1;
-                triangles[i * 3 + 2] = i + 2;
-            }
-
-            mesh.vertices = meshVertices;
-            mesh.triangles = triangles;
-            mesh.RecalculateNormals();
-
-            meshFilter.mesh = mesh;
-        }
-
-        /// <summary>
         /// Plot의 최대 기울기 계산 (0~90도)
         /// 가장 낮은 정점과 가장 높은 정점 사이의 기울기를 반환
         /// </summary>
@@ -470,7 +417,7 @@ namespace HanokBuildingSystem
 
                 bool isValid = connectionAngle >= minAngle && connectionAngle <= maxAngle;
                 if (!isValid) {
-                    // Debug.LogWarning($"[PlotController] Line {lineIdx} 내부 최소각 검증 실패: {minAngle:F1}° < {connectionAngle:F1}° < {maxAngle:F1}°");
+                    Debug.LogWarning($"[PlotController] Line {lineIdx} 내부 최소각 검증 실패: {minAngle:F1}° < {connectionAngle:F1}° < {maxAngle:F1}°");
                     return false;
                 }
             }

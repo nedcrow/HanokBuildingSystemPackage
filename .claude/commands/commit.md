@@ -7,9 +7,10 @@ Analyze the current git changes and suggest commit messages with gitmoji.
 Requirements:
 1. Run `git status` and `git diff --stat` to see changes
 2. Analyze what was changed
-3. Suggest 2-3 commit message options with appropriate gitmoji
+3. Suggest exactly 2 commit message options:
+   - **간략 버전**: 핵심 변경사항만 한 줄로 요약
+   - **디테일 버전**: 제목 + 본문으로 변경 내용을 구체적으로 설명
 4. Use conventional commit format: `<gitmoji> <type>: <subject>`
-5. Include a brief body explaining the changes
 
 Common gitmoji to use:
 - ✨ New feature
@@ -26,4 +27,13 @@ Common gitmoji to use:
 - 🏗️ Architecture
 - 🧹 Chore
 
-Provide options in different styles (concise, detailed, feature-focused).
+Output format:
+```
+## 간략 버전
+<gitmoji> <type>: <subject>
+
+## 디테일 버전
+<gitmoji> <type>: <subject>
+
+<body with bullet points explaining changes>
+```
