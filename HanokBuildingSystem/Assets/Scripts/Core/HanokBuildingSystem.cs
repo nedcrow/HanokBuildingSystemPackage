@@ -377,7 +377,7 @@ namespace HanokBuildingSystem
                 }
                 else if (lineCount >= maxVertexCount)
                 {
-                    CheckPlotCompletion();
+                    TryStartConstructionFromPlot();
                     return;
                 }
             }
@@ -622,41 +622,35 @@ namespace HanokBuildingSystem
             }
         }
 
-        private void CheckPlotCompletion()
+        private void TryStartConstructionFromPlot()
         {
             Plot currentPlot = GetCurrentPlot();
-            if (currentPlot != null && plotController != null && plotController.IsBuildable(currentPlot))
+            if (currentPlot == null || plotController == null || !plotController.IsBuildable(currentPlot))
             {
-                ValidatePlotForConstruction();
-                Events.RaisePlotCompleted(currentPlot);
+                return;
             }
-        }
-        #endregion
 
-        #region Plot Validation
-        private void ValidatePlotForConstruction()
-        {
             if (currentHouses.Count == 0)
             {
                 Debug.LogWarning("No houses to build.");
                 return;
             }
 
-            bool canDivide = CheckPlotDivision();
-
-            if (canDivide && isPlotDivisionEnabled)
+            if (CheckPlotDivision() && isPlotDivisionEnabled)
             {
                 DividePlot();
             }
 
-            bool allHousesValid = ValidateAllHouses();
-
-            if (allHousesValid)
+            if (ValidateAllHouses())
             {
                 StartConstruction();
             }
-        }
 
+            Events.RaisePlotCompleted(currentPlot);
+        }
+        #endregion
+
+        #region Plot Validation
         private bool CheckPlotDivision()
         {
             Plot currentPlot = GetCurrentPlot();
