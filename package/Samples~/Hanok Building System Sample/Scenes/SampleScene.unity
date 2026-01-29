@@ -4965,6 +4965,10 @@ PrefabInstance:
       value: HanokBuildingSystem
       objectReference: {fileID: 0}
     - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: collisionResponse
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: buildingLayerMask.m_Bits
       value: 1
       objectReference: {fileID: 0}
