@@ -43,10 +43,6 @@ namespace HanokBuildingSystem
         [SerializeField] private LayerMask collisionCheckLayers; // 빌딩 배치 시 충돌 체크할 레이어 (Building, Obstacle 등)
         [SerializeField] private CollisionResponseType collisionResponse = CollisionResponseType.None;
 
-        [Header("Visual Feedback")]
-        [SerializeField] private Color validColor = new Color(0, 1, 0, 0.5f);
-        [SerializeField] private Color invalidColor = new Color(1, 0, 0, 0.5f);
-
         [Header("Custom rules")]
         [SerializeField] private List<MonoBehaviour> ruleSources; // IRemodelRule 구현 Mono들은 전부 여기 등록
         private readonly List<IRemodelingRule> rules = new();
@@ -67,7 +63,7 @@ namespace HanokBuildingSystem
         private Vector2 currentMousePosition;
 
         // Cached for performance
-        private bool isValidPlacement = true;
+        [SerializeField] private bool isValidPlacement = true;
         public bool IsValidPlacement => isValidPlacement;
 
         // Remodeling backup data
@@ -548,7 +544,7 @@ namespace HanokBuildingSystem
         /// </summary>
         private IEnumerator DragBuildingCoroutine()
         {
-            bool lastValidPlacement = true;
+            bool lastValidPlacement = isValidPlacement;
 
             // HanokBuildingSystem에서 지형 설정 가져오기
             bool useTerrainHeight = HanokBuildingSystem.Instance != null && HanokBuildingSystem.Instance.UseTerrainHeight;
@@ -600,7 +596,7 @@ namespace HanokBuildingSystem
                     
                     // invalid로 변경되었을 때 이벤트 발생
                     if (!isValidPlacement)
-                    {
+                    {                        
                         buildingSystem.Events.RaiseRemodelingPlacementInvalid(selectedBuilding, invalidReason);
                     }
                     // valid로 변경되었을 때 이벤트 발생
