@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(tree:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "mcp__serena__find_referencing_symbols",
+      "mcp__serena__think_about_task_adherence",
+      "mcp__serena__find_symbol",
+      "mcp__serena__replace_symbol_body",
+      "mcp__serena__think_about_whether_you_are_done",
+      "mcp__serena__write_memory"
     ],
     "deny": [],
     "ask": []

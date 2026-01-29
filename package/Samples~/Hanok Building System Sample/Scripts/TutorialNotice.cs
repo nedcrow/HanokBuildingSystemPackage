@@ -41,7 +41,7 @@ namespace HanokBuildingSystem
                 hanokBuildingSystem.Events.OnStateChanged += OnSystemStateChanged;
                 hanokBuildingSystem.Events.OnConstructionStarted += OnStartConstruction;
                 hanokBuildingSystem.Events.OnHouseSelected += OnHouseSelected;
-                hanokBuildingSystem.Events.OnBuildingModified += OnBuildingModified;
+                hanokBuildingSystem.Events.OnRemodelingBuildingModified += OnBuildingModified;
             }
         }
 

@@ -12,6 +12,18 @@ namespace HanokBuildingSystem
     }
 
     /// <summary>
+    /// 배치가 유효하지 않은 이유
+    /// </summary>
+    [System.Flags]
+    public enum PlacementInvalidReason
+    {
+        None = 0,
+        OutOfBounds = 1 << 0,      // 하우스 영역 이탈
+        Collision = 1 << 1,         // 다른 오브젝트와 충돌
+        CustomRule = 1 << 2,        // 커스텀 룰 위반
+    }
+
+    /// <summary>
     /// 리모델링 모드에서 Building의 위치 수정, 추가, 삭제를 관리
     /// </summary>
     public class RemodelingController : MonoBehaviour
@@ -165,7 +177,7 @@ namespace HanokBuildingSystem
                             StopDragging();
                             SelectBuilding(targetBuilding, targetHouse);
 
-                            buildingSystem.Events.RaiseBuildingModified(targetHouse, selectedBuilding);
+                            buildingSystem.Events.RaiseRemodelingBuildingModified(targetHouse, selectedBuilding);
                         }
                         break;
                 }
@@ -184,7 +196,7 @@ namespace HanokBuildingSystem
                     isNewlyAddedBuilding = false;
                 }
 
-                buildingSystem.Events.RaiseBuildingModified(targetHouse, selectedBuilding);
+                buildingSystem.Events.RaiseRemodelingBuildingModified(targetHouse, selectedBuilding);
 
                 selectedBuilding = null;
 
@@ -227,7 +239,8 @@ namespace HanokBuildingSystem
                     selectedBuilding.transform.rotation = originalRotation;
 
                     // 원래 위치의 유효성 검증
-                    bool isValid = ValidatePlacement(selectedBuilding, targetHouse);
+                    PlacementInvalidReason invalidReason;
+                    bool isValid = ValidatePlacement(selectedBuilding, targetHouse, out invalidReason);
 
                     if (isValid)
                     {
@@ -459,7 +472,7 @@ namespace HanokBuildingSystem
                 Destroy(building.gameObject);
             }
 
-            buildingSystem.Events.RaiseBuildingModified(house, building);
+            buildingSystem.Events.RaiseRemodelingBuildingModified(house, building);
             Debug.Log($"[RemodelingController] Removed building '{building.name}' from {house.name}");
 
             return true;
@@ -552,27 +565,44 @@ namespace HanokBuildingSystem
                 }
                 
                 // 배치 가능 여부 검사
-                isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse);
+                PlacementInvalidReason invalidReason;
+                isValidPlacement = ValidatePlacement(selectedBuilding, targetHouse, out invalidReason);
                 
                 
                 selectedBuilding.transform.position = newPosition;
 
-                // 임의 룰 추가
+                // 임의 룰 실행
                 foreach(IRemodelingRule rule in rules)
                 {
                     string failReason;
                     bool enforce;
                     if (!rule.ControlBuilding(selectedBuilding, targetHouse, newPosition, out failReason, out enforce))
                     {
-                        if(enforce) StopDragging();
+                        string ruleName = rule.GetType().Name;
+                        // Debug.Log($"[DragBuildingCoroutine] Rule returned false - Rule: {ruleName}, Building: {selectedBuilding.name}, Reason: {failReason ?? "N/A"}, Enforce: {enforce}");
+                        
+                        // enforce가 true일 때만 invalid 처리
+                        if(enforce)
+                        {
+                            invalidReason |= PlacementInvalidReason.CustomRule;
+                            isValidPlacement = false;
+                            Debug.LogWarning($"[DragBuildingCoroutine] Placement invalidated by rule: {ruleName}");
+                            StopDragging();
+                        }
                         yield return null;
                     }
                 }                
 
-                // 시각적 피드백 (옵션)
+                // 배치 상태가 변경되었을 때 이벤트 발생
                 if(lastValidPlacement != isValidPlacement)
                 {
-                    lastValidPlacement = isValidPlacement; 
+                    lastValidPlacement = isValidPlacement;
+                    
+                    // invalid로 변경되었을 때 이벤트 발생
+                    if (!isValidPlacement)
+                    {
+                        buildingSystem.Events.RaiseRemodelingPlacementInvalid(selectedBuilding, invalidReason);
+                    }
                 }
                 
 
@@ -585,8 +615,10 @@ namespace HanokBuildingSystem
         /// <summary>
         /// Building 배치가 유효한지 검사
         /// </summary>
-        private bool ValidatePlacement(Building building, House house)
+        private bool ValidatePlacement(Building building, House house, out PlacementInvalidReason invalidReason)
         {
+            invalidReason = PlacementInvalidReason.None;
+
             if (building == null || house == null)
             {
                 return false;
@@ -595,16 +627,16 @@ namespace HanokBuildingSystem
             // 하우스 영역 내부인지 확인
             if (!IsWithinHouseBounds(building.transform.position, house))
             {
-                return false;
+                invalidReason |= PlacementInvalidReason.OutOfBounds;
             }
 
             // 충돌 검사
             if (shouldCheckCollision && CheckPlacementCollision(building))
             {
-                return false;
+                invalidReason |= PlacementInvalidReason.Collision;
             }
-
-            return true;
+            
+            return invalidReason == PlacementInvalidReason.None;
         }
 
         /// <summary>
@@ -748,14 +780,12 @@ namespace HanokBuildingSystem
         {
             if (building == null || targetHouse == null)
             {
-                Debug.LogWarning($"Null [targetHouse] for {building.name}`s collision check.");
                 return false;
             }
 
             Collider buildingCollider = building.GetComponent<Collider>();
             if (buildingCollider == null)
             {
-                Debug.LogWarning($"Null [Collider] for {building.name}`s collision check.");
                 return false;
             }
 
@@ -774,12 +804,21 @@ namespace HanokBuildingSystem
             );
 
             bool hasCollision = false;
-            targetBuilding = null; // 초기화
+            targetBuilding = null;
+
+            // 바운더리 콜라이더 캐싱
+            MeshCollider houseBoundaryCollider = targetHouse.GetBoundaryCollider();
 
             foreach (Collider otherCollider in overlappingColliders)
             {
                 // 자기 자신은 제외
                 if (otherCollider == buildingCollider)
+                {
+                    continue;
+                }
+
+                // 현재 하우스의 바운더리 콜라이더 제외
+                if (houseBoundaryCollider != null && otherCollider == houseBoundaryCollider)
                 {
                     continue;
                 }
@@ -793,14 +832,14 @@ namespace HanokBuildingSystem
                 // 같은 하우스 내의 빌딩만 타겟으로 지정
                 if (otherBuilding != null)
                 {
-                    
                     if (targetHouse.Buildings.Contains(otherBuilding))
                     {
                         targetBuilding = otherBuilding;
                     }
                 }
 
-                return hasCollision = true;
+                hasCollision = true;
+                return hasCollision;
             }            
 
             return hasCollision;
