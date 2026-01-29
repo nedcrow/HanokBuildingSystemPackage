@@ -63,6 +63,7 @@ namespace HanokBuildingSystem
 
         [Tooltip("BoundaryCollider의 Y축 높이 오프셋")]
         [SerializeField] private float boundaryColliderHeightOffset = 0f;
+        private MeshCollider boundaryCollider;
 
     [Header("Current Buildings")]
     [SerializeField] private List<Building> buildings = new List<Building>();
@@ -91,6 +92,7 @@ namespace HanokBuildingSystem
     public HouseTypeData HouseType => houseType;
     public List<BuildingTypeData> RequiredBuildingTypes => requiredBuildingTypes;
     public Plot BoundaryPlot => boundaryPlot;
+    public MeshCollider BoundaryCollider => boundaryCollider;
     public List<Building> Buildings => buildings;
     public GameObject Owner => owner;
     public int CurrentResidents => currentResidents;
@@ -366,6 +368,9 @@ namespace HanokBuildingSystem
         MeshCollider meshCollider = colliderObject.AddComponent<MeshCollider>();
         meshCollider.sharedMesh = mesh;
 
+        // 인스턴스 필드에 저장
+        boundaryCollider = meshCollider;
+
         return meshCollider;
     }
 
@@ -429,6 +434,11 @@ namespace HanokBuildingSystem
         {
             DestroyImmediate(existing.gameObject);
         }
+    }
+
+    public MeshCollider GetBoundaryCollider()
+    {
+        return boundaryCollider;
     }
 
     /// <summary>

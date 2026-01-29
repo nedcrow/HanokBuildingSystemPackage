@@ -52,11 +52,12 @@ namespace HanokBuildingSystem
 
         #region Remodeling Events
         public event Action<House> OnRemodelingStarted;
-        public event Action<House, Building> OnBuildingAddedToHouse;
-        public event Action<House, Building> OnBuildingRemovedFromHouse;
-        public event Action<House, Building> OnBuildingModified;
+        public event Action<House, Building> OnRemodelingBuildingAdded;
+        public event Action<House, Building> OnRemodelingBuildingRemoved;
+        public event Action<House, Building> OnRemodelingBuildingModified;
         public event Action<House> OnRemodelingCompleted;
         public event Action<House> OnRemodelingCancelled;
+        public event Action<Building, PlacementInvalidReason> OnRemodelingPlacementInvalid;
         #endregion
 
         #region Internal Invoke Methods
@@ -106,20 +107,23 @@ namespace HanokBuildingSystem
         internal void RaiseRemodelingStarted(House house)
             => OnRemodelingStarted?.Invoke(house);
 
-        internal void RaiseBuildingAddedToHouse(House house, Building building)
-            => OnBuildingAddedToHouse?.Invoke(house, building);
+        internal void RaiseRemodelingBuildingAdded(House house, Building building)
+            => OnRemodelingBuildingAdded?.Invoke(house, building);
 
-        internal void RaiseBuildingRemovedFromHouse(House house, Building building)
-            => OnBuildingRemovedFromHouse?.Invoke(house, building);
+        internal void RaiseRemodelingBuildingRemoved(House house, Building building)
+            => OnRemodelingBuildingRemoved?.Invoke(house, building);
 
-        internal void RaiseBuildingModified(House house, Building building)
-            => OnBuildingModified?.Invoke(house, building);
+        internal void RaiseRemodelingBuildingModified(House house, Building building)
+            => OnRemodelingBuildingModified?.Invoke(house, building);
 
         internal void RaiseRemodelingCompleted(House house)
             => OnRemodelingCompleted?.Invoke(house);
 
         internal void RaiseRemodelingCancelled(House house)
             => OnRemodelingCancelled?.Invoke(house);
+
+        internal void RaiseRemodelingPlacementInvalid(Building building, PlacementInvalidReason reason)
+            => OnRemodelingPlacementInvalid?.Invoke(building, reason);
         #endregion
     }
 }

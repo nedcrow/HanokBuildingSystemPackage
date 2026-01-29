@@ -84,7 +84,7 @@ public class HBSSampleHousePanel : MonoBehaviour
             buildingSystem.Events.OnRemodelingStarted += HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted += HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled += HandleRemodelingCancelled;
-            buildingSystem.Events.OnBuildingModified += HandleBuildingModified;
+            buildingSystem.Events.OnRemodelingBuildingModified += HandleBuildingModified;
         }
 
         // Building 슬롯 초기화 (Content 하위의 자식들을 가져오기)
@@ -654,7 +654,7 @@ public class HBSSampleHousePanel : MonoBehaviour
             buildingSystem.Events.OnRemodelingStarted -= HandleRemodelingStarted;
             buildingSystem.Events.OnRemodelingCompleted -= HandleRemodelingCompleted;
             buildingSystem.Events.OnRemodelingCancelled -= HandleRemodelingCancelled;
-            buildingSystem.Events.OnBuildingModified -= HandleBuildingModified;
+            buildingSystem.Events.OnRemodelingBuildingModified -= HandleBuildingModified;
         }
     }
 }
