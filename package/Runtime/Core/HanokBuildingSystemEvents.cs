@@ -58,6 +58,8 @@ namespace HanokBuildingSystem
         public event Action<House> OnRemodelingCompleted;
         public event Action<House> OnRemodelingCancelled;
         public event Action<Building, PlacementInvalidReason> OnRemodelingPlacementInvalid;
+
+        public event Action<Building> OnRemodelingPlacementValid;
         #endregion
 
         #region Internal Invoke Methods
@@ -124,6 +126,10 @@ namespace HanokBuildingSystem
 
         internal void RaiseRemodelingPlacementInvalid(Building building, PlacementInvalidReason reason)
             => OnRemodelingPlacementInvalid?.Invoke(building, reason);
+
+
+        internal void RaiseRemodelingPlacementValid(Building building)
+            => OnRemodelingPlacementValid?.Invoke(building);
         #endregion
     }
 }
