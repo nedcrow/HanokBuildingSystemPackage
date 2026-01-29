@@ -603,6 +603,11 @@ namespace HanokBuildingSystem
                     {
                         buildingSystem.Events.RaiseRemodelingPlacementInvalid(selectedBuilding, invalidReason);
                     }
+                    // valid로 변경되었을 때 이벤트 발생
+                    else
+                    {
+                        buildingSystem.Events.RaiseRemodelingPlacementValid(selectedBuilding);
+                    }
                 }
                 
 
