@@ -34,6 +34,11 @@ namespace HanokBuildingSystem
 
             if(wallGenerator == null)
             {
+                wallGenerator = HanokBuildingSystem.Instance.WallGenerator;
+            }
+
+            if(wallGenerator == null)
+            {
                 wallGenerator = FindFirstObjectByType<WallGenerator>();
             }
 
@@ -49,36 +54,6 @@ namespace HanokBuildingSystem
             if (Body != null)
             {
                 Body.SetActive(false);
-            }
-        }
-
-        /// <summary>
-        /// WallBuilding이 비활성화될 때 벽들을 정리
-        /// </summary>
-        private void OnDisable()
-        {
-            // Walls를 풀로 반환
-            if (Walls != null && Walls.Count > 0)
-            {
-                if (memberCatalog == null)
-                {
-                    memberCatalog = HanokBuildingSystem.Instance?.BuildingMemberCatalog;
-                }
-
-                if (memberCatalog != null)
-                {
-                    for (int i = Walls.Count - 1; i >= 0; i--)
-                    {
-                        GameObject wall = Walls[i];
-                        if (wall != null)
-                        {
-                            RemoveBuildingMember(wall);
-                            memberCatalog.ReturnMember(wall);
-                        }
-                    }
-                }
-
-                Walls.Clear();
             }
         }
     }
