@@ -28,7 +28,7 @@ public class RemodelingController : MonoBehaviour
     #region Properties
     public bool IsDragging => isDragging;
     public bool IsEraserMode => isEraserMode;
-    private RemodelingSystem System => buildingSystem?.RemodelingSystem;
+    private RemodelingSystem remodelingSystem;
     #endregion
 
     #region Unity Lifecycle
@@ -39,14 +39,17 @@ public class RemodelingController : MonoBehaviour
             buildingSystem = HanokBuildingSystem.HanokBuildingSystem.Instance;
         }
 
+        if (remodelingSystem == null)
+        {
+            remodelingSystem = buildingSystem?.RemodelingSystem;
+        }
+
         if (mainCamera == null)
         {
             mainCamera = Camera.main;
         }
-    }
 
-    private void OnEnable()
-    {
+        // Events
         if (buildingSystem != null)
         {
             buildingSystem.Events.OnRemodelingCompleted += HandleRemodelingCompleted;
@@ -70,13 +73,13 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     private void HandleRemodelingCompleted(House house)
     {
-        if (house == null || System == null) return;
+        if (house == null || remodelingSystem == null) return;
 
         // 하우스를 UnderConstruction 상태로 변경
         house.SetUsageState(HouseOccupancyState.UnderConstruction);
 
         // 변경된 빌딩들의 건설 단계를 0으로 초기화
-        System.ResetModifiedBuildingsToStageZero(house);
+        remodelingSystem.ResetModifiedBuildingsToStageZero(house);
 
         Debug.Log($"[RemodelingController] Applied remodeling changes for {house.name}");
     }
@@ -86,10 +89,10 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     private void HandleRemodelingCancelled(House house)
     {
-        if (house == null || System == null) return;
+        if (house == null || remodelingSystem == null) return;
 
         // 백업된 상태로 복원
-        System.RestoreHouseState();
+        remodelingSystem.RestoreHouseState();
 
         Debug.Log($"[RemodelingController] Restored backup for {house.name}");
     }
@@ -111,7 +114,7 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public bool TrySelectBuilding(Vector2 screenPosition, House house)
     {
-        if (System == null || house == null)
+        if (remodelingSystem == null || house == null)
         {
             Debug.LogWarning("[RemodelingController] Cannot select building: System or house is null.");
             return false;
@@ -137,7 +140,7 @@ public class RemodelingController : MonoBehaviour
         }
 
         // 일반 모드일 때는 건물 선택
-        System.SelectBuilding(building);
+        remodelingSystem.SelectBuilding(building);
         StartDragging();
         return true;
     }
@@ -147,12 +150,12 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public bool TryPlaceBuilding()
     {
-        if (System == null || !isDragging || System.SelectedBuilding == null)
+        if (remodelingSystem == null || !isDragging || remodelingSystem.SelectedBuilding == null)
         {
             return false;
         }
 
-        bool success = System.TryConfirmPlacement();
+        bool success = remodelingSystem.TryConfirmPlacement();
 
         if (success)
         {
@@ -162,12 +165,12 @@ public class RemodelingController : MonoBehaviour
         // SwapTarget의 경우 드래그 유지, ResetPosition의 경우 System에서 CancelPlacement 호출
 
         // SwapTarget으로 다른 빌딩이 선택된 경우 드래그 유지
-        if (!success && System.SelectedBuilding != null &&
-            System.CollisionResponse == CollisionResponseType.SwapTarget)
+        if (!success && remodelingSystem.SelectedBuilding != null &&
+            remodelingSystem.CollisionResponse == CollisionResponseType.SwapTarget)
         {
             // 드래그 계속 유지
         }
-        else if (!success && System.SelectedBuilding == null)
+        else if (!success && remodelingSystem.SelectedBuilding == null)
         {
             StopDragging();
         }
@@ -180,9 +183,9 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public void CancelSelection()
     {
-        if (System != null)
+        if (remodelingSystem != null)
         {
-            System.CancelPlacement();
+            remodelingSystem.CancelPlacement();
         }
         StopDragging();
     }
@@ -200,9 +203,9 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public void RotateLeft(float angle = 90f)
     {
-        if (System != null)
+        if (remodelingSystem != null)
         {
-            System.RotateBuilding(-angle);
+            remodelingSystem.RotateBuilding(-angle);
         }
     }
 
@@ -211,9 +214,9 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public void RotateRight(float angle = 90f)
     {
-        if (System != null)
+        if (remodelingSystem != null)
         {
-            System.RotateBuilding(angle);
+            remodelingSystem.RotateBuilding(angle);
         }
     }
     #endregion
@@ -224,9 +227,9 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public void StartRemodeling(House house)
     {
-        if (System != null)
+        if (remodelingSystem != null)
         {
-            System.StartSession(house);
+            remodelingSystem.StartSession(house);
         }
     }
 
@@ -236,7 +239,7 @@ public class RemodelingController : MonoBehaviour
     public bool CompleteRemodeling()
     {
         StopDragging();
-        return System?.CompleteSession() ?? false;
+        return remodelingSystem?.CompleteSession() ?? false;
     }
 
     /// <summary>
@@ -245,7 +248,7 @@ public class RemodelingController : MonoBehaviour
     public bool CancelRemodeling()
     {
         StopDragging();
-        return System?.CancelSession() ?? false;
+        return remodelingSystem?.CancelSession() ?? false;
     }
 
     /// <summary>
@@ -253,13 +256,13 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public Building AddBuildingDuringRemodeling(GameObject buildingPrefab, Vector3? position = null)
     {
-        if (System == null)
+        if (remodelingSystem == null)
         {
             Debug.LogWarning("[RemodelingController] Cannot add building: System is null.");
             return null;
         }
 
-        Building newBuilding = System.BeginPlacingNew(buildingPrefab, position);
+        Building newBuilding = remodelingSystem.BeginPlacingNew(buildingPrefab, position);
 
         if (newBuilding != null)
         {
@@ -274,7 +277,7 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     public bool RemoveBuildingDuringRemodeling(Building building, House house)
     {
-        return System?.RemoveBuilding(building) ?? false;
+        return remodelingSystem?.RemoveBuilding(building) ?? false;
     }
     #endregion
 
@@ -287,7 +290,7 @@ public class RemodelingController : MonoBehaviour
         }
 
         isDragging = true;
-        System?.NotifyDragStarted();
+        remodelingSystem?.NotifyDragStarted();
         draggingCoroutine = StartCoroutine(DragBuildingCoroutine());
     }
 
@@ -302,7 +305,7 @@ public class RemodelingController : MonoBehaviour
         if (isDragging)
         {
             isDragging = false;
-            System?.NotifyDragEnded();
+            remodelingSystem?.NotifyDragEnded();
         }
     }
 
@@ -311,7 +314,7 @@ public class RemodelingController : MonoBehaviour
     /// </summary>
     private IEnumerator DragBuildingCoroutine()
     {
-        if (System == null) yield break;
+        if (remodelingSystem == null) yield break;
 
         // HanokBuildingSystem에서 지형 설정 가져오기
         bool useTerrainHeight = HanokBuildingSystem.HanokBuildingSystem.Instance != null &&
@@ -319,19 +322,19 @@ public class RemodelingController : MonoBehaviour
         LayerMask terrainLayer = HanokBuildingSystem.HanokBuildingSystem.Instance != null ?
                                 HanokBuildingSystem.HanokBuildingSystem.Instance.GroundLayerMask : default;
 
-        while (isDragging && System.SelectedBuilding != null)
+        while (isDragging && remodelingSystem.SelectedBuilding != null)
         {
             Vector3 newPosition = ScreenToWorldPosition(currentMousePosition, useTerrainHeight, terrainLayer);
 
             // RemodelingSystem에 위치 업데이트 위임
-            System.UpdateBuildingPosition(newPosition);
+            remodelingSystem.UpdateBuildingPosition(newPosition);
 
             // 배치 유효성 검사
             PlacementInvalidReason invalidReason;
-            bool isValid = System.ValidateCurrentPlacement(out invalidReason);
+            bool isValid = remodelingSystem.ValidateCurrentPlacement(out invalidReason);
 
             // 커스텀 룰 적용
-            System.ApplyCustomRules(newPosition, ref invalidReason, ref isValid);
+            remodelingSystem.ApplyCustomRules(newPosition, ref invalidReason, ref isValid);
 
             // 강제 실패 시 드래그 중지 (enforce가 true인 Failed 룰에서 처리)
             if (!isValid && (invalidReason & PlacementInvalidReason.CustomRule) != 0)

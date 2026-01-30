@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2321337330813453535}
-  - component: {fileID: 8025097793016976325}
+  - component: {fileID: 1664987122189267493}
+  - component: {fileID: 5544837613142234515}
   m_Layer: 0
   m_Name: RemodelingController
   m_TagString: Untagged
@@ -34,7 +35,7 @@ Transform:
   - {fileID: 4671812966042564779}
   m_Father: {fileID: 8136752329970946030}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8025097793016976325
+--- !u!114 &1664987122189267493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,31 +44,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 2199413577735083238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c423241337a4e74897e80a09e748703, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d9cb3f6fe7b61a4696eada477412618, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.RemodelingController
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.RemodelingSystem
   buildingSystem: {fileID: 0}
   buildingCatalog: {fileID: 0}
-  mainCamera: {fileID: 0}
   clampPlacementPosition: 1
-  buildingLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  raycastDistance: 1000
   shouldCheckCollision: 1
   collisionCheckLayers:
     serializedVersion: 2
     m_Bits: 1
-  collisionResponse: 2
-  validColor: {r: 0, g: 1, b: 0, a: 0.5}
-  invalidColor: {r: 1, g: 0, b: 0, a: 0.5}
+  collisionResponse: 0
   ruleSources:
   - {fileID: 3297352506825253912}
   - {fileID: 7224442736635102691}
+  currentPhase: 0
+  targetHouse: {fileID: 0}
   selectedBuilding: {fileID: 0}
   targetBuilding: {fileID: 0}
-  targetHouse: {fileID: 0}
-  isDragging: 0
+  isValidPlacement: 1
+--- !u!114 &5544837613142234515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2199413577735083238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6793ed4ee7116843a0832f89b83d867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemodelingController
+  buildingSystem: {fileID: 0}
+  mainCamera: {fileID: 0}
+  buildingLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  raycastDistance: 1000
 --- !u!1 &2537292056039576241
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,6 +380,7 @@ MonoBehaviour:
   rightButtonAction: {fileID: -2570682182395963499, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
   rotateLeftAction: {fileID: 2735785801234865069, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
   rotateRightAction: {fileID: 6707454358872895932, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
+  deleteAction: {fileID: 0}
   doubleClickInterval: 0.2
   dragStartDistance: 10
 --- !u!1 &6359338958083648233
@@ -509,6 +523,7 @@ MonoBehaviour:
   inputHandler: {fileID: 8482222856146161250}
   plotController: {fileID: 7548693506095678399}
   wallGenerator: {fileID: 6915263287050264867}
+  remodelingController: {fileID: 5544837613142234515}
   houseLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -534,11 +549,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HanokBuildingSystem
   plotController: {fileID: 7548693506095678399}
-  remodelingController: {fileID: 8025097793016976325}
+  remodelingSystem: {fileID: 1664987122189267493}
   wallGenerator: {fileID: 6915263287050264867}
   houseCatalog: {fileID: 4920192036757626759}
   buildingCatalog: {fileID: 3341540988524704928}
-  buildingMemberCatalog: {fileID: 0}
+  buildingMemberCatalog: {fileID: 2419407458928891290}
+  useTerrainHeight: 1
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 16
   maxAllowedSlope: 30
   currentState: 0
   currentPlots: []
@@ -547,9 +566,6 @@ MonoBehaviour:
   maxVertexCount: 4
   enableIntermediatePoints: 1
   intermediatePointSpacing: 2
-  terrainLayer:
-    serializedVersion: 2
-    m_Bits: 16
 --- !u!1 &8215144608226104894
 GameObject:
   m_ObjectHideFlags: 0

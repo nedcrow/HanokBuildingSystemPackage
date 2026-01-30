@@ -99,11 +99,10 @@ namespace HanokBuildingSystem
             bool useTerrainHeight = HanokBuildingSystem.Instance != null && HanokBuildingSystem.Instance.UseTerrainHeight;
             LayerMask terrainLayer = HanokBuildingSystem.Instance != null ? HanokBuildingSystem.Instance.GroundLayerMask : default;
 
-            targetHouse.ShowModelHouse(targetHouse.BoundaryPlot, useTerrainHeight, terrainLayer);
             BackupHouseState();
-            SetPhase(RemodelingPhase.Active);
+            targetHouse.ShowModelHouse(targetHouse.BoundaryPlot, useTerrainHeight, terrainLayer);
 
-            Debug.Log($"[RemodelingSystem] Started session for {house.name}");
+            SetPhase(RemodelingPhase.Active);
         }
 
         /// <summary>
