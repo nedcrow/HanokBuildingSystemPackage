@@ -71,6 +71,9 @@ public class HBSSampleHousePanel : MonoBehaviour
     [SerializeField] private Color eraserActiveColor = Color.red;
     [SerializeField] private Color eraserInactiveColor = Color.white;
 
+    [Header("Remodeling Controller")]
+    [SerializeField] private RemodelingController remodelingController;
+
     private House currentHouse;
     private HanokBuildingSystem.HanokBuildingSystem buildingSystem;
     private bool isEraserMode = false;
@@ -351,10 +354,10 @@ public class HBSSampleHousePanel : MonoBehaviour
     /// </summary>
     public void OnClickCancelButton()
     {
-        if (buildingSystem != null && buildingSystem.RemodelingController != null)
+        if (buildingSystem != null && buildingSystem.RemodelingSystem != null)
         {
             // 리모델링 취소 - 백업된 상태로 복원
-            bool success = buildingSystem.RemodelingController.CancelRemodeling();
+            bool success = buildingSystem.RemodelingSystem.CancelSession();
 
             if (success)
             {
@@ -369,10 +372,10 @@ public class HBSSampleHousePanel : MonoBehaviour
     /// </summary>
     public void OnClickConfirmButton()
     {
-        if (buildingSystem != null && buildingSystem.RemodelingController != null)
+        if (buildingSystem != null && buildingSystem.RemodelingSystem != null)
         {
             // 리모델링 완성 - 하우스 UnderConstruction, 변경된 빌딩 0단계로 초기화
-            bool success = buildingSystem.RemodelingController.CompleteRemodeling();
+            bool success = buildingSystem.RemodelingSystem.CompleteSession();
 
             if (success)
             {
@@ -390,7 +393,7 @@ public class HBSSampleHousePanel : MonoBehaviour
     /// </summary>
     public void OnClickAddBuilding()
     {
-        if (buildingSystem == null || buildingSystem.RemodelingController == null)
+        if (buildingSystem == null || remodelingController == null)
         {
             Debug.LogWarning("[HBSSampleHousePanel] Building system or remodeling controller is null.");
             return;
@@ -409,7 +412,7 @@ public class HBSSampleHousePanel : MonoBehaviour
         }
 
         // RemodelingController를 통해 Building 추가 시작 (드래그 모드 진입)
-        Building newBuilding = buildingSystem.RemodelingController.AddBuildingDuringRemodeling(buildingPrefabToAdd);
+        Building newBuilding = remodelingController.AddBuildingDuringRemodeling(buildingPrefabToAdd);
 
         if (newBuilding != null)
         {
@@ -426,7 +429,7 @@ public class HBSSampleHousePanel : MonoBehaviour
     /// </summary>
     public void OnClickEraser()
     {
-        if (buildingSystem == null || buildingSystem.RemodelingController == null)
+        if (buildingSystem == null || remodelingController == null)
         {
             Debug.LogWarning("[HBSSampleHousePanel] Building system or remodeling controller is null.");
             return;
@@ -450,9 +453,9 @@ public class HBSSampleHousePanel : MonoBehaviour
         isEraserMode = enabled;
 
         // RemodelingController에도 지우개 모드 상태 전달
-        if (buildingSystem?.RemodelingController != null)
+        if (remodelingController != null)
         {
-            buildingSystem.RemodelingController.SetEraserMode(enabled);
+            remodelingController.SetEraserMode(enabled);
         }
 
         // 지우개 버튼 색상 변경 (Button의 ColorBlock을 수정해서 상태 색상이 덮어쓰지 않도록)
@@ -600,13 +603,13 @@ public class HBSSampleHousePanel : MonoBehaviour
         // 지우개 모드가 활성화되어 있으면 건물 제거
         if (isEraserMode)
         {
-            if (buildingSystem == null || buildingSystem.RemodelingController == null)
+            if (buildingSystem == null || buildingSystem.RemodelingSystem == null)
             {
-                Debug.LogWarning("[HBSSampleHousePanel] Cannot remove building: RemodelingController is not available.");
+                Debug.LogWarning("[HBSSampleHousePanel] Cannot remove building: RemodelingSystem is not available.");
                 return;
             }
 
-            bool removed = buildingSystem.RemodelingController.RemoveBuildingDuringRemodeling(building, currentHouse);
+            bool removed = buildingSystem.RemodelingSystem.RemoveBuilding(building);
 
             if (removed)
             {

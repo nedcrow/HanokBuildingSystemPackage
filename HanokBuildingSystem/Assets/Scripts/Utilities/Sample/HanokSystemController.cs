@@ -18,6 +18,7 @@ public class HanokSystemController : MonoBehaviour
     [SerializeField] private HBSInputHandler inputHandler;
     [SerializeField] private PlotController plotController;
     [SerializeField] private WallGenerator wallGenerator;
+    [SerializeField] private RemodelingController remodelingController;
 
     [Header("Raycast Settings")]
     [SerializeField] private LayerMask houseLayerMask;
@@ -116,16 +117,16 @@ public class HanokSystemController : MonoBehaviour
     #region Input Handlers
     private void HandleRemodelingLeftClick(Vector2 screenPosition)
     {
-        if (buildingSystem.RemodelingController == null)
+        if (remodelingController == null)
         {
             Debug.LogWarning("[HanokSystemController] RemodelingController is not assigned.");
             return;
         }
 
         // 이미 드래그 중이면 배치 시도
-        if (buildingSystem.RemodelingController.IsDragging)
+        if (remodelingController.IsDragging)
         {
-            buildingSystem.RemodelingController.TryPlaceBuilding();
+            remodelingController.TryPlaceBuilding();
         }
         // 아니면 Building 선택 시도
         else
@@ -133,7 +134,7 @@ public class HanokSystemController : MonoBehaviour
             if (buildingSystem.CurrentHouses.Count > 0)
             {
                 House targetHouse = buildingSystem.CurrentHouses[0];
-                buildingSystem.RemodelingController.TrySelectBuilding(screenPosition, targetHouse);
+                remodelingController.TrySelectBuilding(screenPosition, targetHouse);
             }
         }
     }
@@ -178,9 +179,9 @@ public class HanokSystemController : MonoBehaviour
 
             case SystemState.Remodeling:
                 // 드래그 중이면 선택 취소
-                if (buildingSystem.RemodelingController != null && buildingSystem.RemodelingController.IsDragging)
+                if (remodelingController != null && remodelingController.IsDragging)
                 {
-                    buildingSystem.RemodelingController.CancelSelection();
+                    remodelingController.CancelSelection();
                 }
                 else
                 {
@@ -227,9 +228,9 @@ public class HanokSystemController : MonoBehaviour
         // Update building position in Remodeling mode
         if (buildingSystem.CurrentState == SystemState.Remodeling)
         {
-            if (buildingSystem.RemodelingController != null)
+            if (remodelingController != null)
             {
-                buildingSystem.RemodelingController.UpdateMousePosition(screenPosition);
+                remodelingController.UpdateMousePosition(screenPosition);
             }
         }
 
@@ -282,7 +283,7 @@ public class HanokSystemController : MonoBehaviour
     {
         if (buildingSystem.CurrentState == SystemState.Remodeling)
         {
-            buildingSystem.RemodelingController?.RotateLeft();
+            remodelingController?.RotateLeft();
         }
     }
 
@@ -290,7 +291,7 @@ public class HanokSystemController : MonoBehaviour
     {
         if (buildingSystem.CurrentState == SystemState.Remodeling)
         {
-            buildingSystem.RemodelingController?.RotateRight();
+            remodelingController?.RotateRight();
         }
     }
 
@@ -449,10 +450,10 @@ public class HanokSystemController : MonoBehaviour
             plotController.ShowPlot(house.BoundaryPlot);            
         }
 
-        if (!buildingSystem.RemodelingController.IsDragging)
+        if (remodelingController != null && !remodelingController.IsDragging)
         {
-            
-        }    
+
+        }
     }
 
     private void HandleHouseDeselected(House house)
@@ -461,11 +462,11 @@ public class HanokSystemController : MonoBehaviour
         {
             return;
         }
-        plotController.HidePlot(house.BoundaryPlot);   
+        plotController.HidePlot(house.BoundaryPlot);
 
-        if (!buildingSystem.RemodelingController.IsDragging)
+        if (remodelingController != null && !remodelingController.IsDragging)
         {
-           
+
         }
     }
 
