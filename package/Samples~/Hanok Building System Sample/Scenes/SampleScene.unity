@@ -846,6 +846,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359280138}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &407826710 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7224442736635102691, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7808e223ad708cb44acaf91c0ef2a57a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSRemodelingRule_Door
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2215,6 +2226,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961766057}
   m_CullTransparentMesh: 1
+--- !u!114 &1002139597 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2419407458928891290, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bebc65ea3dd13b4cad534048595d56c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.BuildingMemberCatalog
 --- !u!4 &1037008664 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8136752329970946030, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
@@ -2612,6 +2634,17 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6792426182135718314, guid: 71743daf25baecc4ea6cf8846224e76a, type: 3}
+--- !u!114 &1144040927 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3297352506825253912, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3591b5074646ba841bebc92d35c2f565, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.HBSRemodelingRule_Dam
 --- !u!1 &1144103209
 GameObject:
   m_ObjectHideFlags: 0
@@ -3131,7 +3164,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1241210029
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4276,6 +4309,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740598593}
   m_CullTransparentMesh: 1
+--- !u!1 &1752197331 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2199413577735083238, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1752197333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752197331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6793ed4ee7116843a0832f89b83d867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemodelingController
+  buildingSystem: {fileID: 0}
+  mainCamera: {fileID: 0}
+  buildingLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  raycastDistance: 1000
+--- !u!114 &1752197334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752197331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d9cb3f6fe7b61a4696eada477412618, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HanokBuildingSystem.RemodelingSystem
+  buildingSystem: {fileID: 0}
+  buildingCatalog: {fileID: 0}
+  clampPlacementPosition: 1
+  shouldCheckCollision: 1
+  collisionCheckLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  collisionResponse: 0
+  ruleSources:
+  - {fileID: 1144040927}
+  - {fileID: 407826710}
+  currentPhase: 0
+  targetHouse: {fileID: 0}
+  selectedBuilding: {fileID: 0}
+  targetBuilding: {fileID: 0}
+  isValidPlacement: 1
 --- !u!1 &1770294326
 GameObject:
   m_ObjectHideFlags: 0
@@ -4948,10 +5032,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1925857604}
     m_Modifications:
+    - target: {fileID: 439425252559469162, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: remodelingController
+      value: 
+      objectReference: {fileID: 1752197333}
+    - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: remodelingSystem
+      value: 
+      objectReference: {fileID: 1752197334}
     - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: useTerrainHeight
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: buildingMemberCatalog
+      value: 
+      objectReference: {fileID: 1002139597}
     - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: groundLayerMask.m_Bits
       value: 16
@@ -4959,6 +5055,10 @@ PrefabInstance:
     - target: {fileID: 439504990842044987, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: intermediatePointSpacing
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2199413577735083238, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      propertyPath: m_Name
+      value: RemodelingSystem
       objectReference: {fileID: 0}
     - target: {fileID: 7407213257174742257, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
       propertyPath: m_Name
@@ -5016,10 +5116,17 @@ PrefabInstance:
       propertyPath: deleteAction
       value: 
       objectReference: {fileID: -4509415214450576543, guid: e967b2e8b257b4943a66c38ff72da227, type: 3}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8025097793016976325, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2199413577735083238, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1752197334}
+    - targetCorrespondingSourceObject: {fileID: 2199413577735083238, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1752197333}
   m_SourcePrefab: {fileID: 100100000, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
 --- !u!1001 &2969110761446407077
 PrefabInstance:

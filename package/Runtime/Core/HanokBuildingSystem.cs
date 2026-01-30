@@ -35,7 +35,7 @@ namespace HanokBuildingSystem
         #region Components
         [Header("Required Components")]
         [SerializeField] private PlotController plotController;
-        [SerializeField] private RemodelingController remodelingController;
+        [SerializeField] private RemodelingSystem remodelingSystem;
         [SerializeField] private WallGenerator wallGenerator;
 
         [Header("Catalogs")]
@@ -53,7 +53,7 @@ namespace HanokBuildingSystem
         [SerializeField] private float maxAllowedSlope = 30f;
 
         public PlotController PlotController => plotController;
-        public RemodelingController RemodelingController => remodelingController;
+        public RemodelingSystem RemodelingSystem => remodelingSystem;
         public WallGenerator WallGenerator => wallGenerator;
         public HouseCatalog HouseCatalog => houseCatalog;
         public BuildingCatalog BuildingCatalog => buildingCatalog;
@@ -223,11 +223,10 @@ namespace HanokBuildingSystem
             // 첫 번째 선택된 House를 리모델링 대상으로 설정
             House targetHouse = currentHouses[0];
 
-            // RemodelingController에 리모델링 시작 알림 (백업 수행)
-            if (remodelingController != null)
+            // RemodelingSystem에 리모델링 시작 알림 (백업 수행)
+            if (remodelingSystem != null)
             {
-                remodelingController.StartRemodeling(targetHouse);
-                
+                remodelingSystem.StartSession(targetHouse);
                 Events.RaiseRemodelingStarted(targetHouse);
             }
 
