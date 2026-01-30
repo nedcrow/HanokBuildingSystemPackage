@@ -570,22 +570,31 @@ namespace HanokBuildingSystem
                 // 임의 룰 실행
                 foreach(IRemodelingRule rule in rules)
                 {
-                    string failReason;
-                    bool enforce;
-                    if (!rule.ControlBuilding(selectedBuilding, targetHouse, newPosition, out failReason, out enforce))
+                    var result = rule.ControlBuilding(selectedBuilding, targetHouse, newPosition);
+                    
+                    // 스킵된 룰은 무시
+                    if (result.Status == RemodelingRuleStatus.Skipped)
                     {
-                        string ruleName = rule.GetType().Name;
-                        // Debug.Log($"[DragBuildingCoroutine] Rule returned false - Rule: {ruleName}, Building: {selectedBuilding.name}, Reason: {failReason ?? "N/A"}, Enforce: {enforce}");
-                        
+                        continue;
+                    }
+                    
+                    string ruleName = rule.GetType().Name;
+                    
+                    if (result.Status == RemodelingRuleStatus.Failed)
+                    {
                         // enforce가 true일 때만 invalid 처리
-                        if(enforce)
+                        if(result.Enforce)
                         {
                             invalidReason |= PlacementInvalidReason.CustomRule;
                             isValidPlacement = false;
                             Debug.LogWarning($"[DragBuildingCoroutine] Placement invalidated by rule: {ruleName}");
                             StopDragging();
                         }
-                        yield return null;
+                    }
+                    else if (result.Status == RemodelingRuleStatus.Succeeded && result.Enforce)
+                    {
+                        // 룰이 성공이고 enforce가 true일 때 강제로 valid 처리
+                        isValidPlacement = true;
                     }
                 }                
 
