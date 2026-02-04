@@ -376,6 +376,7 @@ namespace HanokBuildingSystem
 
     /// <summary>
     /// BoundaryPlot의 정점들로 Mesh를 생성합니다 (Fan triangulation).
+    /// PolygonMeshUtils를 사용하여 CW 방향으로 정규화하여 법선이 Y+ (위쪽)를 향하도록 합니다.
     /// </summary>
     private Mesh CreateBoundaryMesh()
     {
@@ -383,44 +384,7 @@ namespace HanokBuildingSystem
         if (lineList == null || lineList.Count < 3)
             return null;
 
-        // 각 라인의 첫 번째 정점만 추출
-        List<Vector3> cornerVertices = new List<Vector3>();
-        foreach (var line in lineList)
-        {
-            if (line != null && line.Count > 0)
-            {
-                cornerVertices.Add(line[0]);
-            }
-        }
-
-        if (cornerVertices.Count < 3)
-            return null;
-
-        Mesh mesh = new Mesh();
-        mesh.name = "BoundaryMesh";
-
-        // 월드 좌표를 로컬 좌표로 변환
-        Vector3[] meshVertices = new Vector3[cornerVertices.Count];
-        for (int i = 0; i < cornerVertices.Count; i++)
-        {
-            meshVertices[i] = transform.InverseTransformPoint(cornerVertices[i]);
-        }
-
-        // Fan triangulation (첫 정점을 중심으로 삼각형 생성)
-        int[] triangles = new int[(cornerVertices.Count - 2) * 3];
-        for (int i = 0; i < cornerVertices.Count - 2; i++)
-        {
-            triangles[i * 3] = 0;
-            triangles[i * 3 + 1] = i + 1;
-            triangles[i * 3 + 2] = i + 2;
-        }
-
-        mesh.vertices = meshVertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-
-        return mesh;
+        return PolygonMeshUtils.CreateMeshFromVertics(lineList, transform.worldToLocalMatrix);
     }
 
     /// <summary>
