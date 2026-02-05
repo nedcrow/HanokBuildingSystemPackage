@@ -5,7 +5,8 @@ namespace HanokBuildingSystem
     /// </summary>
     public enum RemodelingPhase
     {
-        Idle,               // 컨트롤러 닫힘/비활성
+        Rest,               // 리모델링 닫힘/비활성
+        Idle,               // 리모델링 활성화
         Inspect,            // 선택/정보 확인
         Move,               // 이동 도구
         Rotate,             // 회전 도구
