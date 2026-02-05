@@ -109,7 +109,7 @@ namespace HanokBuildingSystem
             BackupHouseState();
             targetHouse.ShowModelHouse(targetHouse.BoundaryPlot, useTerrainHeight, terrainLayer);
 
-            SetPhase(RemodelingPhase.Inspect);
+            SetPhase(RemodelingPhase.Idle);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace HanokBuildingSystem
             Debug.Log($"[RemodelingSystem] Completed session for {completedHouse.name}");
 
             ClearBackup();
-            SetPhase(RemodelingPhase.Idle);
+            SetPhase(RemodelingPhase.Rest);
             targetHouse = null;
             return true;
         }
@@ -167,7 +167,7 @@ namespace HanokBuildingSystem
             Debug.Log($"[RemodelingSystem] Cancelled session for {cancelledHouse.name}");
 
             ClearBackup();
-            SetPhase(RemodelingPhase.Idle);
+            SetPhase(RemodelingPhase.Rest);
             targetHouse = null;
             return true;
         }
@@ -212,7 +212,6 @@ namespace HanokBuildingSystem
             targetBuilding = null;
             isNewlyAddedBuilding = false;
 
-            SetPhase(RemodelingPhase.Inspect);
             buildingSystem.Events.RaiseRemodelingBuildingDeselected();
 
             Debug.Log("[RemodelingSystem] Deselected building");
@@ -271,7 +270,6 @@ namespace HanokBuildingSystem
             originalRotation = Quaternion.identity;
             isNewlyAddedBuilding = true;
 
-            SetPhase(RemodelingPhase.Add);
             buildingSystem.Events.RaiseRemodelingBuildingSelected(newBuilding);
 
             Debug.Log($"[RemodelingSystem] Started placing new building: {newBuilding.name}");
@@ -281,19 +279,20 @@ namespace HanokBuildingSystem
 
         /// <summary>
         /// 드래그 시작 알림 (컨트롤러에서 호출)
+        /// SetState(IRemodelingState)를 통한 상태 관리를 권장합니다.
         /// </summary>
+        [System.Obsolete("SetState(IRemodelingState)를 통한 상태 관리를 권장합니다.")]
         public void NotifyDragStarted()
         {
             if (selectedBuilding == null) return;
-
-            SetPhase(RemodelingPhase.Move);
-
             buildingSystem.Events.RaiseRemodelingDragStarted();
         }
 
         /// <summary>
         /// 드래그 종료 알림 (컨트롤러에서 호출)
+        /// SetState(IRemodelingState)를 통한 상태 관리를 권장합니다.
         /// </summary>
+        [System.Obsolete("SetState(IRemodelingState)를 통한 상태 관리를 권장합니다.")]
         public void NotifyDragEnded()
         {
             buildingSystem.Events.RaiseRemodelingDragEnded();
@@ -338,7 +337,6 @@ namespace HanokBuildingSystem
                             originalRotation = swapTarget.transform.rotation;
                             isNewlyAddedBuilding = false;
 
-                            SetPhase(RemodelingPhase.Move);
                             buildingSystem.Events.RaiseRemodelingBuildingSelected(swapTarget);
                         }
                         return false;
@@ -361,7 +359,6 @@ namespace HanokBuildingSystem
             targetBuilding = null;
             isNewlyAddedBuilding = false;
 
-            SetPhase(RemodelingPhase.Inspect);
             buildingSystem.Events.RaiseRemodelingBuildingDeselected();
 
             Debug.Log($"[RemodelingSystem] Confirmed placement of {placedBuilding.name}");
@@ -401,7 +398,6 @@ namespace HanokBuildingSystem
             targetBuilding = null;
             isNewlyAddedBuilding = false;
 
-            SetPhase(RemodelingPhase.Inspect);
             buildingSystem.Events.RaiseRemodelingBuildingDeselected();
         }
 
@@ -788,7 +784,7 @@ namespace HanokBuildingSystem
             Debug.Log($"[RemodelingSystem] State changed: {oldState?.StateName ?? "null"} -> {newState?.StateName ?? "null"}");
         }
 
-        private void SetPhase(RemodelingPhase newPhase)
+        public void SetPhase(RemodelingPhase newPhase)
         {
             if (currentPhase == newPhase) return;
 
