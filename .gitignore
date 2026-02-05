@@ -104,3 +104,6 @@ InitTestScene*.unity*
 
 # Batch file
 *.bat
+
+# Windows NUL device artifact
+nul

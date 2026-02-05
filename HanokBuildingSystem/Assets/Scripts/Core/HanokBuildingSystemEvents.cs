@@ -63,6 +63,7 @@ namespace HanokBuildingSystem
 
         #region Remodeling Phase Events
         public event Action<RemodelingPhase, RemodelingPhase> OnRemodelingPhaseChanged;
+        public event Action<IRemodelingState, IRemodelingState> OnRemodelingStateChanged;
         public event Action<Building> OnRemodelingBuildingSelected;
         public event Action OnRemodelingBuildingDeselected;
         public event Action OnRemodelingDragStarted;
@@ -139,6 +140,9 @@ namespace HanokBuildingSystem
 
         internal void RaiseRemodelingPhaseChanged(RemodelingPhase oldPhase, RemodelingPhase newPhase)
             => OnRemodelingPhaseChanged?.Invoke(oldPhase, newPhase);
+
+        internal void RaiseRemodelingStateChanged(IRemodelingState oldState, IRemodelingState newState)
+            => OnRemodelingStateChanged?.Invoke(oldState, newState);
 
         internal void RaiseRemodelingBuildingSelected(Building building)
             => OnRemodelingBuildingSelected?.Invoke(building);
