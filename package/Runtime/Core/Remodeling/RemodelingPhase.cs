@@ -1,15 +1,17 @@
 namespace HanokBuildingSystem
 {
     /// <summary>
-    /// 리모델링 시스템의 현재 단계
+    /// 리모델링 시스템의 현재 단계 (유저가 선택한 도구/모드)
     /// </summary>
     public enum RemodelingPhase
     {
-        Idle,               // 리모델링 비활성
-        Active,             // 리모델링 활성 (빌딩 미선택)
-        Moving,             // 드래그 중
-        Adding,             // 새 빌딩
-        Erasing             // 빌딩 제거
+        Idle,               // 컨트롤러 닫힘/비활성
+        Inspect,            // 선택/정보 확인
+        Move,               // 이동 도구
+        Rotate,             // 회전 도구
+        Expand,             // 증축 도구
+        Add,                // 새 빌딩 추가 도구
+        Erase               // 삭제 도구
     }
 
     /// <summary>

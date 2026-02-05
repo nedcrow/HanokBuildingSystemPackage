@@ -33,6 +33,7 @@ namespace HanokBuildingSystem
 
         #region Properties
         public RemodelingPhase CurrentPhase => currentPhase;
+        public IRemodelingState CurrentState => currentState;
         public House TargetHouse => targetHouse;
         public Building SelectedBuilding => selectedBuilding;
         public Building TargetBuilding => targetBuilding;
@@ -48,6 +49,7 @@ namespace HanokBuildingSystem
         #endregion
 
         #region Private State
+        private IRemodelingState currentState;
         private readonly List<IRemodelingRule> rules = new();
         private readonly List<RemodelingRuleResult> lastRuleResults = new(); // 캐시된 룰 결과 (GC 부담 없음)
         private Vector3 originalPosition;
@@ -79,6 +81,11 @@ namespace HanokBuildingSystem
                     rules.Add(rule);
             }
         }
+
+        private void Update()
+        {
+            currentState?.OnUpdate(this);
+        }
         #endregion
 
         #region Session Management
@@ -102,7 +109,7 @@ namespace HanokBuildingSystem
             BackupHouseState();
             targetHouse.ShowModelHouse(targetHouse.BoundaryPlot, useTerrainHeight, terrainLayer);
 
-            SetPhase(RemodelingPhase.Active);
+            SetPhase(RemodelingPhase.Inspect);
         }
 
         /// <summary>
@@ -118,7 +125,7 @@ namespace HanokBuildingSystem
             }
 
             // 드래그 중이면 배치 취소
-            if (currentPhase == RemodelingPhase.Moving || currentPhase == RemodelingPhase.Adding)
+            if (currentPhase == RemodelingPhase.Move || currentPhase == RemodelingPhase.Add)
             {
                 CancelPlacement();
             }
@@ -148,7 +155,7 @@ namespace HanokBuildingSystem
             }
 
             // 드래그 중이면 배치 취소
-            if (currentPhase == RemodelingPhase.Moving || currentPhase == RemodelingPhase.Adding)
+            if (currentPhase == RemodelingPhase.Move || currentPhase == RemodelingPhase.Add)
             {
                 CancelPlacement();
             }
@@ -205,7 +212,7 @@ namespace HanokBuildingSystem
             targetBuilding = null;
             isNewlyAddedBuilding = false;
 
-            SetPhase(RemodelingPhase.Active);
+            SetPhase(RemodelingPhase.Inspect);
             buildingSystem.Events.RaiseRemodelingBuildingDeselected();
 
             Debug.Log("[RemodelingSystem] Deselected building");
@@ -231,7 +238,7 @@ namespace HanokBuildingSystem
             }
 
             // 이미 배치 중이면 취소
-            if (currentPhase == RemodelingPhase.Moving || currentPhase == RemodelingPhase.Adding)
+            if (currentPhase == RemodelingPhase.Move || currentPhase == RemodelingPhase.Add)
             {
                 CancelPlacement();
             }
@@ -264,7 +271,7 @@ namespace HanokBuildingSystem
             originalRotation = Quaternion.identity;
             isNewlyAddedBuilding = true;
 
-            SetPhase(RemodelingPhase.Adding);
+            SetPhase(RemodelingPhase.Add);
             buildingSystem.Events.RaiseRemodelingBuildingSelected(newBuilding);
 
             Debug.Log($"[RemodelingSystem] Started placing new building: {newBuilding.name}");
@@ -279,7 +286,7 @@ namespace HanokBuildingSystem
         {
             if (selectedBuilding == null) return;
 
-            SetPhase(RemodelingPhase.Moving);
+            SetPhase(RemodelingPhase.Move);
 
             buildingSystem.Events.RaiseRemodelingDragStarted();
         }
@@ -331,7 +338,7 @@ namespace HanokBuildingSystem
                             originalRotation = swapTarget.transform.rotation;
                             isNewlyAddedBuilding = false;
 
-                            SetPhase(RemodelingPhase.Moving);
+                            SetPhase(RemodelingPhase.Move);
                             buildingSystem.Events.RaiseRemodelingBuildingSelected(swapTarget);
                         }
                         return false;
@@ -354,7 +361,7 @@ namespace HanokBuildingSystem
             targetBuilding = null;
             isNewlyAddedBuilding = false;
 
-            SetPhase(RemodelingPhase.Active);
+            SetPhase(RemodelingPhase.Inspect);
             buildingSystem.Events.RaiseRemodelingBuildingDeselected();
 
             Debug.Log($"[RemodelingSystem] Confirmed placement of {placedBuilding.name}");
@@ -394,7 +401,7 @@ namespace HanokBuildingSystem
             targetBuilding = null;
             isNewlyAddedBuilding = false;
 
-            SetPhase(RemodelingPhase.Active);
+            SetPhase(RemodelingPhase.Inspect);
             buildingSystem.Events.RaiseRemodelingBuildingDeselected();
         }
 
@@ -765,6 +772,22 @@ namespace HanokBuildingSystem
         #endregion
 
         #region State Management
+        /// <summary>
+        /// Phase 내부의 세부 상태를 전환한다.
+        /// </summary>
+        public void SetState(IRemodelingState newState)
+        {
+            if (currentState == newState) return;
+
+            IRemodelingState oldState = currentState;
+            currentState?.OnExit(this);
+            currentState = newState;
+            currentState?.OnEnter(this);
+
+            buildingSystem.Events.RaiseRemodelingStateChanged(oldState, newState);
+            Debug.Log($"[RemodelingSystem] State changed: {oldState?.StateName ?? "null"} -> {newState?.StateName ?? "null"}");
+        }
+
         private void SetPhase(RemodelingPhase newPhase)
         {
             if (currentPhase == newPhase) return;
