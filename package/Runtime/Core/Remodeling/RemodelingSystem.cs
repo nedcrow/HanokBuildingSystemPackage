@@ -55,6 +55,7 @@ namespace HanokBuildingSystem
         private Vector3 originalPosition;
         private Quaternion originalRotation;
         private bool isNewlyAddedBuilding = false;
+        private bool wasValidBeforeValidation;
 
         // Remodeling backup data
         private class BuildingSnapshot
@@ -431,24 +432,13 @@ namespace HanokBuildingSystem
         /// <summary>
         /// 배치 유효성 검사 수행 및 결과 반환
         /// </summary>
+        /// <remarks>
+        /// 이벤트는 ApplyCustomRules 완료 후 최종 결과 기반으로 발생합니다.
+        /// </remarks>
         public bool ValidateCurrentPlacement(out PlacementInvalidReason invalidReason)
         {
-            bool wasValid = isValidPlacement;
+            wasValidBeforeValidation = isValidPlacement;
             isValidPlacement = ValidatePlacement(selectedBuilding, out invalidReason);
-
-            // 배치 상태가 변경되었을 때 이벤트 발생
-            if (wasValid != isValidPlacement)
-            {
-                if (!isValidPlacement)
-                {
-                    buildingSystem.Events.RaiseRemodelingPlacementInvalid(selectedBuilding, invalidReason);
-                }
-                else
-                {
-                    buildingSystem.Events.RaiseRemodelingPlacementValid(selectedBuilding);
-                }
-            }
-
             return isValidPlacement;
         }
 
@@ -492,6 +482,19 @@ namespace HanokBuildingSystem
             }
 
             isValidPlacement = validPlacement;
+
+            // 최종 유효성 상태가 변경되었을 때 이벤트 발생
+            if (wasValidBeforeValidation != isValidPlacement)
+            {
+                if (!isValidPlacement)
+                {
+                    buildingSystem.Events.RaiseRemodelingPlacementInvalid(selectedBuilding, invalidReason);
+                }
+                else
+                {
+                    buildingSystem.Events.RaiseRemodelingPlacementValid(selectedBuilding);
+                }
+            }
         }
         #endregion
 
