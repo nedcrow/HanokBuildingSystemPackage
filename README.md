@@ -242,7 +242,7 @@ wallGenerator.GenerateWallsForPlot(plot, wallBuilding);
 
 ## 버전
 
-- 현재 버전: 0.1.41
+- 현재 버전: 0.1.42
 - Unity 최소 버전: 6000.2.2f1
 
 ## 주요 변경사항

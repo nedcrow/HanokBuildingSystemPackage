@@ -3832,6 +3832,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1559869448}
   m_CullTransparentMesh: 1
+--- !u!114 &1574454453 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5544837613142234515, guid: 8be9192bea342354f9b6957fabc5ee1f, type: 3}
+  m_PrefabInstance: {fileID: 91512609680110267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6793ed4ee7116843a0832f89b83d867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemodelingController
 --- !u!1 &1597580580
 GameObject:
   m_ObjectHideFlags: 0
@@ -5129,6 +5140,10 @@ PrefabInstance:
       propertyPath: eraserActiveColor.r
       value: 0.8018868
       objectReference: {fileID: 0}
+    - target: {fileID: 2199815569942758396, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
+      propertyPath: remodelingController
+      value: 
+      objectReference: {fileID: 1574454453}
     - target: {fileID: 2703488506829291220, guid: a671a56b9f87fcc408a1bdbe7037d27f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
