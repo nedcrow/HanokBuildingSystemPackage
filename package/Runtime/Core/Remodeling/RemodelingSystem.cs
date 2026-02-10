@@ -723,14 +723,14 @@ namespace HanokBuildingSystem
 
             Physics.SyncTransforms();
 
-            Bounds bounds = buildingCollider.bounds;
-            Vector3 center = bounds.center;
-            Vector3 halfExtents = bounds.extents;
+            // 빌딩의 회전을 고려한 충돌 판정: 콜라이더의 로컬 파라미터를 사용
+            GetColliderOverlapParams(buildingCollider, building.transform,
+                out Vector3 center, out Vector3 halfExtents, out Quaternion rotation);
 
             Collider[] overlappingColliders = Physics.OverlapBox(
                 center,
                 halfExtents,
-                building.transform.rotation,
+                rotation,
                 collisionCheckLayers
             );
 
@@ -767,6 +767,59 @@ namespace HanokBuildingSystem
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 콜라이더 타입에 따라 회전을 고려한 OverlapBox 파라미터를 계산한다.
+        /// BoxCollider가 아닌 경우에도 로컬 공간 기반으로 근사하여 회전을 반영한다.
+        /// </summary>
+        private void GetColliderOverlapParams(Collider collider, Transform buildingTransform,
+            out Vector3 center, out Vector3 halfExtents, out Quaternion rotation)
+        {
+            if (collider is BoxCollider box)
+            {
+                // BoxCollider: 로컬 center/size를 월드 좌표로 변환
+                center = buildingTransform.TransformPoint(box.center);
+                halfExtents = Vector3.Scale(box.size * 0.5f, buildingTransform.lossyScale);
+                rotation = buildingTransform.rotation;
+            }
+            else if (collider is SphereCollider sphere)
+            {
+                // SphereCollider: 회전 무관, 최대 스케일 축으로 균일 반지름
+                center = buildingTransform.TransformPoint(sphere.center);
+                Vector3 scale = buildingTransform.lossyScale;
+                float maxScale = Mathf.Max(Mathf.Abs(scale.x),
+                    Mathf.Max(Mathf.Abs(scale.y), Mathf.Abs(scale.z)));
+                float scaledRadius = sphere.radius * maxScale;
+                halfExtents = new Vector3(scaledRadius, scaledRadius, scaledRadius);
+                rotation = Quaternion.identity;
+            }
+            else if (collider is CapsuleCollider capsule)
+            {
+                // CapsuleCollider: direction 축 기준으로 로컬 크기 계산
+                center = buildingTransform.TransformPoint(capsule.center);
+                float diameter = capsule.radius * 2f;
+                Vector3 localSize = new Vector3(diameter, diameter, diameter);
+                localSize[capsule.direction] = Mathf.Max(capsule.height, diameter);
+                halfExtents = Vector3.Scale(localSize * 0.5f, buildingTransform.lossyScale);
+                rotation = buildingTransform.rotation;
+            }
+            else if (collider is MeshCollider meshCollider && meshCollider.sharedMesh != null)
+            {
+                // MeshCollider: 메시의 로컬 바운드 사용
+                Bounds meshBounds = meshCollider.sharedMesh.bounds;
+                center = buildingTransform.TransformPoint(meshBounds.center);
+                halfExtents = Vector3.Scale(meshBounds.extents, buildingTransform.lossyScale);
+                rotation = buildingTransform.rotation;
+            }
+            else
+            {
+                // 알 수 없는 콜라이더: AABB 폴백 (회전 미적용)
+                Bounds bounds = collider.bounds;
+                center = bounds.center;
+                halfExtents = bounds.extents;
+                rotation = Quaternion.identity;
+            }
         }
         #endregion
 
