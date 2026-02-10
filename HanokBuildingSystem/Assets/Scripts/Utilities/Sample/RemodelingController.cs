@@ -360,12 +360,22 @@ public class RemodelingController : MonoBehaviour
         }
 
         Ray ray = mainCamera.ScreenPointToRay(screenPosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance, buildingLayerMask))
+        RaycastHit[] hits = Physics.RaycastAll(ray, raycastDistance, buildingLayerMask);
+
+        Building closestBuilding = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (RaycastHit hit in hits)
         {
-            return hit.collider.GetComponentInParent<Building>();
+            Building building = hit.collider.GetComponentInParent<Building>();
+            if (building != null && hit.distance < closestDistance)
+            {
+                closestDistance = hit.distance;
+                closestBuilding = building;
+            }
         }
 
-        return null;
+        return closestBuilding;
     }
 
     private Vector3 ScreenToWorldPosition(Vector2 screenPosition, bool useTerrainHeight = false, LayerMask terrainLayer = default)
