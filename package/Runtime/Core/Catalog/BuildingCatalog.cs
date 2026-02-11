@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace HanokBuildingSystem
@@ -45,38 +46,64 @@ namespace HanokBuildingSystem
             return GetFromPool(prefabIndex, position, rotation);
         }
 
+        private List<GameObject> FindPrefabsByType(BuildingTypeData type)
+        {
+            return buildingPrefabs
+                .Where(p => p != null)
+                .Where(p =>
+                {
+                    Building b = p.GetComponent<Building>();
+                    return b != null && b.StatusData != null && b.StatusData.BuildingType == type;
+                })
+                .ToList();
+        }
+
         public Building GetBuildingByType(BuildingTypeData type)
         {
-            foreach (var prefab in buildingPrefabs)
+            var matched = FindPrefabsByType(type);
+            if (matched.Count == 0)
             {
-                if (prefab == null) continue;
-
-                Building building = prefab.GetComponent<Building>();
-                if (building != null && building.StatusData.BuildingType == type)
-                {
-                    return GetBuilding(prefab);
-                }
+                Debug.LogWarning($"[BuildingCatalog] No building found for type: {type}");
+                return null;
             }
 
-            Debug.LogWarning($"[BuildingCatalog] No building found for type: {type}");
-            return null;
+            return GetBuilding(matched[0]);
         }
 
         public Building GetBuildingByType(BuildingTypeData type, Vector3 position, Quaternion rotation)
         {
-            foreach (var prefab in buildingPrefabs)
+            var matched = FindPrefabsByType(type);
+            if (matched.Count == 0)
             {
-                if (prefab == null) continue;
-
-                Building building = prefab.GetComponent<Building>();
-                if (building != null &&  building.StatusData != null && building.StatusData.BuildingType == type)
-                {
-                    return GetBuilding(prefab, position, rotation);
-                }
+                Debug.LogWarning($"[BuildingCatalog] No building found for type: {type}");
+                return null;
             }
 
-            Debug.LogWarning($"[BuildingCatalog] No building found for type: {type}");
-            return null;
+            return GetBuilding(matched[0], position, rotation);
+        }
+
+        public Building GetRandomBuildingByType(BuildingTypeData type)
+        {
+            var matched = FindPrefabsByType(type);
+            if (matched.Count == 0)
+            {
+                Debug.LogWarning($"[BuildingCatalog] No building found for type: {type}");
+                return null;
+            }
+
+            return GetBuilding(matched[Random.Range(0, matched.Count)]);
+        }
+
+        public Building GetRandomBuildingByType(BuildingTypeData type, Vector3 position, Quaternion rotation)
+        {
+            var matched = FindPrefabsByType(type);
+            if (matched.Count == 0)
+            {
+                Debug.LogWarning($"[BuildingCatalog] No building found for type: {type}");
+                return null;
+            }
+
+            return GetBuilding(matched[Random.Range(0, matched.Count)], position, rotation);
         }
 
         public void ReturnBuilding(Building building)

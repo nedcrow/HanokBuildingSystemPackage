@@ -38,6 +38,19 @@ namespace HanokBuildingSystem
             return GetHouse(firstPrefab);
         }
 
+        public House GetRandomHouse()
+        {
+            if (housePrefabs.Count == 0)
+            {
+                Debug.LogWarning($"[HouseCatalog] No house prefabs available!");
+                return null;
+            }
+
+            GameObject randomPrefab = housePrefabs[Random.Range(0, housePrefabs.Count)];
+            randomPrefab.SetActive(true);
+            return GetHouse(randomPrefab);
+        }
+
         public House GetHouse(GameObject prefab)
         {
             return GetFromPool(prefab);
